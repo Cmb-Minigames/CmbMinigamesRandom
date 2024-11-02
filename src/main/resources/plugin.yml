@@ -1,0 +1,8 @@
+name: CmbMinigamesRandom
+version: '0.1'
+main: xyz.devcmb.cmr.CmbMinigamesRandom
+api-version: '1.21'
+prefix: CmbMinigames
+authors: [ DevCmb ]
+description: The CmbMinigames server plugin, extension of CmbMinigames
+website: devcmb.xyz
