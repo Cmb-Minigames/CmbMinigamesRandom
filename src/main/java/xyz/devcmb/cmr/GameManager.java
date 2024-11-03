@@ -7,10 +7,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 import xyz.devcmb.cmr.minigames.Minigame;
+import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GameManager {
 
@@ -21,11 +23,21 @@ public class GameManager {
     public static int timeLeft = 15;
     public static boolean pregame = false;
     public static boolean ingame = false;
+    public static boolean playersFrozen = false;
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
     public static void registerAllMinigames(){
         registerMinigame(new CaptureTheFlagController());
+    }
+
+    public static Minigame getMinigameByName(String name){
+        for(Minigame minigame : minigames){
+            if(minigame.getName().equalsIgnoreCase(name)){
+                return minigame;
+            }
+        }
+        return null;
     }
 
     public static void registerMinigame(Minigame minigame){
@@ -34,6 +46,11 @@ public class GameManager {
     }
 
     public static void playerConnect(Player player){
+        if(ingame || pregame) {
+            currentMinigame.playerJoin(player);
+            return;
+        }
+
         if((CmbMinigamesRandom.DeveloperMode ? (!Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() >= 2)) && !intermissionCountdownInProgress){
             intermissionCountdownInProgress = true;
             timeLeft = 15;
@@ -78,6 +95,16 @@ public class GameManager {
                         player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 1, 1);
                         player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + minigame.getName(), "", 0, 50, 15);
                     });
+                    new BukkitRunnable(){
+                        @Override
+                        public void run() {
+                            Map<String, ?> map = MapLoader.loadRandomMap(minigame);
+                            pregame = false;
+                            ingame = true;
+                            currentMinigame = minigame;
+                            minigame.start(map);
+                        }
+                    }.runTaskLater(CmbMinigamesRandom.getPlugin(), 75);
                     this.cancel();
                 }
             }
