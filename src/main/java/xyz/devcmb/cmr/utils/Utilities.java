@@ -16,6 +16,7 @@ public class Utilities {
             public void run() {
                 if(seconds == 0){
                     this.cancel();
+                    player.sendTitle(ChatColor.GREEN.toString() + ChatColor.BOLD + "GO!", "", 0, 40, 10);
                     return;
                 }
 
@@ -35,7 +36,7 @@ public class Utilities {
                         break;
                 }
 
-                player.sendTitle(color.toString() + ChatColor.BOLD + "> " + seconds + " <", "The game will begin shortly", 5, 20, 5);
+                player.sendTitle(color.toString() + ChatColor.BOLD + "> " + seconds + " <", "The game will begin shortly", 0, 20, 0);
                 seconds--;
             }
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
@@ -46,4 +47,5 @@ public class Utilities {
         int randomIndex = random.nextInt(list.size());
         return list.get(randomIndex);
     }
+
 }

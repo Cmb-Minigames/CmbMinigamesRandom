@@ -12,12 +12,14 @@ public class ScoreboardManager {
         updateScoreboard = new BukkitRunnable() {
             @Override
             public void run() {
-                if(GameManager.intermission) {
-                    if((CmbMinigamesRandom.DeveloperMode ? (Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() < 2))) {
+                if (GameManager.intermission) {
+                    if ((CmbMinigamesRandom.DeveloperMode ? (Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() < 2))) {
                         NotEnoughPlayersScoreboard.displayLobbyScoreboard(player);
                     } else {
                         StartingSoonScoreboard.displayStartingSoonScoreboard(player);
                     }
+                } else if (GameManager.ingame){
+                    GameManager.currentMinigame.updateScoreboard(player);
                 } else {
                     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
                 }

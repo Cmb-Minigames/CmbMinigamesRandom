@@ -1,0 +1,39 @@
+maps:
+  Capture the Flag:
+    - map:
+        worldName: "ctf_minigame"
+        redTeamSpawn:
+            x: 56
+            y: 110
+            z: 33
+        blueTeamSpawn:
+            x: 8
+            y: 110
+            z: 35
+        flags:
+            redFlag:
+                x: 57.5
+                y: 105.75
+                z: 34.5
+            blueFlag:
+                x: 7.5
+                y: 105.75
+                z: 34.5
+            redFlagClaim:
+              from:
+                x: 59
+                y: 99
+                z: 32
+              to:
+                x: 55
+                y: 99
+                z: 36
+            blueFlagClaim:
+                from:
+                    x: 5
+                    y: 98
+                    z: 36
+                to:
+                    x: 9
+                    y: 98
+                    z: 32
