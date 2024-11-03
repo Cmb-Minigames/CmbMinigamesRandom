@@ -12,10 +12,10 @@ public class NotEnoughPlayersScoreboard {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
-        Objective objective = board.registerNewObjective("info", "dummy", ChatColor.GOLD + ChatColor.BOLD.toString() + "Cmb Minigames" + ChatColor.WHITE + " | " + ChatColor.GRAY + "v" + CmbMinigamesRandom.getPlugin().getDescription().getVersion());
+        Objective objective = board.registerNewObjective("info", "dummy", ChatColor.GOLD + "Cmb Minigames" + ChatColor.WHITE + " | " + ChatColor.GRAY + "v" + CmbMinigamesRandom.getPlugin().getDescription().getVersion());
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        Score blank = objective.getScore(" ");
+        Score blank = objective.getScore("");
         blank.setScore(1);
 
         Score players = objective.getScore(ChatColor.WHITE + "\u1F46 Players: " + ChatColor.AQUA + Bukkit.getOnlinePlayers().size() + "/2");
@@ -24,7 +24,7 @@ public class NotEnoughPlayersScoreboard {
         Score waiting = objective.getScore("ὕ Waiting for players..."); // ὕ is the clock
         waiting.setScore(2);
 
-        Score blank3 = objective.getScore("  ");
+        Score blank3 = objective.getScore("");
         blank3.setScore(4);
 
         player.setScoreboard(board);

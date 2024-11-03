@@ -1,6 +1,5 @@
 package xyz.devcmb.cmr.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
@@ -11,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -25,7 +23,7 @@ public class PregameLobbyProtections implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (isInPregameWorld(player) && !player.isOp()) {
+        if (isInPregameWorld(player)) {
             event.setCancelled(true);
         }
     }
@@ -33,7 +31,7 @@ public class PregameLobbyProtections implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockDamage(BlockDamageEvent event) {
         Player player = event.getPlayer();
-        if (isInPregameWorld(player) && !player.isOp()) {
+        if (isInPregameWorld(player)) {
             event.setCancelled(true);
         }
     }
@@ -41,7 +39,7 @@ public class PregameLobbyProtections implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockDropItem(BlockDropItemEvent event) {
         Player player = event.getPlayer();
-        if (isInPregameWorld(player) ) {
+        if (isInPregameWorld(player)) {
             event.setCancelled(true);
         }
     }
@@ -54,18 +52,10 @@ public class PregameLobbyProtections implements Listener {
         }
     }
 
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event){
-        Player player = event.getPlayer();
-        if (isInPregameWorld(player) && !player.isOp()) {
-            event.setCancelled(true);
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (isInPregameWorld(player) && !player.isOp()) {
+            if (isInPregameWorld(player)) {
                 event.setCancelled(true);
             }
         }

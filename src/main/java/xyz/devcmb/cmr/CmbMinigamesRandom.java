@@ -2,7 +2,6 @@ package xyz.devcmb.cmr;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.devcmb.cmr.listeners.ListenerManager;
-import xyz.devcmb.cmr.utils.MapLoader;
 
 import java.util.logging.Logger;
 
@@ -20,7 +19,6 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         plugin = this;
         LOGGER = getLogger();
 
-        saveDefaultConfig();
         LOGGER.info("Cmb Minigames has awoken. Initializing minigames...");
 
         ListenerManager.initialize();
@@ -29,9 +27,6 @@ public final class CmbMinigamesRandom extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        MapLoader.unloadMap();
-        if(GameManager.ingame){
-            GameManager.currentMinigame.stop();
-        }
+
     }
 }
