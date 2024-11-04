@@ -3,6 +3,8 @@ package xyz.devcmb.cmr.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.minigames.Minigame;
 
@@ -38,6 +40,15 @@ public class MapLoader {
 
     public static void unloadMap(){
         if(LOADED_MAP != null){
+            World world = Bukkit.getWorld(LOADED_MAP);
+            if (world != null) {
+                for (Entity entity : world.getEntities()) {
+                    if (entity.getType() == EntityType.ITEM_DISPLAY || entity.getType() == EntityType.BLOCK_DISPLAY) {
+                        entity.remove();
+                    }
+                }
+            }
+
             Bukkit.unloadWorld(LOADED_MAP, false);
         } else {
             CmbMinigamesRandom.LOGGER.warning("No map loaded to unload.");
