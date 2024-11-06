@@ -9,7 +9,7 @@ public class ListenerManager {
         CmbMinigamesRandom plugin = CmbMinigamesRandom.getPlugin();
         PluginManager pluginManager = plugin.getServer().getPluginManager();
 
-        pluginManager.registerEvents(new PlayerJoin(), CmbMinigamesRandom.getPlugin());
+        pluginManager.registerEvents(new PlayerListeners(), CmbMinigamesRandom.getPlugin());
         pluginManager.registerEvents(new PregameLobbyProtections(), CmbMinigamesRandom.getPlugin());
         pluginManager.registerEvents(new DeathEffects(), CmbMinigamesRandom.getPlugin());
         pluginManager.registerEvents(new MinigameListeners(), CmbMinigamesRandom.getPlugin());

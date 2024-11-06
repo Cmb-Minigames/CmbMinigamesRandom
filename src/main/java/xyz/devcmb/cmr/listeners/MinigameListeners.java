@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,6 +9,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -22,13 +24,25 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.minigames.MinigameFlag;
 
+import java.util.List;
+import java.util.Map;
+
 public class MinigameListeners implements Listener {
+    private static final List<Material> teamBlocks = List.of(
+        Material.RED_CONCRETE,
+        Material.BLUE_CONCRETE,
+        Material.GREEN_CONCRETE,
+        Material.YELLOW_CONCRETE
+    );
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
         if(minigame.getFlags().contains(MinigameFlag.CANNOT_BREAK_BLOCKS)){
             event.setCancelled(true);
+        } else if (minigame.getFlags().contains(MinigameFlag.DISABLE_BLOCK_DROPS)) {
+            event.setDropItems(false);
         }
     }
 
@@ -81,6 +95,12 @@ public class MinigameListeners implements Listener {
                 event.getFrom().getZ() != event.getTo().getZ()) {
                 event.setCancelled(true);
             }
+        } else if(GameManager.currentMap != null){
+            String worldName = (String)((Map<?,?>)GameManager.currentMap.get("map")).get("worldName");
+            Number voidHeight = (Number)((Map<?,?>)GameManager.currentMap.get("map")).get("voidHeight");
+            if(worldName.equals(event.getPlayer().getWorld().getName()) && event.getPlayer().getLocation().getY() < voidHeight.intValue()){
+                event.getPlayer().setHealth(0);
+            }
         }
     }
 
@@ -88,7 +108,14 @@ public class MinigameListeners implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent event){
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
-        minigame.playerRespawn(event.getPlayer());
+        minigame.playerRespawn(event);
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event){
+        if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        Minigame minigame = GameManager.currentMinigame;
+        minigame.playerDeath(event);
     }
 
     @EventHandler
@@ -100,6 +127,8 @@ public class MinigameListeners implements Listener {
             event.setCancelled(true);
         }
     }
+
+
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
@@ -114,12 +143,16 @@ public class MinigameListeners implements Listener {
         }
     }
 
+
+
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
 
         if(minigame.getFlags().contains(MinigameFlag.DISABLE_OFF_HAND) && event.getPlayer().getInventory().getItemInOffHand().equals(event.getItemDrop().getItemStack())) {
+            event.setCancelled(true);
+        } else if(minigame.getFlags().contains(MinigameFlag.UNLIMITED_BLOCKS) && teamBlocks.contains(event.getItemDrop().getItemStack().getType())){
             event.setCancelled(true);
         }
     }

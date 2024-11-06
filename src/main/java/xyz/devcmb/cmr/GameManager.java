@@ -24,6 +24,7 @@ public class GameManager {
     public static boolean pregame = false;
     public static boolean ingame = false;
     public static boolean playersFrozen = false;
+    public static Map<String, ?> currentMap = null;
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
@@ -98,11 +99,11 @@ public class GameManager {
                     new BukkitRunnable(){
                         @Override
                         public void run() {
-                            Map<String, ?> map = MapLoader.loadRandomMap(minigame);
+                            currentMap = MapLoader.loadRandomMap(minigame);
                             pregame = false;
                             ingame = true;
                             currentMinigame = minigame;
-                            minigame.start(map);
+                            minigame.start();
                         }
                     }.runTaskLater(CmbMinigamesRandom.getPlugin(), 75);
                     this.cancel();

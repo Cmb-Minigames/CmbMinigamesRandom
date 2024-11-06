@@ -5,7 +5,9 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -29,7 +31,6 @@ public class CaptureTheFlagController implements Minigame {
     private final Team blueTeam;
     private boolean blueTaken = false;
     private boolean redTaken = false;
-    private Map<String, ?> currentMap = null;
     private ItemDisplay redFlagEntity = null;
     private ItemDisplay blueFlagEntity = null;
     public int redScore = 0;
@@ -45,8 +46,7 @@ public class CaptureTheFlagController implements Minigame {
     }
 
     @Override
-    public void start(Map<String, ?> map) {
-        currentMap = map;
+    public void start() {
         List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(allPlayers);
 
@@ -67,7 +67,7 @@ public class CaptureTheFlagController implements Minigame {
             }
         }
 
-        Map<String, Object> mapData = (Map<String, Object>) map.get("map");
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
             CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
             return;
@@ -151,7 +151,7 @@ public class CaptureTheFlagController implements Minigame {
                     if (newLocation.getBlock().getType().isSolid() &&
                             newLocation.add(0, 1, 0).getBlock().getType() == Material.AIR &&
                             newLocation.add(0, 1, 0).getBlock().getType() == Material.AIR &&
-                            newLocation.getWorld().getNearbyEntities(newLocation, 1, 1, 1).isEmpty()) {
+                            Objects.requireNonNull(newLocation.getWorld()).getNearbyEntities(newLocation, 1, 1, 1).isEmpty()) {
                         validLocationFound = true;
                         break;
                     }
@@ -190,6 +190,7 @@ public class CaptureTheFlagController implements Minigame {
         blueFlagEntity.setItemStack(new ItemStack(Material.ECHO_SHARD));
 
         ItemMeta meta2 = blueFlagItem.getItemMeta();
+        if(meta2 == null) return;
         meta2.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag").intValue());
         meta2.setItemName("Blue Flag");
 
@@ -209,7 +210,7 @@ public class CaptureTheFlagController implements Minigame {
 
     @Override
     public void playerJoin(Player player) {
-        Map<String, Object> mapData = (Map<String, Object>) currentMap.get("map");
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = (String) mapData.get("worldName");
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
 
@@ -225,19 +226,20 @@ public class CaptureTheFlagController implements Minigame {
 
     public void handlePlayerMove(PlayerMoveEvent event){
         Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) currentMap.get("map");
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = (String) mapData.get("worldName");
         Map<?, ?> flags = (Map<?, ?>) mapData.get("flags");
         Map<String, Object> redFlag = (Map<String, Object>) flags.get("redFlag");
         Map<String, Object> blueFlag = (Map<String, Object>) flags.get("blueFlag");
-        Map<String, Object> redFlagClaim = (Map<String, Object>) flags.get("redFlagClaim");
-        Map<String, Object> blueFlagClaim = (Map<String, Object>) flags.get("blueFlagClaim");
+
+        if (!player.getWorld().getName().equals(worldName) || event.getTo() == null) return;
 
         if(BLUE.contains(player)){
             if(player.getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)redFlag.get("x")).doubleValue(), ((Number)redFlag.get("y")).doubleValue(), ((Number)redFlag.get("z")).doubleValue())) < 1 && !redTaken){
                 redTaken = true;
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
                 player.setHealth(6);
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(6);
 
                 ItemStack redFlagItem = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = redFlagItem.getItemMeta();
@@ -254,38 +256,26 @@ public class CaptureTheFlagController implements Minigame {
                     if(plr == player) return;
                     plr.sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + player.getName() + " has captured the flag! Defend them!");
                 });
-            } else if(player.getLocation().distanceSquared(new Location(
-                    Bukkit.getWorld(worldName),
-                    ((Number)blueFlagClaim.get("x")).doubleValue(),
-                    ((Number)blueFlagClaim.get("y")).doubleValue(),
-                    ((Number)blueFlagClaim.get("z")).doubleValue()
-            )) <= 1.3){ // formatting my beloved
+            } else if(inBlueClaimZone(event.getTo())){ // formatting my beloved
                 if(getPlayerFlag(player).equals("red")){
-                    for (ItemStack item : player.getInventory().getContents()) {
-                        if (item != null && item.getType() == Material.ECHO_SHARD) {
-                            player.getInventory().remove(item);
-                        }
-                    }
-
+                    player.getInventory().setItemInOffHand(null);
                     blueScore++;
+                    redTaken = false;
                     BLUE.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
                     RED.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
+                    spawnRedFlag(worldName, redFlag);
                     // TODO Check if the game is over
                 }
-                playerRespawn(player);
-            } else if(player.getLocation().distanceSquared(new Location(
-                    Bukkit.getWorld(worldName),
-                    ((Number)redFlagClaim.get("x")).doubleValue(),
-                    ((Number)redFlagClaim.get("y")).doubleValue(),
-                    ((Number)redFlagClaim.get("z")).doubleValue()
-            )) <= 1.3){
-                playerRespawn(player);
+                teleportToTeamBase(player);
+            } else if(inRedClaimZone(event.getTo())){
+                teleportToTeamBase(player);
             }
         } else if(RED.contains(event.getPlayer())){
             if(event.getPlayer().getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)blueFlag.get("x")).doubleValue(), ((Number)blueFlag.get("y")).doubleValue(), ((Number)blueFlag.get("z")).doubleValue())) < 1 && !blueTaken){
                 blueTaken = true;
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
                 player.setHealth(6);
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(6);
 
                 ItemStack blueFlagIcon = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = blueFlagIcon.getItemMeta();
@@ -302,83 +292,134 @@ public class CaptureTheFlagController implements Minigame {
                     if(plr == event.getPlayer()) return;
                     plr.sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + player.getName() + " has captured the flag! Defend them!");
                 });
-            } else if(player.getLocation().distanceSquared(new Location(
-                    Bukkit.getWorld(worldName),
-                    ((Number)redFlagClaim.get("x")).doubleValue(),
-                    ((Number)redFlagClaim.get("y")).doubleValue(),
-                    ((Number)redFlagClaim.get("z")).doubleValue()
-            )) <= 1.3){ // formatting my beloved
-                if(getPlayerFlag(player).equals("red")){
-                    for (ItemStack item : player.getInventory().getContents()) {
-                        if (item != null && item.getType() == Material.ECHO_SHARD) {
-                            player.getInventory().remove(item);
-                        }
-                    }
-
+            } else if(inRedClaimZone(event.getTo())){
+                if(getPlayerFlag(player).equals("blue")){
+                    player.getInventory().setItemInOffHand(null);
                     redScore++;
+                    blueTaken = false;
                     BLUE.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
                     RED.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
+                    spawnBlueFlag(worldName, blueFlag);
                     // TODO Check if the game is over
                 }
-                playerRespawn(player);
-            } else if(player.getLocation().distanceSquared(new Location(
-                    Bukkit.getWorld(worldName),
-                    ((Number)blueFlagClaim.get("x")).doubleValue(),
-                    ((Number)blueFlagClaim.get("y")).doubleValue(),
-                    ((Number)blueFlagClaim.get("z")).doubleValue()
-            )) <= 1.3){
-                playerRespawn(player);
+                teleportToTeamBase(player);
+            } else if(inBlueClaimZone(event.getTo())){
+                teleportToTeamBase(player);
             }
         }
+    }
 
+    private boolean inRedClaimZone(Location location){
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        Map<?, ?> flags = (Map<?, ?>) mapData.get("flags");
+        Map<String, Object> redFlagClaim = (Map<String, Object>) flags.get("redFlagClaim");
+        Map<String, Number> from = (Map<String, Number>) redFlagClaim.get("from");
+        Map<String, Number> to = (Map<String, Number>) redFlagClaim.get("to");
 
+        return location.getX() >= Math.min(from.get("x").doubleValue(), to.get("x").doubleValue()) &&
+            location.getX() <= Math.max(from.get("x").doubleValue(), to.get("x").doubleValue()) &&
+            location.getY() >= Math.min(from.get("y").doubleValue(), to.get("y").doubleValue()) &&
+            location.getY() <= Math.max(from.get("y").doubleValue(), to.get("y").doubleValue()) &&
+            location.getZ() >= Math.min(from.get("z").doubleValue(), to.get("z").doubleValue()) &&
+            location.getZ() <= Math.max(from.get("z").doubleValue(), to.get("z").doubleValue());
+    }
+
+    private boolean inBlueClaimZone(Location location){
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        Map<?, ?> flags = (Map<?, ?>) mapData.get("flags");
+        Map<String, Object> blueFlagClaim = (Map<String, Object>) flags.get("blueFlagClaim");
+        Map<String, Number> from = (Map<String, Number>) blueFlagClaim.get("from");
+        Map<String, Number> to = (Map<String, Number>) blueFlagClaim.get("to");
+
+        return location.getX() >= Math.min(from.get("x").doubleValue(), to.get("x").doubleValue()) &&
+           location.getX() <= Math.max(from.get("x").doubleValue(), to.get("x").doubleValue()) &&
+           location.getY() >= Math.min(from.get("y").doubleValue(), to.get("y").doubleValue()) &&
+           location.getY() <= Math.max(from.get("y").doubleValue(), to.get("y").doubleValue()) &&
+           location.getZ() >= Math.min(from.get("z").doubleValue(), to.get("z").doubleValue()) &&
+           location.getZ() <= Math.max(from.get("z").doubleValue(), to.get("z").doubleValue());
     }
 
     private String getPlayerFlag(Player player) {
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType() == Material.ECHO_SHARD) {
-                ItemMeta meta = item.getItemMeta();
-                if (meta != null && meta.hasCustomModelData()) {
-                    int customModelData = meta.getCustomModelData();
-                    if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag").intValue()) {
-                        return "red";
-                    } else if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag").intValue()) {
-                        return "blue";
-                    }
+        ItemStack offHandItem = player.getInventory().getItemInOffHand();
+        if (offHandItem.getType() == Material.ECHO_SHARD) {
+            ItemMeta meta = offHandItem.getItemMeta();
+            if (meta != null && meta.hasCustomModelData()) {
+                int customModelData = meta.getCustomModelData();
+                if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag").intValue()) {
+                    return "red";
+                } else if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag").intValue()) {
+                    return "blue";
+                } else {
+                    CmbMinigamesRandom.LOGGER.warning("Invalid custom model data found, got " + customModelData);
                 }
+            } else {
+                CmbMinigamesRandom.LOGGER.warning("No custom model data found");
             }
+        } else {
+            CmbMinigamesRandom.LOGGER.warning("No off-hand item found");
         }
         return "none";
     }
 
-    @Override
-    public void playerRespawn(Player player){
-        Map<String, Object> mapData = (Map<String, Object>) currentMap.get("map");
+    public void teleportToTeamBase(Player player){
+        CmbMinigamesRandom.LOGGER.info("Player respawn event called from ctf controller");
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = (String) mapData.get("worldName");
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
+        World world = Bukkit.getWorld(worldName);
+
+        if (world == null) {
+            CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
+            return;
+        }
 
         Location redSpawnLocation = new Location(
-                Bukkit.getWorld(worldName),
+                world,
                 ((Number) redSpawn.get("x")).doubleValue(),
                 ((Number) redSpawn.get("y")).doubleValue(),
                 ((Number) redSpawn.get("z")).doubleValue()
         );
 
         Location blueSpawnLocation = new Location(
-                Bukkit.getWorld(worldName),
+                world,
                 ((Number) blueSpawn.get("x")).doubleValue(),
                 ((Number) blueSpawn.get("y")).doubleValue(),
                 ((Number) blueSpawn.get("z")).doubleValue()
         );
 
-        if(RED.contains(player)){
+        if (RED.contains(player)) {
             player.teleport(redSpawnLocation);
-        } else if(BLUE.contains(player)){
+        } else if (BLUE.contains(player)) {
             player.teleport(blueSpawnLocation);
         }
 
+        revokeFlag(player);
+    }
+
+    private void revokeFlag(Player player){
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        String worldName = (String) mapData.get("worldName");
+
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+
+        ItemStack offHandItem = player.getInventory().getItemInOffHand();
+        if (offHandItem != null && offHandItem.getType() == Material.ECHO_SHARD) {
+            if (offHandItem.getItemMeta().getItemName().equals(ChatColor.RED + "Red Flag")) {
+                spawnRedFlag(worldName, (Map<String, ?>) ((Map<String, ?>) mapData.get("flags")).get("redFlag"));
+                RED.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
+                BLUE.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
+                redTaken = false;
+            } else if (offHandItem.getItemMeta().getItemName().equals(ChatColor.BLUE + "Blue Flag")) {
+                spawnBlueFlag(worldName, (Map<String, ?>) ((Map<String, ?>) mapData.get("flags")).get("blueFlag"));
+                RED.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
+                BLUE.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
+                blueTaken = false;
+            }
+
+            player.getInventory().setItemInOffHand(null);
+        }
     }
 
     @Override
@@ -391,8 +432,32 @@ public class CaptureTheFlagController implements Minigame {
         return List.of(
             MinigameFlag.DISABLE_FALL_DAMAGE,
             MinigameFlag.UNLIMITED_BLOCKS,
-            MinigameFlag.DISABLE_OFF_HAND
+            MinigameFlag.DISABLE_OFF_HAND,
+            MinigameFlag.DISABLE_BLOCK_DROPS
         );
+    }
+
+    @Override
+    public void playerRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        String worldName = (String) mapData.get("worldName");
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
+        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
+        World world = Bukkit.getWorld(worldName);
+
+        if(RED.contains(player)){
+            event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+        } else if(BLUE.contains(player)){
+            event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+        }
+    }
+
+    @Override
+    public void playerDeath(PlayerDeathEvent event) {
+        Player player = Objects.requireNonNull(event.getEntity().getPlayer());
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        revokeFlag(player);
     }
 
     @Override
