@@ -446,6 +446,8 @@ public class CaptureTheFlagController implements Minigame {
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
         World world = Bukkit.getWorld(worldName);
 
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+
         if(RED.contains(player)){
             event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
         } else if(BLUE.contains(player)){
@@ -456,7 +458,6 @@ public class CaptureTheFlagController implements Minigame {
     @Override
     public void playerDeath(PlayerDeathEvent event) {
         Player player = Objects.requireNonNull(event.getEntity().getPlayer());
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
         revokeFlag(player);
     }
 
