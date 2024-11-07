@@ -128,9 +128,7 @@ public class CaptureTheFlagController implements Minigame {
                             Map<?, List<?>> kit = Kits.ctf_kit;
                             Kits.kitPlayer(kit, player, RED.contains(player) ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
                         });
-                        @SuppressWarnings("unchecked")
                         Map<String, ?> redFlag = ((Map<String,?>)((Map<String,?>)mapData.get("flags")).get("redFlag"));
-                        @SuppressWarnings("unchecked")
                         Map<String, ?> blueFlag = ((Map<String,?>)((Map<String,?>)mapData.get("flags")).get("blueFlag"));
                         spawnRedFlag(worldName, redFlag);
                         spawnBlueFlag(worldName, blueFlag);
