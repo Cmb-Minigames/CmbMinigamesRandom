@@ -2,6 +2,7 @@ package xyz.devcmb.cmr;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,6 +26,7 @@ public class GameManager {
     public static boolean ingame = false;
     public static boolean playersFrozen = false;
     public static Map<String, ?> currentMap = null;
+    public static boolean gameEnding = false;
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
@@ -52,29 +54,55 @@ public class GameManager {
             return;
         }
 
-        if((CmbMinigamesRandom.DeveloperMode ? (!Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() >= 2)) && !intermissionCountdownInProgress){
-            intermissionCountdownInProgress = true;
-            timeLeft = 15;
+        prepare();
+    }
 
-            intermissionTimeDepreciation = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if(timeLeft == 0 || (CmbMinigamesRandom.DeveloperMode ? Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() < 2)){
-                        this.cancel();
-                        intermissionTimeDepreciation = null;
-                        if(timeLeft == 0){
-                            intermission = false;
-                            pregame = true;
-                            chooseRandom();
-                        }
-                    }
+    public static void prepare(){
+        pregame = false;
+        ingame = false;
+        gameEnding = false;
+        intermissionTimeDepreciation = null;
+        playersFrozen = false;
+        currentMinigame = null;
+        intermission = true;
+        intermissionCountdownInProgress = false;
+        timeLeft = 15;
+        MapLoader.unloadMap();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.teleport(Bukkit.getWorld("pregame").getSpawnLocation());
+            player.setGameMode(GameMode.SURVIVAL);
+        });
 
-                    timeLeft -= 1;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if((CmbMinigamesRandom.DeveloperMode ? (!Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() >= 2)) && !intermissionCountdownInProgress){
+                    doIntermission();
+                    this.cancel();
                 }
-            };
+            }
+        }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
+    }
 
-            intermissionTimeDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
-        }
+    public static void doIntermission(){
+        intermissionTimeDepreciation = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(timeLeft == 0 || (CmbMinigamesRandom.DeveloperMode ? Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() < 2)){
+                    this.cancel();
+                    intermissionTimeDepreciation = null;
+                    if(timeLeft == 0){
+                        intermission = false;
+                        pregame = true;
+                        chooseRandom();
+                    }
+                }
+
+                timeLeft -= 1;
+            }
+        };
+
+        intermissionTimeDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 
     public static void chooseRandom() {

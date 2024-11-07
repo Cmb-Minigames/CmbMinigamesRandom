@@ -89,6 +89,7 @@ public class MinigameListeners implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        if(GameManager.gameEnding) return;
         if (GameManager.playersFrozen) {
             if (event.getFrom().getX() != event.getTo().getX() ||
                 event.getFrom().getY() != event.getTo().getY() ||

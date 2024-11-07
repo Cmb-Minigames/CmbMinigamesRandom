@@ -206,6 +206,12 @@ public class CaptureTheFlagController implements Minigame {
         blueTeam.getEntries().forEach(blueTeam::removeEntry);
         redFlagEntity.remove();
         blueFlagEntity.remove();
+        redScore = 0;
+        blueScore = 0;
+        redTaken = false;
+        blueTaken = false;
+
+        GameManager.prepare();
     }
 
     @Override
@@ -261,10 +267,13 @@ public class CaptureTheFlagController implements Minigame {
                     player.getInventory().setItemInOffHand(null);
                     blueScore++;
                     redTaken = false;
-                    BLUE.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
-                    RED.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
-                    spawnRedFlag(worldName, redFlag);
-                    // TODO Check if the game is over
+                    if(blueScore >= 3){
+                        endGame("blue");
+                    } else {
+                        BLUE.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
+                        RED.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
+                        spawnRedFlag(worldName, redFlag);
+                    }
                 }
                 teleportToTeamBase(player);
             } else if(inRedClaimZone(event.getTo())){
@@ -297,16 +306,57 @@ public class CaptureTheFlagController implements Minigame {
                     player.getInventory().setItemInOffHand(null);
                     redScore++;
                     blueTaken = false;
-                    BLUE.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
-                    RED.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
-                    spawnBlueFlag(worldName, blueFlag);
-                    // TODO Check if the game is over
+                    if(redScore >= 3) {
+                        endGame("red");
+                    } else {
+                        BLUE.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
+                        RED.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
+                        spawnBlueFlag(worldName, blueFlag);
+                    }
                 }
                 teleportToTeamBase(player);
             } else if(inBlueClaimZone(event.getTo())){
                 teleportToTeamBase(player);
             }
         }
+    }
+
+    private void endGame(String winner){
+        GameManager.gameEnding = true;
+        if(winner.equals("red")){
+            RED.forEach(plr -> {
+               plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+               plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+               plr.getInventory().clear();
+               plr.setGameMode(GameMode.SPECTATOR);
+            });
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else if(winner.equals("blue")){
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        }
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                stop();
+            }
+        }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
     }
 
     private boolean inRedClaimZone(Location location){
