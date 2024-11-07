@@ -394,15 +394,15 @@ public class CaptureTheFlagController implements Minigame {
             player.teleport(blueSpawnLocation);
         }
 
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+
         revokeFlag(player);
     }
 
     private void revokeFlag(Player player){
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = (String) mapData.get("worldName");
-
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
 
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem != null && offHandItem.getType() == Material.ECHO_SHARD) {
