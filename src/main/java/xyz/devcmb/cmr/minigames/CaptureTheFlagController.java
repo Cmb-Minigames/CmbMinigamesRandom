@@ -38,6 +38,7 @@ public class CaptureTheFlagController implements Minigame {
 
     public CaptureTheFlagController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
+        assert manager != null;
         scoreboard = manager.getNewScoreboard();
         redTeam = scoreboard.registerNewTeam("Red");
         blueTeam = scoreboard.registerNewTeam("Blue");
@@ -45,6 +46,7 @@ public class CaptureTheFlagController implements Minigame {
         blueTeam.setColor(ChatColor.BLUE);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void start() {
         List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
@@ -112,7 +114,7 @@ public class CaptureTheFlagController implements Minigame {
         });
 
         GameManager.playersFrozen = true;
-        Bukkit.getOnlinePlayers().forEach(player -> { player.getInventory().clear(); });
+        Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().clear());
 
         new BukkitRunnable(){
             @Override
@@ -176,6 +178,7 @@ public class CaptureTheFlagController implements Minigame {
 
 
         ItemMeta meta1 = redFlagItem.getItemMeta();
+        if(meta1 == null) return;
         meta1.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag").intValue());
         meta1.setItemName("Red Flag");
 
@@ -184,7 +187,7 @@ public class CaptureTheFlagController implements Minigame {
     }
 
     private void spawnBlueFlag(String worldName, Map<String, ?> blueFlag){
-        blueFlagEntity = (ItemDisplay)Bukkit.getWorld(worldName).spawnEntity(new Location(Bukkit.getWorld(worldName), ((Number)blueFlag.get("x")).doubleValue(), ((Number)blueFlag.get("y")).doubleValue(), ((Number)blueFlag.get("z")).doubleValue()), EntityType.ITEM_DISPLAY);
+        blueFlagEntity = (ItemDisplay) Objects.requireNonNull(Bukkit.getWorld(worldName)).spawnEntity(new Location(Bukkit.getWorld(worldName), ((Number)blueFlag.get("x")).doubleValue(), ((Number)blueFlag.get("y")).doubleValue(), ((Number)blueFlag.get("z")).doubleValue()), EntityType.ITEM_DISPLAY);
 
         ItemStack blueFlagItem = new ItemStack(Material.ECHO_SHARD);
         blueFlagEntity.setItemStack(new ItemStack(Material.ECHO_SHARD));
@@ -214,6 +217,7 @@ public class CaptureTheFlagController implements Minigame {
         GameManager.prepare();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void playerJoin(Player player) {
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
@@ -230,6 +234,7 @@ public class CaptureTheFlagController implements Minigame {
         // TODO
     }
 
+    @SuppressWarnings("unchecked")
     public void handlePlayerMove(PlayerMoveEvent event){
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
@@ -359,6 +364,7 @@ public class CaptureTheFlagController implements Minigame {
         }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
     }
 
+    @SuppressWarnings("unchecked")
     private boolean inRedClaimZone(Location location){
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         Map<?, ?> flags = (Map<?, ?>) mapData.get("flags");
@@ -374,6 +380,7 @@ public class CaptureTheFlagController implements Minigame {
             location.getZ() <= Math.max(from.get("z").doubleValue(), to.get("z").doubleValue());
     }
 
+    @SuppressWarnings("unchecked")
     private boolean inBlueClaimZone(Location location){
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         Map<?, ?> flags = (Map<?, ?>) mapData.get("flags");
@@ -411,6 +418,7 @@ public class CaptureTheFlagController implements Minigame {
         return "none";
     }
 
+    @SuppressWarnings("unchecked")
     public void teleportToTeamBase(Player player){
         CmbMinigamesRandom.LOGGER.info("Player respawn event called from ctf controller");
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
@@ -444,18 +452,19 @@ public class CaptureTheFlagController implements Minigame {
             player.teleport(blueSpawnLocation);
         }
 
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getDefaultValue());
 
         revokeFlag(player);
     }
 
+    @SuppressWarnings("unchecked")
     private void revokeFlag(Player player){
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = (String) mapData.get("worldName");
 
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
-        if (offHandItem != null && offHandItem.getType() == Material.ECHO_SHARD) {
+        if (offHandItem.getType() == Material.ECHO_SHARD && offHandItem.getItemMeta() != null) {
             if (offHandItem.getItemMeta().getItemName().equals(ChatColor.RED + "Red Flag")) {
                 spawnRedFlag(worldName, (Map<String, ?>) ((Map<String, ?>) mapData.get("flags")).get("redFlag"));
                 RED.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
@@ -487,6 +496,7 @@ public class CaptureTheFlagController implements Minigame {
         );
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
