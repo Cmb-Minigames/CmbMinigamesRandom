@@ -50,5 +50,4 @@ public class Utilities {
         int randomIndex = random.nextInt(list.size());
         return list.get(randomIndex);
     }
-
 }

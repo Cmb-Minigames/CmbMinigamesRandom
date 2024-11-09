@@ -3,6 +3,7 @@ package xyz.devcmb.cmr.minigames;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -11,15 +12,20 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
+import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.scoreboards.minigames.CTFScoreboard;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Kits;
+import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
@@ -27,7 +33,7 @@ import java.util.*;
 public class CaptureTheFlagController implements Minigame {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();
-    private final Scoreboard scoreboard;
+    public final Scoreboard scoreboard;
     private final Team redTeam;
     private final Team blueTeam;
     private boolean blueTaken = false;
@@ -36,6 +42,8 @@ public class CaptureTheFlagController implements Minigame {
     private ItemDisplay blueFlagEntity = null;
     public int redScore = 0;
     public int blueScore = 0;
+    private BukkitRunnable itemSpawnRunnable = null;
+    private final List<ItemStack> items = new ArrayList<>();
 
     public CaptureTheFlagController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -43,8 +51,53 @@ public class CaptureTheFlagController implements Minigame {
         scoreboard = manager.getNewScoreboard();
         redTeam = scoreboard.registerNewTeam("Red");
         blueTeam = scoreboard.registerNewTeam("Blue");
+
         redTeam.setColor(ChatColor.RED);
         blueTeam.setColor(ChatColor.BLUE);
+
+        redTeam.setPrefix(ChatColor.RED.toString());
+        blueTeam.setPrefix(ChatColor.BLUE.toString());
+
+        ItemStack harmingArrow = new ItemStack(Material.TIPPED_ARROW);
+        PotionMeta harmingArrowItemMeta = (PotionMeta) harmingArrow.getItemMeta();
+        if (harmingArrowItemMeta == null) return;
+
+        harmingArrowItemMeta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_DAMAGE, 1, 1), true);
+        harmingArrowItemMeta.setItemName("Harming Arrow");
+        harmingArrow.setItemMeta(harmingArrowItemMeta);
+
+        ItemStack speedPotion = new ItemStack(Material.POTION);
+        PotionMeta speedPotionMeta = (PotionMeta) speedPotion.getItemMeta();
+        if (speedPotionMeta == null) return;
+
+        speedPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1), true);
+        speedPotionMeta.setItemName("Speed Potion");
+        speedPotion.setItemMeta(speedPotionMeta);
+
+        ItemStack poisonSplashPotion = new ItemStack(Material.SPLASH_POTION);
+        PotionMeta poisonSplashPotionMeta = (PotionMeta) poisonSplashPotion.getItemMeta();
+        if (poisonSplashPotionMeta == null) return;
+
+        poisonSplashPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 8 * 20, 1), true);
+        poisonSplashPotionMeta.setItemName("Splash Potion of Poison");
+        poisonSplashPotion.setItemMeta(poisonSplashPotionMeta);
+
+        ItemStack strengthPotion = new ItemStack(Material.POTION);
+        PotionMeta strengthPotionMeta = (PotionMeta) strengthPotion.getItemMeta();
+        if (strengthPotionMeta == null) return;
+
+        strengthPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 10 * 20, 1), true);
+        strengthPotionMeta.setItemName("Potion of Strength");
+        strengthPotion.setItemMeta(strengthPotionMeta);
+
+        items.add(harmingArrow);
+        items.add(speedPotion);
+        items.add(poisonSplashPotion);
+        items.add(new ItemStack(Material.ENDER_PEARL));
+        items.add(new ItemStack(Material.GOLDEN_APPLE, 2));
+        items.add(new ItemStack(Material.ARROW, 4));
+        items.add(new ItemStack(Material.WIND_CHARGE, 3));
+        items.add(strengthPotion);
     }
 
     @SuppressWarnings("unchecked")
@@ -70,6 +123,9 @@ public class CaptureTheFlagController implements Minigame {
             }
         }
 
+        CmbMinigamesRandom.packetManager.giveGlow("red_ctf", RED);
+        CmbMinigamesRandom.packetManager.giveGlow("blue_ctf", BLUE);
+
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
             CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
@@ -79,26 +135,30 @@ public class CaptureTheFlagController implements Minigame {
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
 
+        List<Map<String, Number>> itemSpawnLocations = (List<Map<String, Number>>) mapData.get("itemSpawnLocations");
+
         if (redSpawn == null || blueSpawn == null) {
             CmbMinigamesRandom.LOGGER.warning("Spawn points are not defined.");
             return;
         }
 
         String worldName = (String) mapData.get("worldName");
-        if (Bukkit.getWorld(worldName) == null) {
+        World world = Bukkit.getWorld(worldName);
+
+        if (world == null) {
             CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
             return;
         }
 
         Location redSpawnLocation = new Location(
-                Bukkit.getWorld(worldName),
+                world,
                 ((Number) redSpawn.get("x")).doubleValue(),
                 ((Number) redSpawn.get("y")).doubleValue(),
                 ((Number) redSpawn.get("z")).doubleValue()
         );
 
         Location blueSpawnLocation = new Location(
-                Bukkit.getWorld(worldName),
+                world,
                 ((Number) blueSpawn.get("x")).doubleValue(),
                 ((Number) blueSpawn.get("y")).doubleValue(),
                 ((Number) blueSpawn.get("z")).doubleValue()
@@ -120,7 +180,11 @@ public class CaptureTheFlagController implements Minigame {
         new BukkitRunnable(){
             @Override
             public void run() {
-                Bukkit.getOnlinePlayers().forEach(player -> Utilities.Countdown(player, 10));
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    player.setSaturation(0f);
+                    Utilities.Countdown(player, 10);
+                });
+
                 new BukkitRunnable(){
                     @Override
                     public void run() {
@@ -133,6 +197,31 @@ public class CaptureTheFlagController implements Minigame {
                         Map<String, ?> blueFlag = ((Map<String,?>)((Map<String,?>)mapData.get("flags")).get("blueFlag"));
                         spawnRedFlag(worldName, redFlag);
                         spawnBlueFlag(worldName, blueFlag);
+
+                        itemSpawnRunnable = new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                Map<String, Number> spawnLocationMap = (Map<String, Number>) Utilities.getRandom(itemSpawnLocations).get("location");
+                                ItemStack item = Utilities.getRandom(items);
+
+                                Location itemSpawnPlatform = new Location(world, spawnLocationMap.get("x").doubleValue(), spawnLocationMap.get("y").doubleValue(), spawnLocationMap.get("z").doubleValue());
+                                Location itemSpawnLocation = new Location(world, spawnLocationMap.get("x").doubleValue(), spawnLocationMap.get("y").doubleValue() + 1, spawnLocationMap.get("z").doubleValue());
+                                itemSpawnPlatform.getBlock().setType(Material.AIR);
+                                new BukkitRunnable(){
+                                    @Override
+                                    public void run() {
+                                        Bukkit.broadcastMessage(ChatColor.GOLD + "An item has spawned at " + itemSpawnPlatform.getBlockX() + ", " + itemSpawnPlatform.getBlockY() + ", " + itemSpawnPlatform.getBlockZ() + "!");
+                                        itemSpawnPlatform.getBlock().setType(Material.WHITE_CONCRETE);
+                                        Bukkit.getOnlinePlayers().forEach(plr -> plr.playSound(plr.getLocation(), Sound.ENTITY_ITEM_PICKUP, 10, 1));
+
+                                        Item itemEntity = world.dropItem(itemSpawnLocation, item);
+                                        itemEntity.setPickupDelay(0);
+                                        itemEntity.setVelocity(new Vector());
+                                    }
+                                }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 2);
+                            }
+                        };
+                        itemSpawnRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 20);
                     }
                 }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 10);
             }
@@ -141,30 +230,21 @@ public class CaptureTheFlagController implements Minigame {
 
     private Location findValidLocation(Location spawnLocation) {
         Location newLocation = spawnLocation.clone();
-        int radius = 1;
-        int maxRadius = 10;
-        boolean validLocationFound = false;
 
-        while (!validLocationFound && radius <= maxRadius) {
-            for (int x = -radius; x <= radius; x++) {
-                for (int z = -radius; z <= radius; z++) {
-                    newLocation.add(x, 0, z);
-                    if (newLocation.getBlock().getType().isSolid() &&
-                            newLocation.add(0, 1, 0).getBlock().getType() == Material.AIR &&
-                            newLocation.add(0, 1, 0).getBlock().getType() == Material.AIR &&
-                            Objects.requireNonNull(newLocation.getWorld()).getNearbyEntities(newLocation, 1, 1, 1).isEmpty()) {
-                        validLocationFound = true;
-                        break;
+        if (!Objects.requireNonNull(newLocation.getWorld()).getNearbyEntities(newLocation, 1, 1, 1).isEmpty()) {
+            for (int xOffset = -1; xOffset <= 1; xOffset++) {
+                for (int yOffset = -1; yOffset <= 1; yOffset++) {
+                    for (int zOffset = -1; zOffset <= 1; zOffset++) {
+                        if (xOffset == 0 && yOffset == 0 && zOffset == 0) continue;
+
+                        Location checkLocation = newLocation.clone().add(xOffset, yOffset, zOffset);
+
+                        if (Objects.requireNonNull(checkLocation.getWorld()).getNearbyEntities(checkLocation, 1, 1, 1).isEmpty()) {
+                            return checkLocation;
+                        }
                     }
-                    newLocation.subtract(x, 2, z);
                 }
-                if (validLocationFound) break;
             }
-            radius++;
-        }
-
-        if (!validLocationFound) {
-            return spawnLocation;
         }
 
         return newLocation;
@@ -212,10 +292,18 @@ public class CaptureTheFlagController implements Minigame {
         blueScore = 0;
         redTaken = false;
         blueTaken = false;
+        if(itemSpawnRunnable != null) itemSpawnRunnable.cancel();
+        if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
+        GameManager.intermisionRunnable = null;
 
-        if(GameManager.intermisionRunnable != null){
-            GameManager.intermisionRunnable.cancel();
-        }
+        CmbMinigamesRandom.packetManager.removeGroup("red_ctf");
+        CmbMinigamesRandom.packetManager.removeGroup("blue_ctf");
+
+        MapLoader.unloadMap();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
+            player.setGameMode(GameMode.SURVIVAL);
+        });
 
         GameManager.prepare();
     }
@@ -228,11 +316,10 @@ public class CaptureTheFlagController implements Minigame {
         String worldName = (String) mapData.get("worldName");
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
 
-
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
             player.sendMessage(ChatColor.RED + "A game of Capture the Flag is currently active, and you have been added as a spectator.");
-            player.setGameMode(GameMode.SPECTATOR);
+            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
         }, 10L);
     }
 
@@ -526,7 +613,8 @@ public class CaptureTheFlagController implements Minigame {
             MinigameFlag.DISABLE_FALL_DAMAGE,
             MinigameFlag.UNLIMITED_BLOCKS,
             MinigameFlag.DISABLE_OFF_HAND,
-            MinigameFlag.DISABLE_BLOCK_DROPS
+            MinigameFlag.DISABLE_BLOCK_DROPS,
+            MinigameFlag.DISABLE_PLAYER_DEATH_DROP
         );
     }
 
@@ -543,8 +631,10 @@ public class CaptureTheFlagController implements Minigame {
         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
 
         if(RED.contains(player)){
+            Kits.kitPlayer(Kits.ctf_kit, player, Material.RED_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
         } else if(BLUE.contains(player)){
+            Kits.kitPlayer(Kits.ctf_kit, player, Material.BLUE_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
         }
     }

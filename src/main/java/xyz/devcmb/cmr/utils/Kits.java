@@ -12,6 +12,8 @@ public class Kits {
         Material.STONE_SWORD, List.of(1, 0), // Stone sword of quantity 1 on inventory slot 0
         Material.IRON_PICKAXE, List.of(1, 1), // Iron pickaxe of quantity 1 on inventory slot 1
         Material.GOLDEN_APPLE, List.of(2, 2), // 2 golden apples on inventory slot 2
+        Material.ARROW, List.of(2, 6), // 64 arrows on inventory slot 3
+        Material.BOW, List.of(1, 7), // Bow of quantity 1 on inventory slot 4
         KitEnums.COLORED_CONCRETE, List.of(64, 8), // 64 colored concrete on inventory slot 8
         Material.LEATHER_HELMET, List.of(1, KitEnums.HELMET), // Leather helmet of quantity 1 on helmet slot
         Material.LEATHER_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE), // Leather chestplate of quantity 1 on chestplate slot

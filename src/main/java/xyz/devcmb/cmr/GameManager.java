@@ -2,7 +2,6 @@ package xyz.devcmb.cmr;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -82,11 +81,6 @@ public class GameManager {
         intermission = true;
         intermissionCountdownInProgress = false;
         timeLeft = 15;
-        MapLoader.unloadMap();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.teleport(Bukkit.getWorld("pregame").getSpawnLocation());
-            player.setGameMode(GameMode.SURVIVAL);
-        });
 
         if(intermisionRunnable != null) {
             intermisionRunnable.cancel();

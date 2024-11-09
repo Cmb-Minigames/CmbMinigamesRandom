@@ -116,6 +116,10 @@ public class MinigameListeners implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event){
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
+        if(minigame.getFlags().contains(MinigameFlag.DISABLE_PLAYER_DEATH_DROP)){
+            event.getDrops().clear();
+        }
+
         minigame.playerDeath(event);
     }
 
@@ -144,8 +148,6 @@ public class MinigameListeners implements Listener {
         }
     }
 
-
-
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
@@ -157,4 +159,6 @@ public class MinigameListeners implements Listener {
             event.setCancelled(true);
         }
     }
+
+
 }
