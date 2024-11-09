@@ -16,9 +16,14 @@ public class PlayerListeners implements Listener {
         Location spawnPoint = new Location(Bukkit.getWorld("pregame"), -26.5, -43.5, -18);
         Player player = event.getPlayer();
         ScoreboardManager.initialize(player);
-        GameManager.playerConnect(player);
+        GameManager.playerConnect(event);
         player.getInventory().clear();
         player.teleport(spawnPoint);
         player.setRespawnLocation(spawnPoint);
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event){
+        GameManager.playerDisconnect(event.getPlayer());
     }
 }

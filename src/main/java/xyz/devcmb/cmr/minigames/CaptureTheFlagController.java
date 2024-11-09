@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -212,24 +213,59 @@ public class CaptureTheFlagController implements Minigame {
         redTaken = false;
         blueTaken = false;
 
+        if(GameManager.intermisionRunnable != null){
+            GameManager.intermisionRunnable.cancel();
+        }
+
         GameManager.prepare();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void playerJoin(Player player) {
+    public void playerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = (String) mapData.get("worldName");
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
 
-        player.sendMessage(ChatColor.RED + "A game of Capture the Flag is currently active, and you have been added as a spectator.");
-        player.setGameMode(GameMode.SPECTATOR);
-        player.teleport(new Location(Bukkit.getWorld(worldName), ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
+            player.sendMessage(ChatColor.RED + "A game of Capture the Flag is currently active, and you have been added as a spectator.");
+            player.setGameMode(GameMode.SPECTATOR);
+        }, 10L);
     }
 
     @Override
-    public void playerLeave(Player player) {
-        // TODO
+    public Number playerLeave(Player player) {
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        RED.remove(player);
+        BLUE.remove(player);
+
+        if(CmbMinigamesRandom.DeveloperMode){
+            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
+        } else {
+            if(RED.isEmpty()){
+                BLUE.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                });
+                return 7;
+            } else if(BLUE.isEmpty()){
+                RED.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                });
+
+                return 7;
+            }
+        }
+
+        return null;
     }
 
     @SuppressWarnings("unchecked")

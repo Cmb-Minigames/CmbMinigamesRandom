@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 import xyz.devcmb.cmr.minigames.Minigame;
@@ -27,6 +28,7 @@ public class GameManager {
     public static boolean playersFrozen = false;
     public static Map<String, ?> currentMap = null;
     public static boolean gameEnding = false;
+    public static BukkitRunnable intermisionRunnable = null;
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
@@ -48,13 +50,26 @@ public class GameManager {
         CmbMinigamesRandom.LOGGER.info("Registered minigame: " + minigame.getName());
     }
 
-    public static void playerConnect(Player player){
+    public static void playerConnect(PlayerJoinEvent event){
         if(ingame || pregame) {
-            currentMinigame.playerJoin(player);
-            return;
+            currentMinigame.playerJoin(event);
+        } else {
+            prepare();
         }
+    }
 
-        prepare();
+    public static void playerDisconnect(Player player){
+        if(ingame || pregame){
+            Number endTimer = currentMinigame.playerLeave(player);
+            if(endTimer == null) return;
+
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    currentMinigame.stop();
+                }
+            }.runTaskLater(CmbMinigamesRandom.getPlugin(), endTimer.intValue() * 20L);
+        }
     }
 
     public static void prepare(){
@@ -73,15 +88,23 @@ public class GameManager {
             player.setGameMode(GameMode.SURVIVAL);
         });
 
-        new BukkitRunnable() {
+        if(intermisionRunnable != null) {
+            intermisionRunnable.cancel();
+            intermisionRunnable = null;
+        }
+
+        intermisionRunnable = new BukkitRunnable() {
             @Override
             public void run() {
                 if((CmbMinigamesRandom.DeveloperMode ? (!Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() >= 2)) && !intermissionCountdownInProgress){
                     doIntermission();
                     this.cancel();
+                    intermisionRunnable = null;
                 }
             }
-        }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
+        };
+
+        intermisionRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 
     public static void doIntermission(){

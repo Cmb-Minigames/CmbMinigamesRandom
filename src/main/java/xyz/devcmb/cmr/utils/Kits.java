@@ -11,7 +11,7 @@ public class Kits {
     public static final Map<?, List<?>> ctf_kit = Map.of(
         Material.STONE_SWORD, List.of(1, 0), // Stone sword of quantity 1 on inventory slot 0
         Material.IRON_PICKAXE, List.of(1, 1), // Iron pickaxe of quantity 1 on inventory slot 1
-        Material.COOKED_BEEF, List.of(16, 2), // 16 cooked beef on inventory slot 2
+        Material.GOLDEN_APPLE, List.of(2, 2), // 2 golden apples on inventory slot 2
         KitEnums.COLORED_CONCRETE, List.of(64, 8), // 64 colored concrete on inventory slot 8
         Material.LEATHER_HELMET, List.of(1, KitEnums.HELMET), // Leather helmet of quantity 1 on helmet slot
         Material.LEATHER_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE), // Leather chestplate of quantity 1 on chestplate slot
