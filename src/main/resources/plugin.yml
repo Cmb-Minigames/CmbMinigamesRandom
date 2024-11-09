@@ -4,5 +4,15 @@ main: xyz.devcmb.cmr.CmbMinigamesRandom
 api-version: '1.21'
 prefix: CmbMinigames
 authors: [ DevCmb ]
+depend: [ProtocolLib]
 description: The CmbMinigames server plugin, extension of CmbMinigames
 website: devcmb.xyz
+commands:
+  pauseloop:
+    description: Stop the loop
+    usage: /<command>
+    permission: cmbminigames.pause
+permissions:
+  cmbminigames.pause:
+    description: Pause the loop
+    default: false

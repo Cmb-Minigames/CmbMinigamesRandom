@@ -22,7 +22,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
-import xyz.devcmb.cmr.scoreboards.minigames.CTFScoreboard;
+import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.MapLoader;
@@ -604,7 +604,13 @@ public class CaptureTheFlagController implements Minigame {
 
     @Override
     public void updateScoreboard(Player player) {
-        CTFScoreboard.displayCTFScoreboard(player, this);
+        CMScoreboardManager.sendScoreboardAlongDefaults(
+                player,
+                CMScoreboardManager.mergeScoreboards(
+                        CMScoreboardManager.scoreboards.get("ctf").getScoreboard(),
+                        scoreboard
+                )
+        );
     }
 
     @Override
@@ -614,7 +620,8 @@ public class CaptureTheFlagController implements Minigame {
             MinigameFlag.UNLIMITED_BLOCKS,
             MinigameFlag.DISABLE_OFF_HAND,
             MinigameFlag.DISABLE_BLOCK_DROPS,
-            MinigameFlag.DISABLE_PLAYER_DEATH_DROP
+            MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
+            MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE
         );
     }
 

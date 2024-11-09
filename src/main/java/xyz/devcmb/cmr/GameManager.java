@@ -28,6 +28,7 @@ public class GameManager {
     public static Map<String, ?> currentMap = null;
     public static boolean gameEnding = false;
     public static BukkitRunnable intermisionRunnable = null;
+    public static boolean paused = false;
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
@@ -82,6 +83,10 @@ public class GameManager {
         intermissionCountdownInProgress = false;
         timeLeft = 15;
 
+        startIntermissionRunnable();
+    }
+
+    private static void startIntermissionRunnable() {
         if(intermisionRunnable != null) {
             intermisionRunnable.cancel();
             intermisionRunnable = null;
@@ -90,6 +95,7 @@ public class GameManager {
         intermisionRunnable = new BukkitRunnable() {
             @Override
             public void run() {
+                if(paused) return;
                 if((CmbMinigamesRandom.DeveloperMode ? (!Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() >= 2)) && !intermissionCountdownInProgress){
                     doIntermission();
                     this.cancel();
@@ -105,6 +111,16 @@ public class GameManager {
         intermissionTimeDepreciation = new BukkitRunnable() {
             @Override
             public void run() {
+                if(paused){
+                    this.cancel();
+                    intermission = false;
+                    intermissionTimeDepreciation = null;
+                    startIntermissionRunnable();
+                    return;
+                } else if(!intermission) {
+                    intermission = true;
+                }
+
                 if(timeLeft == 0 || (CmbMinigamesRandom.DeveloperMode ? Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() < 2)){
                     this.cancel();
                     intermissionTimeDepreciation = null;

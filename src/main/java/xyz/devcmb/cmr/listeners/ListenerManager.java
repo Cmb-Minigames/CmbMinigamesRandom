@@ -14,5 +14,6 @@ public class ListenerManager {
         pluginManager.registerEvents(new DeathEffects(), CmbMinigamesRandom.getPlugin());
         pluginManager.registerEvents(new MinigameListeners(), CmbMinigamesRandom.getPlugin());
         pluginManager.registerEvents(new CTFListeners(), CmbMinigamesRandom.getPlugin());
+        pluginManager.registerEvents(new GeneralListeners(), CmbMinigamesRandom.getPlugin());
     }
 }

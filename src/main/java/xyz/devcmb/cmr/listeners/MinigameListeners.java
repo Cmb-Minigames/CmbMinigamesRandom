@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -107,7 +108,11 @@ public class MinigameListeners implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event){
-        if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        if(GameManager.currentMinigame == null || !GameManager.ingame) {
+            event.setRespawnLocation(new Location(Bukkit.getWorld("pregame"), -26.5, -43.5, -18));
+            return;
+        }
+
         Minigame minigame = GameManager.currentMinigame;
         minigame.playerRespawn(event);
     }

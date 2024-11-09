@@ -1,17 +1,20 @@
 package xyz.devcmb.cmr.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.minigames.Minigame;
+import xyz.devcmb.cmr.minigames.MinigameFlag;
+import xyz.devcmb.cmr.utils.Utilities;
 
-import java.util.Random;
+import java.util.List;
 
 public class DeathEffects implements Listener {
-    private static final String[] deathMessages = new String[]{
+    private static final List<String> randomizedDeathMessages = List.of(
             "{player} tripped",
             "{player} fell and couldn't get up",
             "{player} forgot this wasn't roblox",
@@ -33,13 +36,60 @@ public class DeathEffects implements Listener {
             "{player} got banned from discord",
             "{player} got rejected",
             "{player} forgot to touch grass"
-    };
+    );
+
+    private static final List<String> randomizedKillMessages = List.of(
+        "{player} got destroyed by {killer}",
+        "{player} got smoked by {killer}",
+        "{player} got obliterated by {killer}",
+        "{player} got annihilated by {killer}",
+        "{player} got wrecked by {killer}",
+        "{player} was exploded by {killer}",
+        "{player} was sniped by {killer}",
+        "{player} was outplayed by {killer}",
+        "{player} was outsmarted by {killer}",
+        "{player} was outgunned by {killer}",
+        "{player} was outmatched by {killer}",
+        "{player} was outperformed by {killer}",
+        "{player} was outdone by {killer}",
+        "{player} was forced to watch skibidi toilet by {killer}",
+        "{player} was banned from discord by {killer}",
+        "{player} was rejected by {killer}",
+        "{player} was forgotten by {killer}",
+        "{player} was disrespected by {killer}"
+    );
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity().getPlayer();
-        String deathMessage = deathMessages[new Random().nextInt(deathMessages.length)];
-        Bukkit.getServer().broadcastMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", player.getName()));
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 10, 1);
+        Minigame activeMinigame = GameManager.currentMinigame;
+        if(activeMinigame == null){
+            doRandomizedDeathMessages(e);
+        } else {
+            if(activeMinigame.getFlags().contains(MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE)){
+                doKillDeathMessage(e);
+            } else {
+                doRandomizedDeathMessages(e);
+            }
+        }
+    }
+
+    private static void doRandomizedDeathMessages(PlayerDeathEvent e){
+        Player player = e.getEntity().getPlayer();
+        String deathMessage = Utilities.getRandom(randomizedDeathMessages);
+        e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", player.getName()));
+    }
+
+    private static void doKillDeathMessage(PlayerDeathEvent e){
+        Player player = e.getEntity().getPlayer();
+        Player killer = player.getKiller();
+
+        if(killer == null){
+            doRandomizedDeathMessages(e);
+        } else {
+            String deathMessage = Utilities.getRandom(randomizedKillMessages);
+            e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", player.getName()).replace("{killer}", killer.getName()));
+        }
     }
 }

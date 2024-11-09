@@ -1,28 +1,35 @@
-package xyz.devcmb.cmr.scoreboards.minigames;
+package xyz.devcmb.cmr.interfaces.scoreboards.minigames;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
+import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 
-public class CTFScoreboard {
-    public static void displayCTFScoreboard(Player player, CaptureTheFlagController ctfController){
+public class CTFScoreboard implements HandledScoreboard {
+    private final CaptureTheFlagController ctfController;
+
+    public CTFScoreboard(CaptureTheFlagController ctfController) {
+        this.ctfController = ctfController;
+    }
+
+    @Override
+    public Scoreboard getScoreboard() {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
-        Scoreboard teams = ctfController.scoreboard;
-
-        teams.getTeams().forEach(team -> {
-            Team newTeam = board.registerNewTeam(team.getName());
-            newTeam.setPrefix(team.getPrefix());
-            newTeam.setSuffix(team.getSuffix());
-            newTeam.setColor(team.getColor());
-            newTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, team.getOption(Team.Option.NAME_TAG_VISIBILITY));
-            newTeam.setOption(Team.Option.COLLISION_RULE, team.getOption(Team.Option.COLLISION_RULE));
-            newTeam.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, team.getOption(Team.Option.DEATH_MESSAGE_VISIBILITY));
-            team.getEntries().forEach(newTeam::addEntry);
-        });
+//        Scoreboard teams = ctfController.scoreboard;
+//
+//        teams.getTeams().forEach(team -> {
+//            Team newTeam = board.registerNewTeam(team.getName());
+//            newTeam.setPrefix(team.getPrefix());
+//            newTeam.setSuffix(team.getSuffix());
+//            newTeam.setColor(team.getColor());
+//            newTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, team.getOption(Team.Option.NAME_TAG_VISIBILITY));
+//            newTeam.setOption(Team.Option.COLLISION_RULE, team.getOption(Team.Option.COLLISION_RULE));
+//            newTeam.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, team.getOption(Team.Option.DEATH_MESSAGE_VISIBILITY));
+//            team.getEntries().forEach(newTeam::addEntry);
+//        });
 
         Objective objective = board.registerNewObjective("info", "dummy", ChatColor.YELLOW + ChatColor.BOLD.toString() + "Capture the Flag");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -54,6 +61,6 @@ public class CTFScoreboard {
         Score BlueScore = objective.getScore(bluePoints);
         BlueScore.setScore(1);
 
-        player.setScoreboard(board);
+        return board;
     }
 }
