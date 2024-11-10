@@ -44,3 +44,10 @@ maps:
               x: 0
               y: 0
               z: 0
+
+database:
+  host: ""
+  port: 3306
+  username: ""
+  password: ""
+  database: ""

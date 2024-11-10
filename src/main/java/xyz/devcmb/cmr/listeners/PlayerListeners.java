@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.Stars;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.utils.Database;
 
 public class PlayerListeners implements Listener {
     @EventHandler
@@ -22,6 +23,10 @@ public class PlayerListeners implements Listener {
         player.getInventory().clear();
         player.teleport(spawnPoint);
         player.setRespawnLocation(spawnPoint);
+
+        if(!Database.userExists(player)){
+            Database.createUser(player);
+        }
     }
 
     @EventHandler

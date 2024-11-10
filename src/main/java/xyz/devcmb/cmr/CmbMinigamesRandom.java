@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.devcmb.cmr.commands.RegisterCommands;
 import xyz.devcmb.cmr.listeners.ListenerManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.PacketManager;
 
@@ -32,6 +33,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         RegisterCommands.register();
         GameManager.registerAllMinigames();
         CMScoreboardManager.registerAllScoreboards();
+        Database.connect();
     }
 
     @Override
@@ -41,5 +43,6 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         if(GameManager.ingame){
             GameManager.currentMinigame.stop();
         }
+        Database.disconnect();
     }
 }
