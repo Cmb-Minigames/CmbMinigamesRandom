@@ -29,6 +29,7 @@ public class Kits {
             Map.entry(Material.COOKED_BEEF, List.of(6, 3)), // 6 cooked beef on inventory slot 3
             Map.entry(Material.FIREWORK_ROCKET, List.of(1, 4)), // 1 firework in the 4th inventory slot
             Map.entry(Material.LEATHER_CHESTPLATE, List.of(1, 5)), // Leather chestplace to replace your elytra with
+            Map.entry(Material.SHEARS, List.of(1, 6)), // Shears of quantity 1 on inventory slot 6
             Map.entry(KitEnums.COLORED_CONCRETE, List.of(64, 8)), // 64 colored concrete on inventory slot 8
             Map.entry(Material.LEATHER_HELMET, List.of(1, KitEnums.HELMET)), // Leather helmet of quantity 1 on helmet slot
             Map.entry(Material.ELYTRA, List.of(1, KitEnums.CHESTPLATE)), // Elytra of quantity 1 on chestplate slot

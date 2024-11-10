@@ -590,9 +590,9 @@ public class CaptureTheFlagController implements Minigame {
     @Override
     public Map<StarSource, Number> getStarSources() {
         return Map.of(
-            StarSource.KILL, 1,
-            StarSource.WIN, 3,
-            StarSource.OBJECTIVE, 2
+            StarSource.KILL, 2,
+            StarSource.WIN, 10,
+            StarSource.OBJECTIVE, 5
         );
     }
 

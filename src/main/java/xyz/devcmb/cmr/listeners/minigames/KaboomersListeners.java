@@ -2,10 +2,12 @@ package xyz.devcmb.cmr.listeners.minigames;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -50,27 +52,43 @@ public class KaboomersListeners implements Listener {
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
-        KaboomersController controller = (KaboomersController)GameManager.getMinigameByName("Kaboomers");
-        if(controller == null || GameManager.currentMinigame != controller) return;
+        KaboomersController controller = (KaboomersController) GameManager.getMinigameByName("Kaboomers");
+        if (controller == null || GameManager.currentMinigame != controller) return;
+
         if (event.getEntity() instanceof Fireball fireball) {
             if (fireball.getShooter() instanceof Player shooter) {
-                if((!controller.RED.contains(shooter) && !controller.BLUE.contains(shooter)) || event.getHitBlock() == null) return;
-                event.setCancelled(true);
-                Utilities.getBlocksInRadius(event.getHitBlock().getLocation(), 1).forEach(block -> {
-                    if (block.getType() != Material.AIR) {
-                        controller.redBlocks.remove(block);
-                        controller.blueBlocks.remove(block);
+                if (!controller.RED.contains(shooter) && !controller.BLUE.contains(shooter)) return;
 
-                        if(controller.RED.contains(shooter)) {
-                            controller.redBlocks.add(block);
-                            block.setType(Material.RED_WOOL);
-                        } else {
-                            controller.blueBlocks.add(block);
-                            block.setType(Material.BLUE_WOOL);
+                if (event.getHitEntity() instanceof Player hitPlayer) {
+                    hitPlayer.damage(10, shooter);
+                } else if (event.getHitBlock() != null) {
+                    event.setCancelled(true);
+                    Utilities.getBlocksInRadius(event.getHitBlock().getLocation(), 1).forEach(block -> {
+                        if (block.getType() != Material.AIR) {
+                            controller.redBlocks.remove(block);
+                            controller.blueBlocks.remove(block);
+
+                            if (controller.RED.contains(shooter)) {
+                                controller.redBlocks.add(block);
+                                block.setType(Material.RED_WOOL);
+                            } else {
+                                controller.blueBlocks.add(block);
+                                block.setType(Material.BLUE_WOOL);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+        Block block = event.getBlock();
+        KaboomersController controller = (KaboomersController) GameManager.getMinigameByName("Kaboomers");
+        if (controller == null || GameManager.currentMinigame != controller) return;
+
+        controller.redBlocks.remove(block);
+        controller.blueBlocks.remove(block);
     }
 }

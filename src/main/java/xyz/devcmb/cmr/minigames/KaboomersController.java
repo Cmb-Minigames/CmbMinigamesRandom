@@ -13,7 +13,9 @@ import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
+import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
@@ -160,13 +162,67 @@ public class KaboomersController implements Minigame {
         BLUE.clear();
         redTeam.getEntries().forEach(redTeam::removeEntry);
         blueTeam.getEntries().forEach(blueTeam::removeEntry);
+        redBlocks.clear();
+        blueBlocks.clear();
+        timeLeft = 0;
+
+        if(timeDepreciation != null) timeDepreciation.cancel();
+        if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
+        GameManager.intermisionRunnable = null;
+
+        MapLoader.unloadMap();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
+            player.setGameMode(GameMode.SURVIVAL);
+        });
+
+        GameManager.prepare();
     }
 
     public void endGame(){
-        // TODO
-        // Announce winner
-        // Give rewards
-        stop();
+        if(redBlocks.size() > blueBlocks.size()){
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else if(blueBlocks.size() > redBlocks.size()){
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else {
+            Bukkit.getOnlinePlayers().forEach(plr -> {
+                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        }
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                stop();
+            }
+        }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
     }
 
     @SuppressWarnings("unchecked")
@@ -186,6 +242,32 @@ public class KaboomersController implements Minigame {
 
     @Override
     public Number playerLeave(Player player) {
+        RED.remove(player);
+        BLUE.remove(player);
+
+        if(CmbMinigamesRandom.DeveloperMode){
+            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
+        } else {
+            if(RED.isEmpty()){
+                BLUE.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                });
+                return 7;
+            } else if(BLUE.isEmpty()){
+                RED.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                });
+
+                return 7;
+            }
+        }
+
         return null;
     }
 
@@ -237,7 +319,10 @@ public class KaboomersController implements Minigame {
 
     @Override
     public Map<StarSource, Number> getStarSources() {
-        return Map.of();
+        return Map.of(
+            StarSource.KILL, 2,
+            StarSource.WIN, 10
+        );
     }
 
     @Override
