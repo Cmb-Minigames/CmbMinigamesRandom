@@ -15,7 +15,7 @@ import xyz.devcmb.cmr.utils.Database;
 public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        Location spawnPoint = new Location(Bukkit.getWorld("pregame"), -26.5, -43.5, -18);
+        Location spawnPoint = new Location(Bukkit.getWorld("pregame"), -26.5, -43.5, -18.5);
         Player player = event.getPlayer();
         Stars.showStarsActionBar(player);
         CMScoreboardManager.initialize(player);
