@@ -2,6 +2,7 @@ package xyz.devcmb.cmr.interfaces.scoreboards.minigames;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
@@ -14,7 +15,7 @@ public class CTFScoreboard implements HandledScoreboard {
     }
 
     @Override
-    public Scoreboard getScoreboard() {
+    public Scoreboard getScoreboard(Player player) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();

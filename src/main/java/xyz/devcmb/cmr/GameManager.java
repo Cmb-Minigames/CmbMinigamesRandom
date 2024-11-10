@@ -6,7 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
+import xyz.devcmb.cmr.minigames.KaboomersController;
 import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -33,7 +33,8 @@ public class GameManager {
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
     public static void registerAllMinigames(){
-        registerMinigame(new CaptureTheFlagController());
+//        registerMinigame(new CaptureTheFlagController());
+        registerMinigame(new KaboomersController());
     }
 
     public static Minigame getMinigameByName(String name){
@@ -108,6 +109,7 @@ public class GameManager {
     }
 
     public static void doIntermission(){
+        if(intermissionTimeDepreciation != null) return;
         intermissionTimeDepreciation = new BukkitRunnable() {
             @Override
             public void run() {
@@ -121,7 +123,7 @@ public class GameManager {
                     intermission = true;
                 }
 
-                if(timeLeft == 0 || (CmbMinigamesRandom.DeveloperMode ? Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() < 2)){
+                if(timeLeft <= 0 || (CmbMinigamesRandom.DeveloperMode ? Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() < 2)){
                     this.cancel();
                     intermissionTimeDepreciation = null;
                     if(timeLeft == 0){

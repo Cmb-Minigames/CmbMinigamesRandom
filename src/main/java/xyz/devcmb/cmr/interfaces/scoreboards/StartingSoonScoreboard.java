@@ -2,6 +2,7 @@ package xyz.devcmb.cmr.interfaces.scoreboards;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import org.bukkit.scoreboard.ScoreboardManager;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
@@ -11,7 +12,7 @@ import java.util.Objects;
 
 public class StartingSoonScoreboard implements HandledScoreboard {
     @Override
-    public Scoreboard getScoreboard() {
+    public Scoreboard getScoreboard(Player player) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard board = Objects.requireNonNull(scoreboardManager).getNewScoreboard();
 

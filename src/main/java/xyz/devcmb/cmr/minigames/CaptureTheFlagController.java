@@ -160,12 +160,12 @@ public class CaptureTheFlagController implements Minigame {
         );
 
         RED.forEach(player -> {
-            player.teleport(findValidLocation(redSpawnLocation));
+            player.teleport(Utilities.findValidLocation(redSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
         });
 
         BLUE.forEach(player -> {
-            player.teleport(findValidLocation(blueSpawnLocation));
+            player.teleport(Utilities.findValidLocation(blueSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
         });
 
@@ -221,28 +221,6 @@ public class CaptureTheFlagController implements Minigame {
                 }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 10);
             }
         }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 2);
-    }
-
-    private Location findValidLocation(Location spawnLocation) {
-        Location newLocation = spawnLocation.clone();
-
-        if (!Objects.requireNonNull(newLocation.getWorld()).getNearbyEntities(newLocation, 1, 1, 1).isEmpty()) {
-            for (int xOffset = -1; xOffset <= 1; xOffset++) {
-                for (int yOffset = -1; yOffset <= 1; yOffset++) {
-                    for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                        if (xOffset == 0 && yOffset == 0 && zOffset == 0) continue;
-
-                        Location checkLocation = newLocation.clone().add(xOffset, yOffset, zOffset);
-
-                        if (Objects.requireNonNull(checkLocation.getWorld()).getNearbyEntities(checkLocation, 1, 1, 1).isEmpty()) {
-                            return checkLocation;
-                        }
-                    }
-                }
-            }
-        }
-
-        return newLocation;
     }
 
     private void spawnRedFlag(String worldName, Map<String, ?> redFlag){
@@ -362,8 +340,8 @@ public class CaptureTheFlagController implements Minigame {
             if(player.getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)redFlag.get("x")).doubleValue(), ((Number)redFlag.get("y")).doubleValue(), ((Number)redFlag.get("z")).doubleValue())) < 1 && !redTaken){
                 redTaken = true;
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
-                player.setHealth(6);
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(6);
+                player.setHealth(10);
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
 
                 ItemStack redFlagItem = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = redFlagItem.getItemMeta();
@@ -402,8 +380,8 @@ public class CaptureTheFlagController implements Minigame {
             if(event.getPlayer().getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)blueFlag.get("x")).doubleValue(), ((Number)blueFlag.get("y")).doubleValue(), ((Number)blueFlag.get("z")).doubleValue())) < 1 && !blueTaken){
                 blueTaken = true;
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
-                player.setHealth(6);
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(6);
+                player.setHealth(10);
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
 
                 ItemStack blueFlagIcon = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = blueFlagIcon.getItemMeta();
@@ -603,7 +581,7 @@ public class CaptureTheFlagController implements Minigame {
         CMScoreboardManager.sendScoreboardAlongDefaults(
                 player,
                 CMScoreboardManager.mergeScoreboards(
-                        CMScoreboardManager.scoreboards.get("ctf").getScoreboard(),
+                        CMScoreboardManager.scoreboards.get("ctf").getScoreboard(player),
                         scoreboard
                 )
         );

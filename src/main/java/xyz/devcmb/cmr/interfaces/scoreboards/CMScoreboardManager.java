@@ -9,11 +9,14 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.scoreboards.minigames.KaboomersScoreboard;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 import xyz.devcmb.cmr.interfaces.scoreboards.minigames.CTFScoreboard;
+import xyz.devcmb.cmr.minigames.KaboomersController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CMScoreboardManager {
     public static BukkitRunnable updateScoreboard = null;
@@ -34,7 +37,7 @@ public class CMScoreboardManager {
                 } else if (GameManager.paused) {
                     displayScoreboardFromName(player, "GamePaused");
                 } else {
-                    player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+                    sendScoreboardAlongDefaults(player, Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard());
                 }
             }
         };
@@ -43,27 +46,31 @@ public class CMScoreboardManager {
 
     public static void registerAllScoreboards() {
         CaptureTheFlagController ctfController = (CaptureTheFlagController) GameManager.getMinigameByName("Capture the Flag");
+        KaboomersController kaboomersController = (KaboomersController) GameManager.getMinigameByName("Kaboomers");
         scoreboards.put("NotEnoughPlayers", new NotEnoughPlayersScoreboard());
         scoreboards.put("StartingSoon", new StartingSoonScoreboard());
         scoreboards.put("GamePaused", new GamePausedScoreboard());
         scoreboards.put("ctf", new CTFScoreboard(ctfController));
+        scoreboards.put("TabListPrefix", new TabListPrefix());
+        scoreboards.put("kaboomers", new KaboomersScoreboard(kaboomersController));
     }
 
     public static void displayScoreboardFromName(Player player, String scoreboard) {
         HandledScoreboard handledScoreboard = scoreboards.get(scoreboard);
         if (handledScoreboard != null) {
-            sendScoreboardAlongDefaults(player, handledScoreboard.getScoreboard());
+            sendScoreboardAlongDefaults(player, handledScoreboard.getScoreboard(player));
         } else {
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         }
     }
 
     public static void sendScoreboardAlongDefaults(Player player, Scoreboard board) {
-        player.setScoreboard(mergeScoreboards(board));
+        player.setScoreboard(mergeScoreboards(scoreboards.get("TabListPrefix").getScoreboard(player), board));
     }
 
     public static Scoreboard mergeScoreboards(Scoreboard... boards) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+        assert scoreboardManager != null;
         Scoreboard merged = scoreboardManager.getNewScoreboard();
 
         for (Scoreboard board : boards) {

@@ -7,6 +7,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -15,10 +16,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
@@ -135,7 +133,7 @@ public class MinigameListeners implements Listener {
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL)){
             killer.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 10, 1);
-            killer.sendTitle("⚔ " + Format.formatPlayerName(player), " | +" + minigame.getStarSources().get(StarSource.KILL).intValue() + " 🌟", 0, 40, 10);
+            killer.sendTitle("⚔ " + Format.formatPlayerName(player), "+" + minigame.getStarSources().get(StarSource.KILL).intValue() + " 🌟", 0, 40, 10);
             Database.addUserStars(killer, minigame.getStarSources().get(StarSource.KILL).intValue());
         }
     }
@@ -177,5 +175,19 @@ public class MinigameListeners implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (GameManager.currentMinigame == null || !GameManager.ingame) return;
+        Minigame minigame = GameManager.currentMinigame;
 
+        if (minigame.getFlags().contains(MinigameFlag.DO_NOT_CONSUME_FIREWORKS)) {
+            Player player = event.getPlayer();
+            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                ItemStack item = event.getItem();
+                if (item != null && item.getType() == Material.FIREWORK_ROCKET && player.isGliding()) {
+                    Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.getInventory().addItem(new ItemStack(Material.FIREWORK_ROCKET, 1)), 3 * 20); // delay 3 seconds before giving another one
+                }
+            }
+        }
+    }
 }

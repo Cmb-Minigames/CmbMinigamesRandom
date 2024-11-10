@@ -44,7 +44,18 @@ maps:
               x: 0
               y: 0
               z: 0
-
+  Kaboomers:
+    - map:
+        worldName: ""
+        voidHeight: 0
+        redTeamSpawn:
+          x: 0
+          y: 0
+          z: 0
+        blueTeamSpawn:
+          x: 0
+          y: 0
+          z: 0
 database:
   host: ""
   port: 3306

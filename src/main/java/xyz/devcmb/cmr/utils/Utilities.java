@@ -1,15 +1,15 @@
 package xyz.devcmb.cmr.utils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Utilities {
     private static final Map<Character, String> lowNumbersMap = new HashMap<>();
@@ -78,5 +78,52 @@ public class Utilities {
             }
         }
         return result.toString();
+    }
+
+    public static Location findValidLocation(Location spawnLocation) {
+        Location newLocation = spawnLocation.clone();
+
+        if (!Objects.requireNonNull(newLocation.getWorld()).getNearbyEntities(newLocation, 1, 1, 1).isEmpty()) {
+            for (int xOffset = -1; xOffset <= 1; xOffset++) {
+                for (int yOffset = -1; yOffset <= 1; yOffset++) {
+                    for (int zOffset = -1; zOffset <= 1; zOffset++) {
+                        if (xOffset == 0 && yOffset == 0 && zOffset == 0) continue;
+
+                        Location checkLocation = newLocation.clone().add(xOffset, yOffset, zOffset);
+
+                        if (Objects.requireNonNull(checkLocation.getWorld()).getNearbyEntities(checkLocation, 1, 1, 1).isEmpty()) {
+                            return checkLocation;
+                        }
+                    }
+                }
+            }
+        }
+
+        return newLocation;
+    }
+
+    public static List<Block> getBlocksInRadius(Location center, int radius) {
+        List<Block> blocks = new ArrayList<>();
+        World world = center.getWorld();
+        int centerX = center.getBlockX();
+        int centerY = center.getBlockY();
+        int centerZ = center.getBlockZ();
+
+        for (int x = centerX - radius; x <= centerX + radius; x++) {
+            for (int y = centerY - radius; y <= centerY + radius; y++) {
+                for (int z = centerZ - radius; z <= centerZ + radius; z++) {
+                    Block block = world.getBlockAt(x, y, z);
+                    blocks.add(block);
+                }
+            }
+        }
+
+        return blocks;
+    }
+
+    public static String formatTime(int time){
+        int minutes = time / 60;
+        int seconds = time % 60;
+        return String.format("%02d:%02d", minutes, seconds);
     }
 }

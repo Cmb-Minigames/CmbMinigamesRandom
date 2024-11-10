@@ -6,5 +6,6 @@ public enum KitEnums {
     LEGGINGS,
     BOOTS,
     OFFHAND,
-    COLORED_CONCRETE
+    COLORED_CONCRETE,
+    ROCKET_LAUNCHER
 }
