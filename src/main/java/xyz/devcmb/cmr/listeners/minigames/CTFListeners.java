@@ -1,8 +1,12 @@
 package xyz.devcmb.cmr.listeners.minigames;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import xyz.devcmb.cmr.GameManager;
@@ -27,5 +31,26 @@ public class CTFListeners implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+    
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event){
+        if(checkProtections(event.getBlock())) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+        if(checkProtections(event.getBlock())) event.setCancelled(true);
+    }
+
+    private boolean checkProtections(Block block) {
+        CaptureTheFlagController ctfController = (CaptureTheFlagController) GameManager.getMinigameByName("Capture The Flag");
+        if(ctfController == null || GameManager.currentMinigame != ctfController) return false;
+        Location redFlagLocation = ctfController.redFlagEntity.getLocation();
+        Location blueFlagLocation = ctfController.blueFlagEntity.getLocation();
+        Location blockLocation = block.getLocation();
+
+        int blockPlacingDistance = 5;
+        return blockLocation.distance(redFlagLocation) <= blockPlacingDistance || blockLocation.distance(blueFlagLocation) <= blockPlacingDistance;
     }
 }

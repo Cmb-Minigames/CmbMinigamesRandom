@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import xyz.devcmb.cmr.utils.Format;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -53,17 +54,8 @@ public class GeneralListeners implements Listener {
         }
 
         Player player = event.getPlayer();
-        String playerName = player.getName();
         String message = event.getMessage();
 
-        if(player.hasPermission("group.owner")){
-            event.setFormat("\uE000 " + ChatColor.RED + playerName + ChatColor.WHITE + " » " + message);
-        } else if(player.hasPermission("group.moderator")){
-            event.setFormat("\uE002 " + ChatColor.LIGHT_PURPLE + playerName + ChatColor.WHITE + " » " + message);
-        } else if(player.hasPermission("group.tester")){
-            event.setFormat("\uE001 " + ChatColor.BLUE + playerName + ChatColor.WHITE + " » " + message);
-        } else {
-            event.setFormat(playerName + " » " + message);
-        }
+        event.setFormat(Format.formatPlayerName(player) + ChatColor.WHITE + ": " + message);
     }
 }

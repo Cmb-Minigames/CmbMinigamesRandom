@@ -53,7 +53,7 @@ public class GameManager {
     public static void playerConnect(PlayerJoinEvent event){
         if(ingame || pregame) {
             currentMinigame.playerJoin(event);
-        } else {
+        } else if(!paused){
             prepare();
         }
     }

@@ -3,6 +3,7 @@ package xyz.devcmb.cmr.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +25,9 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.minigames.MinigameFlag;
+import xyz.devcmb.cmr.minigames.StarSource;
+import xyz.devcmb.cmr.utils.Database;
+import xyz.devcmb.cmr.utils.Format;
 
 import java.util.List;
 import java.util.Map;
@@ -121,11 +125,19 @@ public class MinigameListeners implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event){
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
+        Player player = event.getEntity().getPlayer();
+        if(player == null) return;
+        Player killer = player.getKiller();
         if(minigame.getFlags().contains(MinigameFlag.DISABLE_PLAYER_DEATH_DROP)){
             event.getDrops().clear();
         }
 
         minigame.playerDeath(event);
+        if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL)){
+            killer.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 10, 1);
+            killer.sendTitle("⚔ " + Format.formatPlayerName(player), " | +" + minigame.getStarSources().get(StarSource.KILL).intValue() + " 🌟", 0, 40, 10);
+            Database.addUserStars(killer, minigame.getStarSources().get(StarSource.KILL).intValue());
+        }
     }
 
     @EventHandler

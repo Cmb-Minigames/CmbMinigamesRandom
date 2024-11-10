@@ -76,6 +76,34 @@ public class Database {
         return 0;
     }
 
+    public static void setUserStars(Player player, int stars) {
+        try {
+            if (!userExists(player)) {
+                createUser(player);
+            }
+            PreparedStatement statement = connection.prepareStatement("UPDATE Users SET stars = ? WHERE uuid = ?");
+            statement.setInt(1, stars);
+            statement.setBytes(2, uuidToBytes(player.getUniqueId()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            CmbMinigamesRandom.LOGGER.severe("Failed to update user stars by UUID: " + e.getMessage());
+        }
+    }
+
+    public static void addUserStars(Player player, int stars){
+        try {
+            if (!userExists(player)) {
+                createUser(player);
+            }
+            PreparedStatement statement = connection.prepareStatement("UPDATE Users SET stars = stars + ? WHERE uuid = ?");
+            statement.setInt(1, stars);
+            statement.setBytes(2, uuidToBytes(player.getUniqueId()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            CmbMinigamesRandom.LOGGER.severe("Failed to add user stars by UUID: " + e.getMessage());
+        }
+    }
+
     public static ResultSet createUser(Player player){
         try {
             if(userExists(player)){

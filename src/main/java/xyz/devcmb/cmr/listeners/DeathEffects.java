@@ -9,6 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.minigames.MinigameFlag;
+import xyz.devcmb.cmr.utils.Format;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class DeathEffects implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity().getPlayer();
+        if(player == null) return;
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 10, 1);
         Minigame activeMinigame = GameManager.currentMinigame;
         if(activeMinigame == null){
@@ -78,7 +80,7 @@ public class DeathEffects implements Listener {
     private static void doRandomizedDeathMessages(PlayerDeathEvent e){
         Player player = e.getEntity().getPlayer();
         String deathMessage = Utilities.getRandom(randomizedDeathMessages);
-        e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", player.getName()));
+        e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY));
     }
 
     private static void doKillDeathMessage(PlayerDeathEvent e){
@@ -89,7 +91,7 @@ public class DeathEffects implements Listener {
             doRandomizedDeathMessages(e);
         } else {
             String deathMessage = Utilities.getRandom(randomizedKillMessages);
-            e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", player.getName()).replace("{killer}", killer.getName()));
+            e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY).replace("{killer}", ChatColor.WHITE + Format.formatPlayerName(killer) + ChatColor.GRAY));
         }
     }
 }

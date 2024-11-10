@@ -20,6 +20,7 @@ public interface Minigame {
     void playerRespawn(PlayerRespawnEvent event);
     void playerDeath(PlayerDeathEvent event);
     void updateScoreboard(Player player);
+    Map<StarSource, Number> getStarSources();
 
     String getName();
     String getDescription();

@@ -13,7 +13,7 @@ public class Stars {
         new BukkitRunnable() {
             @Override
             public void run() {
-                String stars = Utilities.replaceNumbersWithLowOnes("⭐" + Database.getUserStars(player));
+                String stars = Utilities.replaceNumbersWithLowOnes(" ".repeat(25) + "⭐" + Database.getUserStars(player));
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(stars));
             }
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 40);

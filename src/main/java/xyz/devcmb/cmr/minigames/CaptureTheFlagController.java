@@ -23,10 +23,7 @@ import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
-import xyz.devcmb.cmr.utils.CustomModelDataConstants;
-import xyz.devcmb.cmr.utils.Kits;
-import xyz.devcmb.cmr.utils.MapLoader;
-import xyz.devcmb.cmr.utils.Utilities;
+import xyz.devcmb.cmr.utils.*;
 
 import java.util.*;
 
@@ -38,8 +35,8 @@ public class CaptureTheFlagController implements Minigame {
     private final Team blueTeam;
     private boolean blueTaken = false;
     private boolean redTaken = false;
-    private ItemDisplay redFlagEntity = null;
-    private ItemDisplay blueFlagEntity = null;
+    public ItemDisplay redFlagEntity = null;
+    public ItemDisplay blueFlagEntity = null;
     public int redScore = 0;
     public int blueScore = 0;
     private BukkitRunnable itemSpawnRunnable = null;
@@ -388,11 +385,12 @@ public class CaptureTheFlagController implements Minigame {
                     if(plr == player) return;
                     plr.sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + player.getName() + " has captured the flag! Defend them!");
                 });
-            } else if(inBlueClaimZone(event.getTo())){ // formatting my beloved
+            } else if(inBlueClaimZone(event.getTo())){
                 if(getPlayerFlag(player).equals("red")){
                     player.getInventory().setItemInOffHand(null);
                     blueScore++;
                     redTaken = false;
+                    Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE).intValue());
                     if(blueScore >= 3){
                         endGame("blue");
                     } else {
@@ -432,6 +430,7 @@ public class CaptureTheFlagController implements Minigame {
                     player.getInventory().setItemInOffHand(null);
                     redScore++;
                     blueTaken = false;
+                    Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE).intValue());
                     if(redScore >= 3) {
                         endGame("red");
                     } else {
@@ -452,6 +451,7 @@ public class CaptureTheFlagController implements Minigame {
         if(winner.equals("red")){
             RED.forEach(plr -> {
                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+               Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                plr.getInventory().clear();
                plr.setGameMode(GameMode.SPECTATOR);
@@ -471,6 +471,7 @@ public class CaptureTheFlagController implements Minigame {
             });
             BLUE.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
@@ -610,6 +611,15 @@ public class CaptureTheFlagController implements Minigame {
                         CMScoreboardManager.scoreboards.get("ctf").getScoreboard(),
                         scoreboard
                 )
+        );
+    }
+
+    @Override
+    public Map<StarSource, Number> getStarSources() {
+        return Map.of(
+            StarSource.KILL, 1,
+            StarSource.WIN, 3,
+            StarSource.OBJECTIVE, 2
         );
     }
 
