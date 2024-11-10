@@ -1,4 +1,4 @@
-![CmbMinigamesBanner.png](https://github.com/Cmb-Minigames/CmbMinigamesRandom/tree/main/docs%2Fimages%2FCmbMinigamesBanner.png)
+![CmbMinigamesBanner.png](https://github.com/Cmb-Minigames/CmbMinigamesRandom/blob/master/docs/images/CmbMinigamesBanner.png?raw=true)
 # Cmb Minigames Random Server
 The server code for the random minigames server. A server where every time a minigame ends, another random one will start
 
