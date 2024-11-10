@@ -120,8 +120,6 @@ public class CaptureTheFlagController implements Minigame {
             }
         }
 
-        CmbMinigamesRandom.packetManager.giveGlow("red_ctf", RED);
-        CmbMinigamesRandom.packetManager.giveGlow("blue_ctf", BLUE);
 
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
@@ -292,9 +290,6 @@ public class CaptureTheFlagController implements Minigame {
         if(itemSpawnRunnable != null) itemSpawnRunnable.cancel();
         if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
         GameManager.intermisionRunnable = null;
-
-        CmbMinigamesRandom.packetManager.removeGroup("red_ctf");
-        CmbMinigamesRandom.packetManager.removeGroup("blue_ctf");
 
         MapLoader.unloadMap();
         Bukkit.getOnlinePlayers().forEach(player -> {
