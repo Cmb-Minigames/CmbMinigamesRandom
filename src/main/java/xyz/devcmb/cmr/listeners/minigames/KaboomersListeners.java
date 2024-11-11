@@ -3,6 +3,7 @@ package xyz.devcmb.cmr.listeners.minigames;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +13,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.KaboomersController;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
@@ -59,9 +61,18 @@ public class KaboomersListeners implements Listener {
             if (fireball.getShooter() instanceof Player shooter) {
                 if (!controller.RED.contains(shooter) && !controller.BLUE.contains(shooter)) return;
 
-                if (event.getHitEntity() instanceof Player hitPlayer) {
-                    hitPlayer.damage(10, shooter);
-                } else if (event.getHitBlock() != null) {
+                Vector hitLocation = event.getEntity().getLocation().toVector();
+                double radius = 1.5;
+
+                for (Entity entity : event.getEntity().getNearbyEntities(radius, radius, radius)) {
+                    if (entity instanceof Player hitPlayer) {
+                        if (hitPlayer.getLocation().toVector().isInSphere(hitLocation, radius)) {
+                            hitPlayer.damage(10, shooter);
+                        }
+                    }
+                }
+
+                if (event.getHitBlock() != null) {
                     event.setCancelled(true);
                     Utilities.getBlocksInRadius(event.getHitBlock().getLocation(), 1).forEach(block -> {
                         if (block.getType() != Material.AIR) {
