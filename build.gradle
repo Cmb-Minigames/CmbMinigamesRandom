@@ -22,6 +22,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT")
     compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
+    implementation "net.kyori:adventure-api:4.17.0"
 }
 
 shadowJar {

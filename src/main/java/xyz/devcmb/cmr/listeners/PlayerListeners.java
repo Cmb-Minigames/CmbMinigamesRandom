@@ -1,6 +1,9 @@
 package xyz.devcmb.cmr.listeners;
 
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,6 +30,9 @@ public class PlayerListeners implements Listener {
         if(!Database.userExists(player)){
             Database.createUser(player);
         }
+
+        Audience audience = (Audience) player;
+        audience.sendPlayerListHeader(Component.text(ChatColor.GOLD + ChatColor.BOLD.toString() + "Cmb Minigames - Random"));
     }
 
     @EventHandler

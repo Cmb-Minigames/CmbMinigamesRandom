@@ -79,12 +79,14 @@ public class DeathEffects implements Listener {
 
     private static void doRandomizedDeathMessages(PlayerDeathEvent e){
         Player player = e.getEntity().getPlayer();
+        if(player == null) return;
         String deathMessage = Utilities.getRandom(randomizedDeathMessages);
         e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY));
     }
 
     private static void doKillDeathMessage(PlayerDeathEvent e){
         Player player = e.getEntity().getPlayer();
+        assert player != null;
         Player killer = player.getKiller();
 
         if(killer == null){

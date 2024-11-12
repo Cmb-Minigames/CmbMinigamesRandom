@@ -5,11 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import xyz.devcmb.cmr.utils.Format;
 
+import java.util.Objects;
+
 public class TabListPrefix implements HandledScoreboard {
     @Override
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
+        Scoreboard board = Objects.requireNonNull(manager).getNewScoreboard();
 
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             String prefix = Format.getPrefix(onlinePlayer);

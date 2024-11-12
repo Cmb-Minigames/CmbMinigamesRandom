@@ -105,6 +105,7 @@ public class Utilities {
     public static List<Block> getBlocksInRadius(Location center, int radius) {
         List<Block> blocks = new ArrayList<>();
         World world = center.getWorld();
+        if(world == null) return List.of();
         int centerX = center.getBlockX();
         int centerY = center.getBlockY();
         int centerZ = center.getBlockZ();

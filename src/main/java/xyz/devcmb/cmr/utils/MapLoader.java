@@ -32,10 +32,11 @@ public class MapLoader {
 
         WorldCreator wc = new WorldCreator(worldName);
         World world = CmbMinigamesRandom.getPlugin().getServer().createWorld(wc);
+        if(world == null) return;
         world.setAutoSave(false);
         LOADED_MAP = worldName;
 
-        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(Bukkit.getWorld(worldName).getSpawnLocation()));
+        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(world.getSpawnLocation()));
     }
 
     public static void unloadMap(){
@@ -55,6 +56,7 @@ public class MapLoader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static Map<String, ?> loadRandomMap(Minigame minigame){
         List<Map<String, ?>> maps = (List<Map<String, ?>>) CmbMinigamesRandom.getPlugin().getConfig().getList("maps." + minigame.getName());
         if(maps == null || maps.isEmpty()){

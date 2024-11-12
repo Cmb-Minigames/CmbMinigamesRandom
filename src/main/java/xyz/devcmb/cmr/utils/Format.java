@@ -13,8 +13,10 @@ public class Format {
 
     public static String getPrefix(Player player){
         String prefix = "";
-        if(player.hasPermission("group.owner")){
+        if(player.hasPermission("group.owner")) {
             prefix = "\uE000 " + prefix;
+        } else if(player.hasPermission("group.developer")){
+            prefix = "\uE00D " + prefix;
         } else if(player.hasPermission("group.moderator")){
             prefix = "\uE002 " + prefix;
         } else if(player.hasPermission("group.tester")){

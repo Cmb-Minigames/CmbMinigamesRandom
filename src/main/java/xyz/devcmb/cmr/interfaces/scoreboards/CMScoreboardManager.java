@@ -60,7 +60,7 @@ public class CMScoreboardManager {
         if (handledScoreboard != null) {
             sendScoreboardAlongDefaults(player, handledScoreboard.getScoreboard(player));
         } else {
-            player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+            player.setScoreboard(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard());
         }
     }
 
@@ -88,7 +88,7 @@ public class CMScoreboardManager {
             board.getObjectives().forEach(objective -> {
                 Objective newObjective = merged.getObjective(objective.getName());
                 if (newObjective == null) {
-                    newObjective = merged.registerNewObjective(objective.getName(), objective.getCriteria(), objective.getDisplayName());
+                    newObjective = merged.registerNewObjective(objective.getName(), objective.getTrackedCriteria(), objective.getDisplayName(), objective.getRenderType());
                     newObjective.setDisplaySlot(objective.getDisplaySlot());
                 }
                 for (String entry : board.getEntries()) {

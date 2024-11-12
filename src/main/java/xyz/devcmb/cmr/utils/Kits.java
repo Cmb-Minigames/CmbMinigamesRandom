@@ -44,6 +44,7 @@ public class Kits {
             } else if(key == KitEnums.ROCKET_LAUNCHER){
                 ItemStack rocketLauncher = new ItemStack(Material.ECHO_SHARD, (int) value.getFirst());
                 ItemMeta meta = rocketLauncher.getItemMeta();
+                if(meta == null) return;
                 meta.setItemName("Rocket Launcher");
                 meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("rocket_launcher").intValue());
                 rocketLauncher.setItemMeta(meta);

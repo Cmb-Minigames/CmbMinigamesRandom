@@ -15,7 +15,7 @@ public class GamePausedScoreboard implements HandledScoreboard {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard board = Objects.requireNonNull(scoreboardManager).getNewScoreboard();
 
-        Objective objective = board.registerNewObjective("info", "dummy", ChatColor.GOLD + ChatColor.BOLD.toString() + "Cmb Minigames" + ChatColor.WHITE + " | " + ChatColor.GRAY + "v" + CmbMinigamesRandom.getPlugin().getDescription().getVersion());
+        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), ChatColor.GOLD + ChatColor.BOLD.toString() + "Cmb Minigames" + ChatColor.WHITE + " | " + ChatColor.GRAY + "v" + CmbMinigamesRandom.getPlugin().getDescription().getVersion());
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank = objective.getScore(" ");
