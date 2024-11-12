@@ -18,7 +18,7 @@ import xyz.devcmb.cmr.utils.Database;
 public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        Location spawnPoint = new Location(Bukkit.getWorld("pregame"), -26.5, -43.5, -18.5);
+        Location spawnPoint = new Location(Bukkit.getWorld("pregame"), -26.5, -42.5, -18.5);
         Player player = event.getPlayer();
         Stars.showStarsActionBar(player);
         CMScoreboardManager.initialize(player);
@@ -32,7 +32,7 @@ public class PlayerListeners implements Listener {
         }
 
         Audience audience = (Audience) player;
-        audience.sendPlayerListHeader(Component.text(ChatColor.GOLD + ChatColor.BOLD.toString() + "Cmb Minigames - Random"));
+        audience.sendPlayerListHeader(Component.text(" ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames - Random" + " ".repeat(5)));
     }
 
     @EventHandler

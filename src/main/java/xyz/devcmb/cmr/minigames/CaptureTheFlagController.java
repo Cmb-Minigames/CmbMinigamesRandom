@@ -642,6 +642,6 @@ public class CaptureTheFlagController implements Minigame {
 
     @Override
     public String getDescription() {
-        return "Steal the flag from the opposing team and return it to your base!";
+        return "Steal the flag from the opposing team and return it to your base by jumping into your teams capture point! First to 3 wins!";
     }
 }

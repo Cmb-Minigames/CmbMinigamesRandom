@@ -332,6 +332,6 @@ public class KaboomersController implements Minigame {
 
     @Override
     public String getDescription() {
-        return "Claim area around the map as your own by shooting a fireball at it, whichever team has the most claimed by the end wins";
+        return "Claim area around the map as your own by shooting a fireball at it, which will claim up to a 3 by 3 by 3 cube, whichever team has the most claimed by the end wins";
     }
 }
