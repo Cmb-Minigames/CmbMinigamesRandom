@@ -1,11 +1,11 @@
 package xyz.devcmb.cmr.utils;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 
@@ -126,5 +126,29 @@ public class Utilities {
         int minutes = time / 60;
         int seconds = time % 60;
         return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    public static Chest fillChestRandomly(Chest chestData, List<ItemStack> items, Integer min, Integer max) {
+        Inventory chestInventory = chestData.getBlockInventory();
+        chestInventory.clear();
+
+        Random random = new Random();
+        int amount = random.nextInt(max - min + 1) + min;
+
+        List<Integer> slots = new ArrayList<>();
+
+        for (int i = 0; i < amount; i++) {
+            ItemStack item = getRandom(items);
+            int slot;
+
+            do {
+                slot = random.nextInt(chestInventory.getSize());
+            } while (slots.contains(slot));
+
+            chestInventory.setItem(slot, item);
+            slots.add(slot);
+        }
+
+        return chestData;
     }
 }

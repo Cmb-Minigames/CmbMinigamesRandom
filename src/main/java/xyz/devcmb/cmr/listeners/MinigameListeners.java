@@ -1,9 +1,6 @@
 package xyz.devcmb.cmr.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +33,62 @@ public class MinigameListeners implements Listener {
         Material.BLUE_CONCRETE,
         Material.GREEN_CONCRETE,
         Material.YELLOW_CONCRETE
+    );
+
+    private static final List<Material> noRepeatTools = List.of(
+        Material.WOODEN_SWORD,
+        Material.WOODEN_AXE,
+        Material.WOODEN_PICKAXE,
+        Material.WOODEN_SHOVEL,
+        Material.WOODEN_HOE,
+        Material.STONE_SWORD,
+        Material.STONE_AXE,
+        Material.STONE_PICKAXE,
+        Material.STONE_SHOVEL,
+        Material.STONE_HOE,
+        Material.IRON_SWORD,
+        Material.IRON_AXE,
+        Material.IRON_PICKAXE,
+        Material.IRON_SHOVEL,
+        Material.IRON_HOE,
+        Material.GOLDEN_SWORD,
+        Material.GOLDEN_AXE,
+        Material.GOLDEN_PICKAXE,
+        Material.GOLDEN_SHOVEL,
+        Material.GOLDEN_HOE,
+        Material.DIAMOND_SWORD,
+        Material.DIAMOND_AXE,
+        Material.DIAMOND_PICKAXE,
+        Material.DIAMOND_SHOVEL,
+        Material.DIAMOND_HOE,
+        Material.NETHERITE_SWORD,
+        Material.NETHERITE_AXE,
+        Material.NETHERITE_PICKAXE,
+        Material.NETHERITE_SHOVEL,
+        Material.NETHERITE_HOE,
+        // Other
+        Material.ECHO_SHARD, // Custom items should use this as the base
+        // Armor
+        Material.LEATHER_HELMET,
+        Material.LEATHER_CHESTPLATE,
+        Material.LEATHER_LEGGINGS,
+        Material.LEATHER_BOOTS,
+        Material.CHAINMAIL_HELMET,
+        Material.CHAINMAIL_CHESTPLATE,
+        Material.CHAINMAIL_LEGGINGS,
+        Material.CHAINMAIL_BOOTS,
+        Material.IRON_HELMET,
+        Material.IRON_CHESTPLATE,
+        Material.IRON_LEGGINGS,
+        Material.IRON_BOOTS,
+        Material.DIAMOND_HELMET,
+        Material.DIAMOND_CHESTPLATE,
+        Material.DIAMOND_LEGGINGS,
+        Material.DIAMOND_BOOTS,
+        Material.NETHERITE_HELMET,
+        Material.NETHERITE_CHESTPLATE,
+        Material.NETHERITE_LEGGINGS,
+        Material.NETHERITE_BOOTS
     );
 
     @EventHandler
@@ -77,7 +130,7 @@ public class MinigameListeners implements Listener {
         Minigame minigame = GameManager.currentMinigame;
         if(minigame.getFlags().contains(MinigameFlag.CANNOT_PLACE_BLOCKS)){
             event.setCancelled(true);
-        } else if(minigame.getFlags().contains(MinigameFlag.UNLIMITED_BLOCKS)){
+        } else if(minigame.getFlags().contains(MinigameFlag.UNLIMITED_BLOCKS) && event.getBlock().getType() != Material.TNT){
             ItemStack itemInHand = event.getItemInHand();
             Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> {
                 itemInHand.setAmount(itemInHand.getAmount() + 1);
@@ -93,6 +146,7 @@ public class MinigameListeners implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         if(GameManager.gameEnding) return;
+        if(event.getTo() == null) return;
         if (GameManager.playersFrozen) {
             if (event.getFrom().getX() != event.getTo().getX() ||
                 event.getFrom().getY() != event.getTo().getY() ||
@@ -131,10 +185,11 @@ public class MinigameListeners implements Listener {
         }
 
         minigame.playerDeath(event);
-        if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL)){
+        if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){
             killer.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 10, 1);
             killer.sendTitle("⚔ " + Format.formatPlayerName(player), "+" + minigame.getStarSources().get(StarSource.KILL).intValue() + " 🌟", 0, 40, 10);
             Database.addUserStars(killer, minigame.getStarSources().get(StarSource.KILL).intValue());
+            GameManager.kills.put(killer, GameManager.kills.get(killer).intValue() + 1);
         }
     }
 
@@ -159,6 +214,28 @@ public class MinigameListeners implements Listener {
                 event.setCancelled(true);
             } else if (event.getClick() == ClickType.SWAP_OFFHAND) {
                 event.setCancelled(true);
+            }
+        } else if(minigame.getFlags().contains(MinigameFlag.NO_REPEATED_TOOLS)){
+            if (event.getClickedInventory() == null || event.getClickedInventory() == event.getWhoClicked().getInventory()) return;
+            if (!(event.getWhoClicked() instanceof Player player)) return;
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null) return;
+
+            for (ItemStack item : player.getInventory().getContents()) {
+                if (item != null && item.isSimilar(clickedItem) && noRepeatTools.contains(item.getType())) {
+                    event.setCancelled(true);
+                    player.sendMessage(ChatColor.RED + "You cannot have more than one item of this type in your inventory in this minigame!");
+                    return;
+                }
+
+                for (ItemStack armorItem : player.getInventory().getArmorContents()) {
+                    if (armorItem != null && armorItem.isSimilar(clickedItem) && noRepeatTools.contains(armorItem.getType())) {
+                        event.setCancelled(true);
+                        player.sendMessage(ChatColor.RED + "You cannot have more than one item of this type in your inventory in this minigame!");
+                        return;
+                    }
+                }
             }
         }
     }

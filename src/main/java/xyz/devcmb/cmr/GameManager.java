@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import xyz.devcmb.cmr.minigames.BrawlController;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 import xyz.devcmb.cmr.minigames.KaboomersController;
 import xyz.devcmb.cmr.minigames.Minigame;
@@ -13,6 +14,7 @@ import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +32,14 @@ public class GameManager {
     public static boolean gameEnding = false;
     public static BukkitRunnable intermisionRunnable = null;
     public static boolean paused = false;
+    public static Map<Player, Number> kills = new HashMap<>();
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
     public static void registerAllMinigames(){
         registerMinigame(new CaptureTheFlagController());
         registerMinigame(new KaboomersController());
+        registerMinigame(new BrawlController());
     }
 
     public static Minigame getMinigameByName(String name){
@@ -53,6 +57,7 @@ public class GameManager {
     }
 
     public static void playerConnect(PlayerJoinEvent event){
+        kills.put(event.getPlayer(), 0);
         if(ingame || pregame) {
             currentMinigame.playerJoin(event);
         } else if(!paused){
@@ -61,6 +66,7 @@ public class GameManager {
     }
 
     public static void playerDisconnect(Player player){
+        kills.remove(player);
         if(ingame || pregame){
             Number endTimer = currentMinigame.playerLeave(player);
             if(endTimer == null) return;
@@ -84,6 +90,7 @@ public class GameManager {
         intermission = true;
         intermissionCountdownInProgress = false;
         timeLeft = 15;
+        kills.replaceAll((player, kills) -> 0);
 
         startIntermissionRunnable();
     }

@@ -2,6 +2,7 @@ package xyz.devcmb.cmr.listeners;
 
 import org.bukkit.plugin.PluginManager;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.listeners.minigames.BrawlListeners;
 import xyz.devcmb.cmr.listeners.minigames.CTFListeners;
 import xyz.devcmb.cmr.listeners.minigames.KaboomersListeners;
 
@@ -17,5 +18,6 @@ public class ListenerManager {
         pluginManager.registerEvents(new CTFListeners(), plugin);
         pluginManager.registerEvents(new GeneralListeners(), plugin);
         pluginManager.registerEvents(new KaboomersListeners(), plugin);
+        pluginManager.registerEvents(new BrawlListeners(), plugin);
     }
 }

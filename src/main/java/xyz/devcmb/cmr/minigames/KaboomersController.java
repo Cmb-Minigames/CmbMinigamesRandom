@@ -172,6 +172,7 @@ public class KaboomersController implements Minigame {
 
         MapLoader.unloadMap();
         Bukkit.getOnlinePlayers().forEach(player -> {
+            player.spigot().respawn();
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
         });
@@ -180,6 +181,7 @@ public class KaboomersController implements Minigame {
     }
 
     public void endGame(){
+        GameManager.gameEnding = true;
         if(redBlocks.size() > blueBlocks.size()){
             RED.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
@@ -249,19 +251,23 @@ public class KaboomersController implements Minigame {
             return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
         } else {
             if(RED.isEmpty()){
+                GameManager.gameEnding = true;
                 BLUE.forEach(plr -> {
                     plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
                 });
                 return 7;
             } else if(BLUE.isEmpty()){
+                GameManager.gameEnding = true;
                 RED.forEach(plr -> {
                     plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
                 });
 
                 return 7;
@@ -321,7 +327,7 @@ public class KaboomersController implements Minigame {
     public Map<StarSource, Number> getStarSources() {
         return Map.of(
             StarSource.KILL, 2,
-            StarSource.WIN, 10
+            StarSource.WIN, 20
         );
     }
 

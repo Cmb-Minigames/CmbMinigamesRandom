@@ -271,6 +271,7 @@ public class CaptureTheFlagController implements Minigame {
 
         MapLoader.unloadMap();
         Bukkit.getOnlinePlayers().forEach(player -> {
+            player.spigot().respawn();
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
         });
@@ -308,6 +309,7 @@ public class CaptureTheFlagController implements Minigame {
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
                 });
                 return 7;
             } else if(BLUE.isEmpty()){
@@ -316,6 +318,7 @@ public class CaptureTheFlagController implements Minigame {
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
                 });
 
                 return 7;
@@ -591,7 +594,7 @@ public class CaptureTheFlagController implements Minigame {
     public Map<StarSource, Number> getStarSources() {
         return Map.of(
             StarSource.KILL, 2,
-            StarSource.WIN, 10,
+            StarSource.WIN, 20,
             StarSource.OBJECTIVE, 5
         );
     }

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
+import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 import xyz.devcmb.cmr.minigames.KaboomersController;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -19,7 +20,7 @@ public class KaboomersScoreboard implements HandledScoreboard {
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
-        Objective objective = board.registerNewObjective("info", "dummy", ChatColor.YELLOW + ChatColor.BOLD.toString() + "Kaboomers");
+        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), ChatColor.YELLOW + ChatColor.BOLD.toString() + "Kaboomers");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank1 = objective.getScore(" ");
@@ -28,17 +29,20 @@ public class KaboomersScoreboard implements HandledScoreboard {
         Score timeLeft = objective.getScore("Time Left: " + ChatColor.AQUA + Utilities.formatTime(kaboomersController.timeLeft));
         timeLeft.setScore(5);
 
+        Score kills = objective.getScore("⚔ Kills: " + ChatColor.AQUA + GameManager.kills.get(player));
+        kills.setScore(4);
+
         Score blank2 = objective.getScore("  ");
-        blank2.setScore(4);
+        blank2.setScore(3);
 
         Score red = objective.getScore(ChatColor.RED + "Red" + ChatColor.RESET + ": " + ChatColor.AQUA + kaboomersController.redBlocks.size());
-        red.setScore(3);
+        red.setScore(2);
 
         Score blue = objective.getScore(ChatColor.BLUE + "Blue" + ChatColor.RESET + ": " + ChatColor.AQUA + kaboomersController.blueBlocks.size());
-        blue.setScore(2);
+        blue.setScore(1);
 
         Score blank3 = objective.getScore("   ");
-        blank3.setScore(1);
+        blank3.setScore(0);
 
         return board;
     }

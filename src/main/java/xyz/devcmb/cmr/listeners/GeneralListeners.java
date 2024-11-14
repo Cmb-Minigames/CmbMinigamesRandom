@@ -2,12 +2,15 @@ package xyz.devcmb.cmr.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import xyz.devcmb.cmr.utils.Format;
@@ -57,5 +60,13 @@ public class GeneralListeners implements Listener {
         String message = event.getMessage();
 
         event.setFormat(Format.formatPlayerName(player) + ChatColor.WHITE + ": " + message);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (event.getBlock().getType() == Material.TNT) {
+            event.getBlock().setType(Material.AIR);
+            event.getBlock().getWorld().spawn(event.getBlock().getLocation(), TNTPrimed.class);
+        }
     }
 }

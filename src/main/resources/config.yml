@@ -56,6 +56,26 @@ maps:
           x: 0
           y: 0
           z: 0
+  Brawl:
+    - map:
+        worldName: ""
+        voidHeight:
+        spawn:
+          x: 0
+          y: 0
+          z: 0
+        chests:
+          large:
+            - location:
+                x: 0
+                y: 0
+                z: 0
+          small:
+            - location:
+                x: 0
+                y: 0
+                z: 0
+
 database:
   host: ""
   port: 3306

@@ -9,7 +9,9 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.scoreboards.minigames.BrawlScoreboard;
 import xyz.devcmb.cmr.interfaces.scoreboards.minigames.KaboomersScoreboard;
+import xyz.devcmb.cmr.minigames.BrawlController;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 import xyz.devcmb.cmr.interfaces.scoreboards.minigames.CTFScoreboard;
 import xyz.devcmb.cmr.minigames.KaboomersController;
@@ -47,12 +49,14 @@ public class CMScoreboardManager {
     public static void registerAllScoreboards() {
         CaptureTheFlagController ctfController = (CaptureTheFlagController) GameManager.getMinigameByName("Capture the Flag");
         KaboomersController kaboomersController = (KaboomersController) GameManager.getMinigameByName("Kaboomers");
+        BrawlController brawlController = (BrawlController) GameManager.getMinigameByName("Brawl");
         scoreboards.put("NotEnoughPlayers", new NotEnoughPlayersScoreboard());
         scoreboards.put("StartingSoon", new StartingSoonScoreboard());
         scoreboards.put("GamePaused", new GamePausedScoreboard());
         scoreboards.put("ctf", new CTFScoreboard(ctfController));
         scoreboards.put("TabListPrefix", new TabListPrefix());
         scoreboards.put("kaboomers", new KaboomersScoreboard(kaboomersController));
+        scoreboards.put("brawl", new BrawlScoreboard(brawlController));
     }
 
     public static void displayScoreboardFromName(Player player, String scoreboard) {

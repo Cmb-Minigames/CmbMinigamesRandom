@@ -89,7 +89,7 @@ public class DeathEffects implements Listener {
         assert player != null;
         Player killer = player.getKiller();
 
-        if(killer == null){
+        if(killer == null || killer == player){
             doRandomizedDeathMessages(e);
         } else {
             String deathMessage = Utilities.getRandom(randomizedKillMessages);

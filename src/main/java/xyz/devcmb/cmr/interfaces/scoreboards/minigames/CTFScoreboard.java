@@ -32,7 +32,7 @@ public class CTFScoreboard implements HandledScoreboard {
 //            team.getEntries().forEach(newTeam::addEntry);
 //        });
 
-        Objective objective = board.registerNewObjective("info", "dummy", ChatColor.YELLOW + ChatColor.BOLD.toString() + "Capture the Flag");
+        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), ChatColor.YELLOW + ChatColor.BOLD.toString() + "Capture the Flag");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank1 = objective.getScore(" ");
