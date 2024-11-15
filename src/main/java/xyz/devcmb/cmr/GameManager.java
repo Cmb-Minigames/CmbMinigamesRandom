@@ -33,6 +33,7 @@ public class GameManager {
     public static BukkitRunnable intermisionRunnable = null;
     public static boolean paused = false;
     public static Map<Player, Number> kills = new HashMap<>();
+    public static Map<Minigame, Number> minigamePlays = new HashMap<>();
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
@@ -51,8 +52,18 @@ public class GameManager {
         return null;
     }
 
+    public static Minigame getMinigameById(String id){
+        for(Minigame minigame : minigames){
+            if(minigame.getId().equalsIgnoreCase(id)){
+                return minigame;
+            }
+        }
+        return null;
+    }
+
     public static void registerMinigame(Minigame minigame){
         minigames.add(minigame);
+        minigamePlays.put(minigame, 0);
         CmbMinigamesRandom.LOGGER.info("Registered minigame: " + minigame.getName());
     }
 
@@ -174,6 +185,8 @@ public class GameManager {
                             pregame = false;
                             ingame = true;
                             currentMinigame = minigame;
+
+                            minigamePlays.put(minigame, minigamePlays.get(minigame).intValue() + 1);
                             minigame.start();
                         }
                     }.runTaskLater(CmbMinigamesRandom.getPlugin(), 75);

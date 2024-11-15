@@ -12,7 +12,20 @@ commands:
     description: Stop the loop
     usage: /<command>
     permission: cmbminigames.pause
+  end:
+    description: Force end the current minigame
+    usage: /<command>
+    permission: cmbminigames.end
+  minigame:
+    description: View the data for a minigame
+    usage: /<command> <minigame>
+  flags:
+    description: View the flags for a minigame
+    usage: /<command> <minigame>
 permissions:
   cmbminigames.pause:
     description: Pause the loop
+    default: false
+  cmbminigames.end:
+    description: End the current minigame
     default: false

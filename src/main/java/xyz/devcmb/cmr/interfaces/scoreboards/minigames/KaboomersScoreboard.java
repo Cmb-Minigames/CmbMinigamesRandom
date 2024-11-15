@@ -26,7 +26,7 @@ public class KaboomersScoreboard implements HandledScoreboard {
         Score blank1 = objective.getScore(" ");
         blank1.setScore(6);
 
-        Score timeLeft = objective.getScore("Time Left: " + ChatColor.AQUA + Utilities.formatTime(kaboomersController.timeLeft));
+        Score timeLeft = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(kaboomersController.timeLeft));
         timeLeft.setScore(5);
 
         Score kills = objective.getScore("⚔ Kills: " + ChatColor.AQUA + GameManager.kills.get(player));

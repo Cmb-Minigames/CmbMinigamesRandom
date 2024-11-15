@@ -1,6 +1,8 @@
 package xyz.devcmb.cmr;
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import xyz.devcmb.cmr.commands.RegisterCommands;
 import xyz.devcmb.cmr.listeners.ListenerManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
@@ -13,6 +15,14 @@ public final class CmbMinigamesRandom extends JavaPlugin {
     private static CmbMinigamesRandom plugin;
     public static Logger LOGGER;
     public static final boolean DeveloperMode = true;
+    private static BukkitAudiences adventure;
+
+    public static @NonNull BukkitAudiences adventure() {
+        if(adventure == null) {
+            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        }
+        return adventure;
+    }
 
     public static CmbMinigamesRandom getPlugin() {
         return plugin;
@@ -26,6 +36,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         saveDefaultConfig();
         LOGGER.info("Cmb Minigames has awoken. Initializing minigames...");
 
+        this.adventure = BukkitAudiences.create(this);
         ListenerManager.initialize();
         RegisterCommands.register();
         GameManager.registerAllMinigames();

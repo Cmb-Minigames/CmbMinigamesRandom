@@ -645,6 +645,11 @@ public class CaptureTheFlagController implements Minigame {
     }
 
     @Override
+    public String getId() {
+        return "ctf";
+    }
+
+    @Override
     public String getName() {
         return "Capture the Flag";
     }

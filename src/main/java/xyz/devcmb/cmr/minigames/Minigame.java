@@ -22,6 +22,7 @@ public interface Minigame {
     void updateScoreboard(Player player);
     Map<StarSource, Number> getStarSources();
 
+    String getId();
     String getName();
     String getDescription();
 }

@@ -332,6 +332,11 @@ public class KaboomersController implements Minigame {
     }
 
     @Override
+    public String getId() {
+        return "kaboomers";
+    }
+
+    @Override
     public String getName() {
         return "Kaboomers";
     }

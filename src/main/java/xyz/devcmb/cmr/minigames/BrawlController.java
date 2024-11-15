@@ -318,6 +318,11 @@ public class BrawlController implements Minigame {
     }
 
     @Override
+    public String getId() {
+        return "brawl";
+    }
+
+    @Override
     public String getName() {
         return "Brawl";
     }

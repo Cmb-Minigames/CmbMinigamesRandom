@@ -1,0 +1,54 @@
+package xyz.devcmb.cmr.commands;
+
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.minigames.Minigame;
+
+public class MinigameCommand implements CommandExecutor {
+    private final BukkitAudiences audiences;
+
+    public MinigameCommand(BukkitAudiences audiences) {
+        this.audiences = audiences;
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+        if(args.length == 1){
+            Minigame minigame = GameManager.getMinigameById(args[0]);
+            if(minigame != null){
+                // don't worry nibbles, i don't understand this enough either
+                audiences.sender(commandSender).sendMessage(Component.text()
+                        .append(Component.text("-------------------------------------\n").color(NamedTextColor.AQUA))
+                        .append(Component.text(minigame.getName() + "\n").color(NamedTextColor.WHITE))
+                        .append(Component.text(minigame.getDescription() + "\n\n").color(NamedTextColor.GRAY))
+                        .append(Component.text("Plays this session: ").color(NamedTextColor.WHITE))
+                        .append(Component.text(GameManager.minigamePlays.get(minigame).toString()).color(NamedTextColor.AQUA))
+                        .append(Component.text("\nFlags: ")
+                                // this don't work for some reason :shrug:
+                                .color(NamedTextColor.WHITE)
+                                .append(Component.text(String.valueOf(minigame.getFlags().size()))
+                                        .color(NamedTextColor.AQUA))
+                                .hoverEvent(HoverEvent.showText(Component.text("Click to view the flags")
+                                        .color(NamedTextColor.YELLOW)))
+                                .clickEvent(ClickEvent.runCommand("/flags " + minigame.getId())))
+                        .append(Component.text("\n-------------------------------------").color(NamedTextColor.AQUA))
+                        .build());
+            } else {
+                commandSender.sendMessage("❓ " + ChatColor.RED + "Invalid minigame.");
+            }
+        } else {
+            commandSender.sendMessage("❓ " + ChatColor.RED + "Invalid arguments. Usage: /minigame <game>");
+        }
+
+        return true;
+    }
+}

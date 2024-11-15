@@ -39,12 +39,18 @@ public class GeneralListeners implements Listener {
         if (pluginCommand == null && minecraftCommand == null) {
             event.getPlayer().sendMessage("❓ " + ChatColor.RED + "This command does not exist.");
             event.setCancelled(true);
-        } else if (pluginCommand != null && !event.getPlayer().hasPermission(Objects.requireNonNull(pluginCommand.getPermission()))) {
-            event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
-            event.setCancelled(true);
-        } else if (minecraftCommand != null && !event.getPlayer().hasPermission(Objects.requireNonNull(minecraftCommand.getPermission()))) {
-            event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
-            event.setCancelled(true);
+        } else if (pluginCommand != null) {
+            String permission = pluginCommand.getPermission();
+            if (permission != null && !event.getPlayer().hasPermission(permission)) {
+                event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
+                event.setCancelled(true);
+            }
+        } else if (minecraftCommand != null) {
+            String permission = minecraftCommand.getPermission();
+            if (permission != null && !event.getPlayer().hasPermission(permission)) {
+                event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
+                event.setCancelled(true);
+            }
         }
     }
 
