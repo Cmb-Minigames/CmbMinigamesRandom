@@ -60,7 +60,7 @@ public class GameManager {
         kills.put(event.getPlayer(), 0);
         if(ingame || pregame) {
             currentMinigame.playerJoin(event);
-        } else if(!paused && !intermission && (CmbMinigamesRandom.DeveloperMode ? Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){
+        } else if(!paused && intermissionTimeDepreciation == null && (CmbMinigamesRandom.DeveloperMode ? !Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){
             prepare();
         }
     }
