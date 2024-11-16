@@ -22,6 +22,9 @@ commands:
   flags:
     description: View the flags for a minigame
     usage: /<command> <minigame>
+  select:
+    description: Select a minigame
+    usage: /<command> <minigame>
 permissions:
   cmbminigames.pause:
     description: Pause the loop

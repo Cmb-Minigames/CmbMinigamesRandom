@@ -24,7 +24,7 @@ public class GameManager {
     public static Minigame currentMinigame = null;
     public static boolean intermission = true;
     public static boolean intermissionCountdownInProgress = false;
-    public static int timeLeft = 15;
+    public static int timeLeft = 30;
     public static boolean pregame = false;
     public static boolean ingame = false;
     public static boolean playersFrozen = false;
@@ -34,6 +34,7 @@ public class GameManager {
     public static boolean paused = false;
     public static Map<Player, Number> kills = new HashMap<>();
     public static Map<Minigame, Number> minigamePlays = new HashMap<>();
+    public static Minigame selectedMinigame = null;
 
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
@@ -100,7 +101,7 @@ public class GameManager {
         currentMinigame = null;
         intermission = true;
         intermissionCountdownInProgress = false;
-        timeLeft = 15;
+        timeLeft = 30;
         kills.replaceAll((player, kills) -> 0);
 
         startIntermissionRunnable();
@@ -160,8 +161,8 @@ public class GameManager {
     }
 
     public static void chooseRandom() {
-        Minigame minigame = Utilities.getRandom(minigames);
-
+        Minigame minigame = selectedMinigame != null ? selectedMinigame : Utilities.getRandom(minigames);
+        selectedMinigame = null;
         new BukkitRunnable() {
             int countdown = 5;
 

@@ -12,9 +12,11 @@ public class RegisterCommands {
         Objects.requireNonNull(plugin.getCommand("end")).setExecutor(new EndMinigameCommand());
         Objects.requireNonNull(plugin.getCommand("minigame")).setExecutor(new MinigameCommand(CmbMinigamesRandom.adventure()));
         Objects.requireNonNull(plugin.getCommand("flags")).setExecutor(new FlagsCommand(CmbMinigamesRandom.adventure()));
+        Objects.requireNonNull(plugin.getCommand("select")).setExecutor(new SelectCommand());
 
         // Completions
         Objects.requireNonNull(plugin.getCommand("minigame")).setTabCompleter(new MinigameCompletion());
         Objects.requireNonNull(plugin.getCommand("flags")).setTabCompleter(new MinigameCompletion());
+        Objects.requireNonNull(plugin.getCommand("select")).setTabCompleter(new MinigameCompletion());
     }
 }
