@@ -27,3 +27,5 @@ In order to contribute to any of the Cmb Minigames projects, you must follow the
 - All contributions should explain exactly what was added or changed
 
 If all of these guidelines are followed, your pull request will be accepted and merged into the main branch.
+
+Protected under AGPL-3.0 License
