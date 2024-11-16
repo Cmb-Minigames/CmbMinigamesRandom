@@ -293,6 +293,8 @@ public class CaptureTheFlagController implements Minigame {
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
+            player.setGlowing(false);
         });
 
         GameManager.prepare();
@@ -362,7 +364,7 @@ public class CaptureTheFlagController implements Minigame {
             if(player.getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)redFlag.get("x")).doubleValue(), ((Number)redFlag.get("y")).doubleValue(), ((Number)redFlag.get("z")).doubleValue())) < 1 && !redTaken){
                 redTaken = true;
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
-                player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, -1, 1));
+                player.setGlowing(true);
                 player.setHealth(10);
                 Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
 
@@ -384,7 +386,7 @@ public class CaptureTheFlagController implements Minigame {
             } else if(inBlueClaimZone(event.getTo())){
                 if(getPlayerFlag(player).equals("red")){
                     player.getInventory().setItemInOffHand(null);
-                    player.removePotionEffect(PotionEffectType.GLOWING);
+                    player.setGlowing(false);
                     blueScore++;
                     redTaken = false;
                     Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE).intValue());
@@ -404,7 +406,7 @@ public class CaptureTheFlagController implements Minigame {
             if(event.getPlayer().getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)blueFlag.get("x")).doubleValue(), ((Number)blueFlag.get("y")).doubleValue(), ((Number)blueFlag.get("z")).doubleValue())) < 1 && !blueTaken){
                 blueTaken = true;
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
-                player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, -1, 1));
+                player.setGlowing(true);
                 player.setHealth(10);
                 Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
 
@@ -426,7 +428,7 @@ public class CaptureTheFlagController implements Minigame {
             } else if(inRedClaimZone(event.getTo())){
                 if(getPlayerFlag(player).equals("blue")){
                     player.getInventory().setItemInOffHand(null);
-                    player.removePotionEffect(PotionEffectType.GLOWING);
+                    player.setGlowing(false);
                     redScore++;
                     blueTaken = false;
                     Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE).intValue());
@@ -593,13 +595,13 @@ public class CaptureTheFlagController implements Minigame {
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.getType() == Material.ECHO_SHARD && offHandItem.getItemMeta() != null) {
             if (offHandItem.getItemMeta().getItemName().equals(ChatColor.RED + "Red Flag")) {
-                player.removePotionEffect(PotionEffectType.GLOWING);
+                player.setGlowing(false);
                 spawnRedFlag(worldName, (Map<String, ?>) ((Map<String, ?>) mapData.get("flags")).get("redFlag"));
                 RED.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
                 BLUE.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
                 redTaken = false;
             } else if (offHandItem.getItemMeta().getItemName().equals(ChatColor.BLUE + "Blue Flag")) {
-                player.removePotionEffect(PotionEffectType.GLOWING);
+                player.setGlowing(false);
                 spawnBlueFlag(worldName, (Map<String, ?>) ((Map<String, ?>) mapData.get("flags")).get("blueFlag"));
                 RED.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
                 BLUE.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
