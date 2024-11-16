@@ -4,6 +4,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import xyz.devcmb.cmr.commands.RegisterCommands;
+import xyz.devcmb.cmr.items.ItemManager;
 import xyz.devcmb.cmr.listeners.ListenerManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
@@ -36,12 +37,13 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         saveDefaultConfig();
         LOGGER.info("Cmb Minigames has awoken. Initializing minigames...");
 
-        this.adventure = BukkitAudiences.create(this);
+        adventure = BukkitAudiences.create(this);
+        Database.connect();
         ListenerManager.initialize();
         RegisterCommands.register();
         GameManager.registerAllMinigames();
         CMScoreboardManager.registerAllScoreboards();
-        Database.connect();
+        ItemManager.registerAllItems();
     }
 
     @Override

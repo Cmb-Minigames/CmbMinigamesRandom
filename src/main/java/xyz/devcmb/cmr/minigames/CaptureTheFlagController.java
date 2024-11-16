@@ -159,6 +159,12 @@ public class CaptureTheFlagController implements Minigame {
                 ((Number) blueSpawn.get("z")).doubleValue()
         );
 
+        redSpawnLocation.setYaw(((Number) redSpawn.get("yaw")).floatValue());
+        redSpawnLocation.setPitch(((Number) redSpawn.get("pitch")).floatValue());
+
+        blueSpawnLocation.setYaw(((Number) blueSpawn.get("yaw")).floatValue());
+        blueSpawnLocation.setPitch(((Number) blueSpawn.get("pitch")).floatValue());
+
         RED.forEach(player -> {
             player.teleport(Utilities.findValidLocation(redSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
@@ -548,6 +554,12 @@ public class CaptureTheFlagController implements Minigame {
                 ((Number) blueSpawn.get("z")).doubleValue()
         );
 
+        redSpawnLocation.setYaw(((Number) redSpawn.get("yaw")).floatValue());
+        redSpawnLocation.setPitch(((Number) redSpawn.get("pitch")).floatValue());
+
+        blueSpawnLocation.setYaw(((Number) blueSpawn.get("yaw")).floatValue());
+        blueSpawnLocation.setPitch(((Number) blueSpawn.get("pitch")).floatValue());
+
         if (RED.contains(player)) {
             player.teleport(redSpawnLocation);
         } else if (BLUE.contains(player)) {
@@ -629,12 +641,33 @@ public class CaptureTheFlagController implements Minigame {
 
         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
 
+        Location redSpawnLocation = new Location(
+                world,
+                ((Number) redSpawn.get("x")).doubleValue(),
+                ((Number) redSpawn.get("y")).doubleValue(),
+                ((Number) redSpawn.get("z")).doubleValue()
+        );
+
+        Location blueSpawnLocation = new Location(
+                world,
+                ((Number) blueSpawn.get("x")).doubleValue(),
+                ((Number) blueSpawn.get("y")).doubleValue(),
+                ((Number) blueSpawn.get("z")).doubleValue()
+        );
+
+        redSpawnLocation.setYaw(((Number) redSpawn.get("yaw")).floatValue());
+        redSpawnLocation.setPitch(((Number) redSpawn.get("pitch")).floatValue());
+
+        blueSpawnLocation.setYaw(((Number) blueSpawn.get("yaw")).floatValue());
+        blueSpawnLocation.setPitch(((Number) blueSpawn.get("pitch")).floatValue());
+
         if(RED.contains(player)){
             Kits.kitPlayer(Kits.ctf_kit, player, Material.RED_CONCRETE);
-            event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+
+            event.setRespawnLocation(redSpawnLocation);
         } else if(BLUE.contains(player)){
             Kits.kitPlayer(Kits.ctf_kit, player, Material.BLUE_CONCRETE);
-            event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+            event.setRespawnLocation(blueSpawnLocation);
         }
     }
 

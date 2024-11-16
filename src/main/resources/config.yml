@@ -8,10 +8,14 @@ maps:
           x: 0
           y: 0
           z: 0
+          pitch: 0
+          yaw: 90
         blueTeamSpawn:
           x: 0
           y: 0
           z: 0
+          pitch: 0
+          yaw: -90
         flags:
           redFlag:
             x: 0

@@ -9,7 +9,8 @@ public class CustomModelDataConstants {
         Material.ECHO_SHARD, Map.of(
             "blue_flag", 1,
             "red_flag", 2,
-            "rocket_launcher", 3
+            "rocket_launcher", 3,
+            "star_shower", 4
         )
     );
 }
