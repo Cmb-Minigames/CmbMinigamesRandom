@@ -1,11 +1,14 @@
 package xyz.devcmb.cmr.utils;
 
 import org.bukkit.*;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 
@@ -27,12 +30,13 @@ public class Utilities {
         lowNumbersMap.put('9', "\uE00B");
     }
 
-    public static void Countdown(Player player, int totalSeconds){
-        new BukkitRunnable(){
+    public static void Countdown(Player player, int totalSeconds) {
+        new BukkitRunnable() {
             int seconds = totalSeconds;
+
             @Override
             public void run() {
-                if(seconds == 0){
+                if (seconds == 0) {
                     this.cancel();
                     player.sendTitle(ChatColor.GREEN.toString() + ChatColor.BOLD + "GO!", "", 0, 40, 10);
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10, 2.5f);
@@ -41,7 +45,7 @@ public class Utilities {
 
                 ChatColor color = ChatColor.WHITE;
 
-                switch(seconds){
+                switch (seconds) {
                     case 3:
                         color = ChatColor.GREEN;
                         break;
@@ -62,7 +66,7 @@ public class Utilities {
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 
-    public static <T> T getRandom(List<T> list){
+    public static <T> T getRandom(List<T> list) {
         Random random = new Random();
         int randomIndex = random.nextInt(list.size());
         return list.get(randomIndex);
@@ -105,7 +109,7 @@ public class Utilities {
     public static List<Block> getBlocksInRadius(Location center, int radius) {
         List<Block> blocks = new ArrayList<>();
         World world = center.getWorld();
-        if(world == null) return List.of();
+        if (world == null) return List.of();
         int centerX = center.getBlockX();
         int centerY = center.getBlockY();
         int centerZ = center.getBlockZ();
@@ -122,7 +126,7 @@ public class Utilities {
         return blocks;
     }
 
-    public static String formatTime(int time){
+    public static String formatTime(int time) {
         int minutes = time / 60;
         int seconds = time % 60;
         return String.format("%02d:%02d", minutes, seconds);
@@ -150,5 +154,51 @@ public class Utilities {
         }
 
         return chestData;
+    }
+
+    public static void showAdvancement(Player player, String item, String title, String description) {
+        NamespacedKey advancementKey = new NamespacedKey(CmbMinigamesRandom.getPlugin(), "customadvancement_" + title.toLowerCase().replace(" ", "_"));
+        String json = String.format("""
+            {
+                "criteria": {
+                    "requirement": {
+                        "trigger": "minecraft:location",
+                        "conditions": {}
+                    }
+                },
+                "requirements": [["requirement"]],
+                "display": {
+                    "title": {"text": "%s"},
+                    "description": {"text": "%s"},
+                    "icon": {
+                        "item": "%s"
+                    },
+                    "frame": "task",
+                    "show_toast": true,
+                    "announce_to_chat": false,
+                    "hidden": false,
+                    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+                }
+            }""",
+        title, description, item);
+
+
+        try {
+            Bukkit.getUnsafe().loadAdvancement(advancementKey, json);
+
+            Advancement advancement = Bukkit.getAdvancement(advancementKey);
+            if (advancement != null) {
+                AdvancementProgress progress = player.getAdvancementProgress(advancement);
+                if (!progress.isDone()) {
+                    progress.getRemainingCriteria().forEach(progress::awardCriteria);
+                }
+            }
+
+            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                Bukkit.getUnsafe().removeAdvancement(advancementKey);
+            }, 20L);
+        } catch (Exception e) {
+            CmbMinigamesRandom.LOGGER.warning("Failed to show advancement: " + e.getMessage());
+        }
     }
 }

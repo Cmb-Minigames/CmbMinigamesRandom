@@ -9,6 +9,7 @@ import xyz.devcmb.cmr.listeners.ListenerManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
+import xyz.devcmb.cmr.utils.MusicBox;
 
 import java.util.logging.Logger;
 
@@ -39,6 +40,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
 
         adventure = BukkitAudiences.create(this);
         Database.connect();
+        MusicBox.registerAllTracks();
         ListenerManager.initialize();
         RegisterCommands.register();
         ItemManager.registerAllItems();

@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.minigames;
 
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -144,7 +145,8 @@ public class BrawlController implements Minigame {
             players.forEach(player -> {
                 Kits.kitPlayer(kit, player, Material.WHITE_CONCRETE);
                 player.setSaturation(0);
-                player.setHealth(20);
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
+                player.setHealth(40);
             });
 
 
@@ -206,6 +208,8 @@ public class BrawlController implements Minigame {
             player.spigot().respawn();
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+            player.getInventory().clear();
         });
 
         GameManager.prepare();
@@ -229,6 +233,7 @@ public class BrawlController implements Minigame {
     @Override
     public Number playerLeave(Player player) {
         players.remove(player);
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
 
         if(CmbMinigamesRandom.DeveloperMode){
             return (players.isEmpty()) ? 0 : null;

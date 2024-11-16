@@ -13,10 +13,7 @@ import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
-import xyz.devcmb.cmr.utils.Database;
-import xyz.devcmb.cmr.utils.Kits;
-import xyz.devcmb.cmr.utils.MapLoader;
-import xyz.devcmb.cmr.utils.Utilities;
+import xyz.devcmb.cmr.utils.*;
 
 import java.util.*;
 
@@ -130,6 +127,7 @@ public class KaboomersController implements Minigame {
                 });
 
                 Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                    MusicBox.playTrack("kaboomers");
                     Bukkit.getOnlinePlayers().forEach(player -> {
                         Map<?, List<?>> kit = Kits.kaboomers_kit;
                         Kits.kitPlayer(kit, player, RED.contains(player) ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
@@ -175,6 +173,7 @@ public class KaboomersController implements Minigame {
             player.spigot().respawn();
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
         });
 
         GameManager.prepare();

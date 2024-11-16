@@ -40,6 +40,8 @@ public class CaptureTheFlagController implements Minigame {
     public int redScore = 0;
     public int blueScore = 0;
     private BukkitRunnable itemSpawnRunnable = null;
+    public int timePassed = 0;
+    private BukkitRunnable timePassedRunnable = null;
     private final List<ItemStack> items = new ArrayList<>();
 
     public CaptureTheFlagController() {
@@ -194,6 +196,14 @@ public class CaptureTheFlagController implements Minigame {
                             Map<?, List<?>> kit = Kits.ctf_kit;
                             Kits.kitPlayer(kit, player, RED.contains(player) ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
                         });
+                        timePassedRunnable = new BukkitRunnable(){
+                            @Override
+                            public void run() {
+                                timePassed++;
+                            }
+                        };
+                        timePassedRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
+
                         Map<String, ?> redFlag = ((Map<String,?>)((Map<String,?>)mapData.get("flags")).get("redFlag"));
                         Map<String, ?> blueFlag = ((Map<String,?>)((Map<String,?>)mapData.get("flags")).get("blueFlag"));
                         spawnRedFlag(worldName, redFlag);
@@ -265,6 +275,8 @@ public class CaptureTheFlagController implements Minigame {
         BLUE.clear();
         redTeam.getEntries().forEach(redTeam::removeEntry);
         blueTeam.getEntries().forEach(blueTeam::removeEntry);
+        timePassedRunnable.cancel();
+        timePassed = 0;
         redFlagEntity.remove();
         blueFlagEntity.remove();
         redScore = 0;
@@ -280,6 +292,7 @@ public class CaptureTheFlagController implements Minigame {
             player.spigot().respawn();
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
         });
 
         GameManager.prepare();
