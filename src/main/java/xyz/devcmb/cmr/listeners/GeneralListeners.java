@@ -13,10 +13,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.Format;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 public class GeneralListeners implements Listener {
     private CommandMap commandMap;
@@ -26,7 +26,7 @@ public class GeneralListeners implements Listener {
             commandMapField.setAccessible(true);
             this.commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
         } catch (Exception e) {
-            e.printStackTrace();
+            CmbMinigamesRandom.LOGGER.severe("Failed to get command map.");
         }
     }
 
@@ -39,13 +39,16 @@ public class GeneralListeners implements Listener {
         if (pluginCommand == null && minecraftCommand == null) {
             event.getPlayer().sendMessage("❓ " + ChatColor.RED + "This command does not exist.");
             event.setCancelled(true);
+        } else if(event.getMessage().startsWith("/stop") || event.getMessage().startsWith("/reload")) {
+            event.getPlayer().sendMessage("❓ " + ChatColor.RED + "No.");
+            event.setCancelled(true);
         } else if (pluginCommand != null) {
             String permission = pluginCommand.getPermission();
             if (permission != null && !event.getPlayer().hasPermission(permission)) {
                 event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
                 event.setCancelled(true);
             }
-        } else if (minecraftCommand != null) {
+        } else {
             String permission = minecraftCommand.getPermission();
             if (permission != null && !event.getPlayer().hasPermission(permission)) {
                 event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
@@ -71,8 +74,11 @@ public class GeneralListeners implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.getBlock().getType() == Material.TNT) {
-            event.getBlock().setType(Material.AIR);
-            event.getBlock().getWorld().spawn(event.getBlock().getLocation(), TNTPrimed.class);
+            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                event.getBlock().setType(Material.AIR);
+                event.getBlock().getWorld().spawn(event.getBlock().getLocation(), TNTPrimed.class);
+                event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
+            }, 3); // This is required to prevent the unlimited blocks from giving you it back
         }
     }
 }

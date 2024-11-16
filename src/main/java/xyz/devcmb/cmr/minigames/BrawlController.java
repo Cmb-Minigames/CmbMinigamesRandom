@@ -15,6 +15,7 @@ import org.bukkit.potion.PotionType;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.items.ItemManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.MapLoader;
@@ -64,8 +65,7 @@ public class BrawlController implements Minigame {
         poisonPotion.setItemMeta(poisonMeta);
 
         smallChestItems.add(poisonPotion);
-
-        // TODO less overpowered custom items
+        smallChestItems.add(ItemManager.items.get("Fireball"));
 
         // Large items
         largeChestItems.addAll(smallChestItems);
@@ -93,7 +93,7 @@ public class BrawlController implements Minigame {
         poisonPotion2.setItemMeta(poisonMeta2);
 
         largeChestItems.add(poisonPotion2);
-        // TODO overpowered custom items
+        largeChestItems.add(ItemManager.items.get("Meteor Shower"));
     }
 
     @SuppressWarnings("unchecked")
@@ -132,7 +132,8 @@ public class BrawlController implements Minigame {
 
         players.forEach(player -> {
             player.teleport(spawnLocation);
-            player.setSaturation(0);
+            player.setSaturation(20);
+            player.setHealth(20);
             Utilities.Countdown(player, 10);
         });
 
@@ -140,7 +141,12 @@ public class BrawlController implements Minigame {
         // use runtasklater from the getScheduler method of the Bukkit class instead of new BukkitRunnable
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Map<?, List<?>> kit = Kits.brawl_kit;
-            players.forEach(player -> Kits.kitPlayer(kit, player, Material.WHITE_CONCRETE));
+            players.forEach(player -> {
+                Kits.kitPlayer(kit, player, Material.WHITE_CONCRETE);
+                player.setSaturation(0);
+                player.setHealth(20);
+            });
+
 
             // WHAT IS THIS
             // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -159,7 +165,7 @@ public class BrawlController implements Minigame {
 
                 Block chest1 = loc.getBlock();
                 if (chest1.getState() instanceof Chest chestData) {
-                    Chest data = Utilities.fillChestRandomly(chestData, largeChestItems, 7, 12);
+                    Chest data = Utilities.fillChestRandomly(chestData, largeChestItems, 5, 9);
                     chest1.setBlockData(data.getBlockData());
                 } else {
                     CmbMinigamesRandom.LOGGER.warning("Block at " + loc + " is not a chest.");

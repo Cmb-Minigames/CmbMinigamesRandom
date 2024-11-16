@@ -66,8 +66,6 @@ public class MinigameListeners implements Listener {
         Material.NETHERITE_PICKAXE,
         Material.NETHERITE_SHOVEL,
         Material.NETHERITE_HOE,
-        // Other
-        Material.ECHO_SHARD, // Custom items should use this as the base
         // Armor
         Material.LEATHER_HELMET,
         Material.LEATHER_CHESTPLATE,

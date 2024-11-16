@@ -41,9 +41,9 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         Database.connect();
         ListenerManager.initialize();
         RegisterCommands.register();
+        ItemManager.registerAllItems();
         GameManager.registerAllMinigames();
         CMScoreboardManager.registerAllScoreboards();
-        ItemManager.registerAllItems();
     }
 
     @Override
