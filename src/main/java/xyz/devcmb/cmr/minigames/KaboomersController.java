@@ -41,9 +41,6 @@ public class KaboomersController implements Minigame {
 
         redTeam.setColor(ChatColor.RED);
         blueTeam.setColor(ChatColor.BLUE);
-
-        redTeam.setPrefix(ChatColor.RED.toString());
-        blueTeam.setPrefix(ChatColor.BLUE.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -62,10 +59,12 @@ public class KaboomersController implements Minigame {
                 RED.add(allPlayers.get(i));
                 redTeam.addEntry(allPlayers.get(i).getName());
                 allPlayers.get(i).setScoreboard(scoreboard);
+                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
                 blueTeam.addEntry(allPlayers.get(i).getName());
                 allPlayers.get(i).setScoreboard(scoreboard);
+                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
 
@@ -158,8 +157,6 @@ public class KaboomersController implements Minigame {
     public void stop() {
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
         redBlocks.clear();
         blueBlocks.clear();
         timeLeft = 0;
@@ -174,6 +171,7 @@ public class KaboomersController implements Minigame {
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
+            GameManager.teamColors.put(player, ChatColor.WHITE);
         });
 
         GameManager.prepare();

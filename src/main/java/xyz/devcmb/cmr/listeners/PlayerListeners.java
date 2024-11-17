@@ -11,8 +11,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.Stars;
+import xyz.devcmb.cmr.interfaces.TabList;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
 
@@ -37,6 +39,10 @@ public class PlayerListeners implements Listener {
 
         Audience audience = (Audience) player;
         audience.sendPlayerListHeader(Component.text(" ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames - Random" + " ".repeat(5)));
+
+        Bukkit.getScheduler().runTaskTimer(CmbMinigamesRandom.getPlugin(), () -> {
+            TabList.updateTabListName(player);
+        }, 0, 40);
     }
 
     @EventHandler

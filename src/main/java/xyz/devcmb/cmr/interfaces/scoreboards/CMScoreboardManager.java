@@ -54,7 +54,6 @@ public class CMScoreboardManager {
         scoreboards.put("StartingSoon", new StartingSoonScoreboard());
         scoreboards.put("GamePaused", new GamePausedScoreboard());
         scoreboards.put("ctf", new CTFScoreboard(ctfController));
-        scoreboards.put("TabListPrefix", new TabListPrefix());
         scoreboards.put("kaboomers", new KaboomersScoreboard(kaboomersController));
         scoreboards.put("brawl", new BrawlScoreboard(brawlController));
     }
@@ -69,7 +68,8 @@ public class CMScoreboardManager {
     }
 
     public static void sendScoreboardAlongDefaults(Player player, Scoreboard board) {
-        player.setScoreboard(mergeScoreboards(scoreboards.get("TabListPrefix").getScoreboard(player), board));
+        // no custom ones atm
+        player.setScoreboard(board);
     }
 
     public static Scoreboard mergeScoreboards(Scoreboard... boards) {

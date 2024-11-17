@@ -115,10 +115,12 @@ public class CaptureTheFlagController implements Minigame {
                 RED.add(allPlayers.get(i));
                 redTeam.addEntry(allPlayers.get(i).getName());
                 allPlayers.get(i).setScoreboard(scoreboard);
+                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
                 blueTeam.addEntry(allPlayers.get(i).getName());
                 allPlayers.get(i).setScoreboard(scoreboard);
+                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
 
@@ -295,6 +297,7 @@ public class CaptureTheFlagController implements Minigame {
             player.getInventory().clear();
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
             player.setGlowing(false);
+            GameManager.teamColors.put(player, ChatColor.WHITE);
         });
 
         GameManager.prepare();

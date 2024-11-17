@@ -35,7 +35,7 @@ public class GameManager {
     public static Map<Player, Number> kills = new HashMap<>();
     public static Map<Minigame, Number> minigamePlays = new HashMap<>();
     public static Minigame selectedMinigame = null;
-
+    public static Map<Player, ChatColor> teamColors = new HashMap<>();
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
     public static void registerAllMinigames(){
@@ -50,6 +50,7 @@ public class GameManager {
                 return minigame;
             }
         }
+
         return null;
     }
 
@@ -70,6 +71,7 @@ public class GameManager {
 
     public static void playerConnect(PlayerJoinEvent event){
         kills.put(event.getPlayer(), 0);
+        teamColors.put(event.getPlayer(), ChatColor.WHITE);
         if(ingame || pregame) {
             currentMinigame.playerJoin(event);
         } else if(!paused && intermissionTimeDepreciation == null && (CmbMinigamesRandom.DeveloperMode ? !Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){
@@ -79,6 +81,7 @@ public class GameManager {
 
     public static void playerDisconnect(Player player){
         kills.remove(player);
+        teamColors.remove(player);
         if(ingame || pregame){
             Number endTimer = currentMinigame.playerLeave(player);
             if(endTimer == null) return;
