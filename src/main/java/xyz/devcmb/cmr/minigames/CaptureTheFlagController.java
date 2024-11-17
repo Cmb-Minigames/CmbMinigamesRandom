@@ -295,7 +295,7 @@ public class CaptureTheFlagController implements Minigame {
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
-            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
             player.setGlowing(false);
             GameManager.teamColors.put(player, ChatColor.WHITE);
         });

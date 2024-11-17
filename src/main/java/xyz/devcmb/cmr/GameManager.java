@@ -3,8 +3,10 @@ package xyz.devcmb.cmr;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.minigames.BrawlController;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
@@ -13,10 +15,7 @@ import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameManager {
 
@@ -106,6 +105,7 @@ public class GameManager {
         intermissionCountdownInProgress = false;
         timeLeft = 30;
         kills.replaceAll((player, kills) -> 0);
+        cleanup();
 
         startIntermissionRunnable();
     }
@@ -198,5 +198,18 @@ public class GameManager {
                 }
             }
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 10);
+    }
+
+    public static void cleanup(){
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
+                player.getInventory().clear();
+                player.setGlowing(false);
+                for (PotionEffect effect : player.getActivePotionEffects()) {
+                    player.removePotionEffect(effect.getType());
+                }
+            });
+        }, 20);
     }
 }

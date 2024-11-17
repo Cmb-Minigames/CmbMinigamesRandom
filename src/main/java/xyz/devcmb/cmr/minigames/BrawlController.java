@@ -134,12 +134,12 @@ public class BrawlController implements Minigame {
         players.forEach(player -> {
             player.teleport(spawnLocation);
             player.setSaturation(20);
-            player.setHealth(20);
+            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
             Utilities.Countdown(player, 10);
         });
 
         // REMEMBER
-        // use runtasklater from the getScheduler method of the Bukkit class instead of new BukkitRunnable
+        // use runTaskLater from the getScheduler method of the Bukkit class instead of new BukkitRunnable
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Map<?, List<?>> kit = Kits.brawl_kit;
             players.forEach(player -> {
