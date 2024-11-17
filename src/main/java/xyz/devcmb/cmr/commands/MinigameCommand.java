@@ -2,8 +2,6 @@ package xyz.devcmb.cmr.commands;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -32,14 +30,8 @@ public class MinigameCommand implements CommandExecutor {
                         .append(Component.text(minigame.getDescription() + "\n\n").color(NamedTextColor.GRAY))
                         .append(Component.text("Plays this session: ").color(NamedTextColor.WHITE))
                         .append(Component.text(GameManager.minigamePlays.get(minigame).toString()).color(NamedTextColor.AQUA))
-                        .append(Component.text("\nFlags: ")
-                                // this don't work for some reason :shrug:
-                                .color(NamedTextColor.WHITE)
-                                .append(Component.text(String.valueOf(minigame.getFlags().size()))
-                                        .color(NamedTextColor.AQUA))
-                                .hoverEvent(HoverEvent.showText(Component.text("Click to view the flags")
-                                        .color(NamedTextColor.YELLOW)))
-                                .clickEvent(ClickEvent.runCommand("/flags " + minigame.getId())))
+                        .append(Component.text("\nFlags: ").color(NamedTextColor.WHITE))
+                        .append(Component.text(String.valueOf(minigame.getFlags().size())).color(NamedTextColor.AQUA))
                         .append(Component.text("\n-------------------------------------").color(NamedTextColor.AQUA))
                         .build());
             } else {
