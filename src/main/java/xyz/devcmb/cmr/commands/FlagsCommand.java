@@ -2,14 +2,10 @@ package xyz.devcmb.cmr.commands;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
@@ -41,6 +37,8 @@ public class FlagsCommand implements CommandExecutor {
             } else {
                 commandSender.sendMessage("❓ Invalid minigame.");
             }
+        } else {
+            commandSender.sendMessage("❓ Invalid arguments. Usage: /flags <game>");
         }
 
         return true;

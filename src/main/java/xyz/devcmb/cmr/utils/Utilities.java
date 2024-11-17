@@ -3,14 +3,15 @@ package xyz.devcmb.cmr.utils;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.GameManager;
 
 import java.util.*;
 
@@ -200,5 +201,23 @@ public class Utilities {
         } catch (Exception e) {
             CmbMinigamesRandom.LOGGER.warning("Failed to show advancement: " + e.getMessage());
         }
+    }
+
+    public static void endGameResuable() {
+        if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
+        GameManager.intermisionRunnable = null;
+
+        MapLoader.unloadMap();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.spigot().respawn();
+            player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
+            player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+            player.setGlowing(false);
+            GameManager.teamColors.put(player, ChatColor.WHITE);
+        });
+
+        GameManager.prepare();
     }
 }

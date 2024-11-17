@@ -162,19 +162,8 @@ public class KaboomersController implements Minigame {
         timeLeft = 0;
 
         if(timeDepreciation != null) timeDepreciation.cancel();
-        if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
-        GameManager.intermisionRunnable = null;
 
-        MapLoader.unloadMap();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.spigot().respawn();
-            player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
-            player.setGameMode(GameMode.SURVIVAL);
-            player.getInventory().clear();
-            GameManager.teamColors.put(player, ChatColor.WHITE);
-        });
-
-        GameManager.prepare();
+        Utilities.endGameResuable();
     }
 
     public void endGame(){

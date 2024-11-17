@@ -114,12 +114,10 @@ public class CaptureTheFlagController implements Minigame {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
                 redTeam.addEntry(allPlayers.get(i).getName());
-                allPlayers.get(i).setScoreboard(scoreboard);
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
                 blueTeam.addEntry(allPlayers.get(i).getName());
-                allPlayers.get(i).setScoreboard(scoreboard);
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
@@ -286,21 +284,7 @@ public class CaptureTheFlagController implements Minigame {
         redTaken = false;
         blueTaken = false;
         if(itemSpawnRunnable != null) itemSpawnRunnable.cancel();
-        if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
-        GameManager.intermisionRunnable = null;
-
-        MapLoader.unloadMap();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.spigot().respawn();
-            player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
-            player.setGameMode(GameMode.SURVIVAL);
-            player.getInventory().clear();
-            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-            player.setGlowing(false);
-            GameManager.teamColors.put(player, ChatColor.WHITE);
-        });
-
-        GameManager.prepare();
+        Utilities.endGameResuable();
     }
 
     @SuppressWarnings("unchecked")

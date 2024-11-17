@@ -9,6 +9,13 @@ public class TabList {
     public static void updateTabListName(Player player){
         String prefix = Format.getPrefix(player);
         ChatColor teamColor = GameManager.teamColors.get(player);
+        if(prefix == null){
+            prefix = "";
+        }
+
+        if(teamColor == null){
+            teamColor = ChatColor.WHITE;
+        }
 
         player.setPlayerListName(prefix + teamColor + player.getName());
     }
