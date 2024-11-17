@@ -200,19 +200,7 @@ public class BrawlController implements Minigame {
         allPlayers.clear();
         spawnLocation = null;
 
-        if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
-        GameManager.intermisionRunnable = null;
-
-        MapLoader.unloadMap();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.spigot().respawn();
-            player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
-            player.setGameMode(GameMode.SURVIVAL);
-            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-            player.getInventory().clear();
-        });
-
-        GameManager.prepare();
+        Utilities.endGameResuable();
     }
 
     @SuppressWarnings("unchecked")

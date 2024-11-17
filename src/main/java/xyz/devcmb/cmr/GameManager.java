@@ -8,10 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
-import xyz.devcmb.cmr.minigames.BrawlController;
-import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
-import xyz.devcmb.cmr.minigames.KaboomersController;
-import xyz.devcmb.cmr.minigames.Minigame;
+import xyz.devcmb.cmr.minigames.*;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
