@@ -43,6 +43,19 @@ public class CTFListeners implements Listener {
         if(checkProtections(event.getBlock())) event.setCancelled(true);
     }
 
+    @EventHandler
+    public void onPlayerAttack(EntityDamageByEntityEvent event){
+        CaptureTheFlagController ctfController = (CaptureTheFlagController) GameManager.getMinigameByName("Capture The Flag");
+        if(ctfController == null || GameManager.currentMinigame != ctfController) return;
+        if (event.getEntity() instanceof Player player && event.getDamager() instanceof Player damager) {
+            if(ctfController.RED.contains(player) && ctfController.RED.contains(damager)){
+                event.setCancelled(true);
+            } else if(ctfController.BLUE.contains(player) && ctfController.BLUE.contains(damager)){
+                event.setCancelled(true);
+            }
+        }
+    }
+
     private boolean checkProtections(Block block) {
         CaptureTheFlagController ctfController = (CaptureTheFlagController) GameManager.getMinigameByName("Capture The Flag");
         if(ctfController == null || GameManager.currentMinigame != ctfController) return false;

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -101,5 +102,18 @@ public class KaboomersListeners implements Listener {
 
         controller.redBlocks.remove(block);
         controller.blueBlocks.remove(block);
+    }
+
+    @EventHandler
+    public void onPlayerAttack(EntityDamageByEntityEvent event){
+        KaboomersController controller = (KaboomersController) GameManager.getMinigameByName("Kaboomers");
+        if (controller == null || GameManager.currentMinigame != controller) return;
+        if (event.getEntity() instanceof Player player && event.getDamager() instanceof Player damager) {
+            if(controller.RED.contains(player) && controller.RED.contains(damager)){
+                event.setCancelled(true);
+            } else if(controller.BLUE.contains(player) && controller.BLUE.contains(damager)){
+                event.setCancelled(true);
+            }
+        }
     }
 }
