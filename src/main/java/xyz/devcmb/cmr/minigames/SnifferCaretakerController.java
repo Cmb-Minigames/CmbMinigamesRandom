@@ -29,6 +29,9 @@ public class SnifferCaretakerController implements Minigame {
     private final Team redTeam;
     private final Team blueTeam;
 
+    public Entity redSniffer;
+    public Entity blueSniffer;
+
     public SnifferCaretakerController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         assert manager != null;
@@ -148,8 +151,8 @@ public class SnifferCaretakerController implements Minigame {
                 ((Number) blueSnifferSpawn.get("z")).doubleValue()
         );
 
-        Entity redSniffer = world.spawnEntity(redSnifferSpawnLocation, EntityType.SNIFFER);
-        Entity blueSniffer = world.spawnEntity(blueSnifferSpawnLocation, EntityType.SNIFFER);
+        redSniffer = world.spawnEntity(redSnifferSpawnLocation, EntityType.SNIFFER);
+        blueSniffer = world.spawnEntity(blueSnifferSpawnLocation, EntityType.SNIFFER);
         redSniffer.setInvulnerable(true);
         blueSniffer.setInvulnerable(true);
 
@@ -203,6 +206,9 @@ public class SnifferCaretakerController implements Minigame {
         BLUE.clear();
         redTeam.getEntries().forEach(redTeam::removeEntry);
         blueTeam.getEntries().forEach(blueTeam::removeEntry);
+
+        redSniffer = null;
+        blueSniffer = null;
 
         Utilities.endGameResuable();
     }
