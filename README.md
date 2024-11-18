@@ -8,8 +8,6 @@ There are currently a small group of added minigames, with more to come in the f
   - Steal the flag from the opposing team and return it to your base!
 - [x] Kaboomers
   - Claim area around the map as your own by shooting a fireball at it, whichever team has the most claimed by the end wins
-- [ ] Simon Says
-  - Each round, one player will be made the simon at random, with a control panel to select from a large group of items to send for the players, simon or non simon tasks. Keep doing this until only one person is left
 - [ ] Sniffer Caretaker
   - Keep your team’s sniffer alive by giving it food, dirt, and torchflower seeds stolen from the other team. You win if the other team’s sniffer is not taken care of enough and dies.
 > [!WARNING]\
