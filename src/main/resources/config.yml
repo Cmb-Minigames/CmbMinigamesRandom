@@ -79,6 +79,45 @@ maps:
                 x: 0
                 y: 0
                 z: 0
+  Sniffer Caretaker:
+    - map:
+        worldName: ""
+        voidHeight: 0
+        redTeamSpawn:
+          x: 0
+          y: 0
+          z: 0
+        blueTeamSpawn:
+          x: 0
+          y: 0
+          z: 0
+        redTeamBarrier:
+          from:
+            x: 0
+            y: 0
+            z: 0
+          to:
+            x: 0
+            y: 0
+            z: 0
+        blueTeamBarrier:
+          from:
+            x: 0
+            y: 0
+            z: 0
+          to:
+            x: 0
+            y: 0
+            z: 0
+        redTeamSnifferSpawn:
+          x: 0
+          y: 0
+          z: 0
+        blueTeamSnifferSpawn:
+          x: 0
+          y: 0
+          z: 0
+
 
 database:
   host: ""
