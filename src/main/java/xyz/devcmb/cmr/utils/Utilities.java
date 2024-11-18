@@ -87,15 +87,13 @@ public class Utilities {
 
         if (!Objects.requireNonNull(newLocation.getWorld()).getNearbyEntities(newLocation, 1, 1, 1).isEmpty()) {
             for (int xOffset = -1; xOffset <= 1; xOffset++) {
-                for (int yOffset = -1; yOffset <= 1; yOffset++) {
-                    for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                        if (xOffset == 0 && yOffset == 0 && zOffset == 0) continue;
+                for (int zOffset = -1; zOffset <= 1; zOffset++) {
+                    if (xOffset == 0 && zOffset == 0) continue;
 
-                        Location checkLocation = newLocation.clone().add(xOffset, yOffset, zOffset);
+                    Location checkLocation = newLocation.clone().add(xOffset, 0, zOffset);
 
-                        if (Objects.requireNonNull(checkLocation.getWorld()).getNearbyEntities(checkLocation, 1, 1, 1).isEmpty()) {
-                            return checkLocation;
-                        }
+                    if (Objects.requireNonNull(checkLocation.getWorld()).getNearbyEntities(checkLocation, 1, 1, 1).isEmpty()) {
+                        return checkLocation;
                     }
                 }
             }

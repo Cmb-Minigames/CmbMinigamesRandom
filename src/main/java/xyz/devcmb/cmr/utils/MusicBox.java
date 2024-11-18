@@ -17,7 +17,7 @@ public class MusicBox {
     public static void registerAllTracks(){
         registerTrack(
             "kaboomers",
-            "minecraft:kaboomers",
+            "cmbminigames:kaboomers",
             "Kaboom!",
             "Nibbl_z"
         );
@@ -67,4 +67,5 @@ public class MusicBox {
             }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 1);
         });
     }
+
 }
