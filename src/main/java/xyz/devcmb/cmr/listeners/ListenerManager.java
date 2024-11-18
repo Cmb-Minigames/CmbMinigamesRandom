@@ -7,6 +7,7 @@ import xyz.devcmb.cmr.listeners.items.MeteorShowerListener;
 import xyz.devcmb.cmr.listeners.minigames.BrawlListeners;
 import xyz.devcmb.cmr.listeners.minigames.CTFListeners;
 import xyz.devcmb.cmr.listeners.minigames.KaboomersListeners;
+import xyz.devcmb.cmr.listeners.minigames.SnifferCaretakerListeners;
 
 public class ListenerManager {
     public static void initialize(){
@@ -23,6 +24,7 @@ public class ListenerManager {
         pluginManager.registerEvents(new CTFListeners(), plugin);
         pluginManager.registerEvents(new KaboomersListeners(), plugin);
         pluginManager.registerEvents(new BrawlListeners(), plugin);
+        pluginManager.registerEvents(new SnifferCaretakerListeners(), plugin);
 
         // Items
         pluginManager.registerEvents(new MeteorShowerListener(), plugin);
