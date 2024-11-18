@@ -3,6 +3,7 @@ package xyz.devcmb.cmr.commands;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,10 +36,10 @@ public class FlagsCommand implements CommandExecutor {
                         .append(Component.text("\n-------------------------------------").color(NamedTextColor.AQUA))
                         .build());
             } else {
-                commandSender.sendMessage("❓ Invalid minigame.");
+                commandSender.sendMessage("❓ " + ChatColor.RED + "Invalid minigame.");
             }
         } else {
-            commandSender.sendMessage("❓ Invalid arguments. Usage: /flags <game>");
+            commandSender.sendMessage("❓ " + ChatColor.RED + "Invalid arguments. Usage: /flags <game>");
         }
 
         return true;
