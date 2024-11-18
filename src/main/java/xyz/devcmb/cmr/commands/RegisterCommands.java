@@ -2,6 +2,7 @@ package xyz.devcmb.cmr.commands;
 
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.commands.completions.MinigameCompletion;
+import xyz.devcmb.cmr.commands.completions.UICompletions;
 
 import java.util.Objects;
 
@@ -13,10 +14,12 @@ public class RegisterCommands {
         Objects.requireNonNull(plugin.getCommand("minigame")).setExecutor(new MinigameCommand(CmbMinigamesRandom.adventure()));
         Objects.requireNonNull(plugin.getCommand("flags")).setExecutor(new FlagsCommand(CmbMinigamesRandom.adventure()));
         Objects.requireNonNull(plugin.getCommand("select")).setExecutor(new SelectCommand());
+        Objects.requireNonNull(plugin.getCommand("ui")).setExecutor(new UICommand());
 
         // Completions
         Objects.requireNonNull(plugin.getCommand("minigame")).setTabCompleter(new MinigameCompletion());
         Objects.requireNonNull(plugin.getCommand("flags")).setTabCompleter(new MinigameCompletion());
         Objects.requireNonNull(plugin.getCommand("select")).setTabCompleter(new MinigameCompletion());
+        Objects.requireNonNull(plugin.getCommand("ui")).setTabCompleter(new UICompletions());
     }
 }

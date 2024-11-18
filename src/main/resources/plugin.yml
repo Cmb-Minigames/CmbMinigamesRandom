@@ -25,6 +25,9 @@ commands:
   select:
     description: Select a minigame
     usage: /<command> <minigame>
+  ui:
+    description: Create an empty UI to test positionings
+    usage: /<command> <slots> <name>
 permissions:
   cmbminigames.pause:
     description: Pause the loop

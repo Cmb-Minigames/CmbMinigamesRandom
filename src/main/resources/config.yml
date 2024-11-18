@@ -117,6 +117,18 @@ maps:
           x: 0
           y: 0
           z: 0
+  Simon Says:
+    - map:
+        worldName: ""
+        voidHeight: 0
+        spawn:
+          x: 0
+          y: 0
+          z: 0
+        simonSpawn:
+          x: 0
+          y: 0
+          z: 0
 
 
 database:
