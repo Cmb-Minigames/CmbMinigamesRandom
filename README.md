@@ -10,6 +10,8 @@ There are currently a small group of added minigames, with more to come in the f
   - Claim area around the map as your own by shooting a fireball at it, whichever team has the most claimed by the end wins
 - [ ] Sniffer Caretaker
   - Keep your team’s sniffer alive by giving it food, dirt, and torchflower seeds stolen from the other team. You win if the other team’s sniffer is not taken care of enough and dies.
+- [ ] Cooking Chaos
+  - Race for resources to cook for your animal patreons where pvp is enabled, you can sabotague the other team or play it safe and get your own resources. The team with the most animals fed in 5 minutes wins. 
 > [!WARNING]\
 > This is a large-scale project maintained by a very small pool of people, so do not expect updates too frequently.
 
