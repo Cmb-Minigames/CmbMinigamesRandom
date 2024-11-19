@@ -12,15 +12,36 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.Format;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 public class GeneralListeners implements Listener {
     private CommandMap commandMap;
+    private final List<String> blockedCharacters = List.of(
+        "\uE00E",
+        "⭐",
+        "\uE003",
+        "\uE004",
+        "\uE005",
+        "\uE006",
+        "\uE007",
+        "\uE008",
+        "\uE009",
+        "\uE00A",
+        "\uE00B",
+        "\uE00C",
+        "\u1F46",
+        "ὕ",
+        "\uE000",
+        "\uE001",
+        "\uE002",
+        "\uE00D"
+    );
+
     public GeneralListeners() {
         try {
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -64,6 +85,14 @@ public class GeneralListeners implements Listener {
             event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You cannot send links in chat.");
             event.setCancelled(true);
             return;
+        }
+
+        for (String blockedCharacter : blockedCharacters) {
+            if (event.getMessage().contains(blockedCharacter)) {
+                event.getPlayer().sendMessage("❓ " + ChatColor.RED + "Your message contains a blocked character.");
+                event.setCancelled(true);
+                return;
+            }
         }
 
         Player player = event.getPlayer();
