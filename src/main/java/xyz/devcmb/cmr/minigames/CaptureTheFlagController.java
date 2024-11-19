@@ -54,9 +54,6 @@ public class CaptureTheFlagController implements Minigame {
         redTeam.setColor(ChatColor.RED);
         blueTeam.setColor(ChatColor.BLUE);
 
-        redTeam.setPrefix(ChatColor.RED.toString());
-        blueTeam.setPrefix(ChatColor.BLUE.toString());
-
         ItemStack harmingArrow = new ItemStack(Material.TIPPED_ARROW);
         PotionMeta harmingArrowItemMeta = (PotionMeta) harmingArrow.getItemMeta();
         if (harmingArrowItemMeta == null) return;
