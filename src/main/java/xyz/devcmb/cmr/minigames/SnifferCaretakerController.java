@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
@@ -34,6 +35,7 @@ public class SnifferCaretakerController implements Minigame {
 
     public int redSnifferHappiness = 0;
     public int blueSnifferHappiness = 0;
+    public int happinessDecreaseAmount = 1;
 
     public SnifferCaretakerController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -42,6 +44,10 @@ public class SnifferCaretakerController implements Minigame {
         redTeam = scoreboard.registerNewTeam("Red");
         blueTeam = scoreboard.registerNewTeam("Blue");
     }
+
+    private BukkitRunnable happinessDepreciation;
+    private BukkitRunnable difficultyIncrease;
+
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
@@ -159,6 +165,10 @@ public class SnifferCaretakerController implements Minigame {
         redSniffer.setInvulnerable(true);
         blueSniffer.setInvulnerable(true);
 
+        redSnifferHappiness = 500;
+        blueSnifferHappiness = 500;
+        happinessDecreaseAmount = 1;
+
         Location redSpawnLocation = new Location(
                 world,
                 ((Number) redSpawn.get("x")).doubleValue(),
@@ -200,6 +210,27 @@ public class SnifferCaretakerController implements Minigame {
 
             Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
             Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.AIR);
+
+            happinessDepreciation = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    redSnifferHappiness = Math.clamp(redSnifferHappiness - happinessDecreaseAmount, 0, 1000);
+                    blueSnifferHappiness = Math.clamp(blueSnifferHappiness - happinessDecreaseAmount, 0, 1000);
+                }
+            };
+
+            happinessDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 3);
+
+            difficultyIncrease = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    happinessDecreaseAmount++;
+                    Bukkit.broadcastMessage(ChatColor.RED + "The sniffers demand MORE! Happiness will go down by " + happinessDecreaseAmount + " every second!");
+                }
+            };
+
+            difficultyIncrease.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 30);
+
         }, 20 * 10);
     }
 
@@ -215,6 +246,11 @@ public class SnifferCaretakerController implements Minigame {
 
         redSnifferHappiness = 0;
         blueSnifferHappiness = 0;
+
+        happinessDepreciation.cancel();
+        happinessDepreciation = null;
+        difficultyIncrease.cancel();
+        difficultyIncrease = null;
 
         Utilities.endGameResuable();
     }

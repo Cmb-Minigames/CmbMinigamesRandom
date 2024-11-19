@@ -2,6 +2,7 @@ package xyz.devcmb.cmr.listeners.minigames;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -26,7 +27,7 @@ public class SnifferCaretakerListeners implements Listener {
         Material.DEEPSLATE_COAL_ORE
     );
 
-    private final Map<Material, Number> snifferRequestedItems = Map.of(
+    private final Map<Material, Integer> snifferRequestedItems = Map.of(
         Material.DIRT, 2,
         Material.WHEAT, 5,
         Material.HAY_BLOCK, 50,
@@ -47,17 +48,27 @@ public class SnifferCaretakerListeners implements Listener {
     public void onItemDrop(PlayerDropItemEvent event) {
         SnifferCaretakerController controller = (SnifferCaretakerController) GameManager.getMinigameByName("Sniffer Caretaker");
         if (controller == null || GameManager.currentMinigame != controller) return;
-        // if it isn't obvious enough these are temporary messages, make it do things when i implement the happiness
 
-        if (controller.RED.contains(event.getPlayer()) && event.getItemDrop().getLocation().distance(controller.redSniffer.getLocation()) > 5.0) return;
-        if (controller.BLUE.contains(event.getPlayer()) && event.getItemDrop().getLocation().distance(controller.blueSniffer.getLocation()) > 5.0) return;
+        Item itemDrop = event.getItemDrop();
+        Material material = itemDrop.getItemStack().getType();
 
-        if (snifferRequestedItems.containsKey(event.getItemDrop().getItemStack().getType())) {
-            event.getPlayer().sendMessage(ChatColor.GREEN + "Sniffer says THANK YOU FOR YOUR GOODIES");
-            event.getItemDrop().remove();
+        if (controller.RED.contains(event.getPlayer()) && itemDrop.getLocation().distance(controller.redSniffer.getLocation()) > 7.0) return;
+        if (controller.BLUE.contains(event.getPlayer()) && itemDrop.getLocation().distance(controller.blueSniffer.getLocation()) > 7.0) return;
+
+        if (snifferRequestedItems.containsKey(material)) {
+            int happinessIncrease = snifferRequestedItems.get(material) * itemDrop.getItemStack().getAmount();
+            if (controller.RED.contains(event.getPlayer())) {
+                controller.redSnifferHappiness = Math.clamp(controller.redSnifferHappiness + happinessIncrease, 0, 1000);
+                event.getPlayer().sendMessage(ChatColor.RED + "[Red Sniffer] " + ChatColor.RESET + (happinessIncrease >= 50 ? "This makes me VERY happy!" : "This makes me happy!"));
+            }
+            if (controller.BLUE.contains(event.getPlayer())) {
+                controller.blueSnifferHappiness = Math.clamp(controller.blueSnifferHappiness + happinessIncrease, 0, 1000);
+                event.getPlayer().sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RESET + (happinessIncrease >= 50 ? "This makes me VERY happy!" : "This makes me happy!"));
+            }
+            itemDrop.remove();
         } else {
-            event.getPlayer().sendMessage(ChatColor.RED + "Sniffer says i do NOT want that");
-            event.getItemDrop().remove();
+            if (controller.RED.contains(event.getPlayer())) event.getPlayer().sendMessage(ChatColor.RED + "[Red Sniffer] I don't want that!");
+            if (controller.BLUE.contains(event.getPlayer())) event.getPlayer().sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RED + "I don't want that!");
         }
     }
 }
