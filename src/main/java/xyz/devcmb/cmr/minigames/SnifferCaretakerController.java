@@ -32,6 +32,9 @@ public class SnifferCaretakerController implements Minigame {
     public Entity redSniffer;
     public Entity blueSniffer;
 
+    public int redSnifferHappiness = 0;
+    public int blueSnifferHappiness = 0;
+
     public SnifferCaretakerController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         assert manager != null;
@@ -209,6 +212,9 @@ public class SnifferCaretakerController implements Minigame {
 
         redSniffer = null;
         blueSniffer = null;
+
+        redSnifferHappiness = 0;
+        blueSnifferHappiness = 0;
 
         Utilities.endGameResuable();
     }
