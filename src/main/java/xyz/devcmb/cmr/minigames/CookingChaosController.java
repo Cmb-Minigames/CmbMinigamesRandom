@@ -14,6 +14,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
 
@@ -204,7 +205,7 @@ public class CookingChaosController implements Minigame {
                             chestData.getInventory().setItem(15, new ItemStack(Material.MELON_SEEDS, 32));
                         }
                     });
-                    Bukkit.broadcastMessage(ChatColor.GREEN + "Bone meal chests have been refilled!");
+                    Bukkit.broadcastMessage(ChatColor.GREEN + "Crop chests have been refilled!");
                 }
             };
 
@@ -226,13 +227,53 @@ public class CookingChaosController implements Minigame {
         Utilities.endGameResuable();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void playerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        String worldName = (String) mapData.get("worldName");
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
 
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
+            player.sendMessage(ChatColor.RED + "A game of cooking chaos is currently active, and you have been added as a spectator.");
+            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
+        }, 10L);
     }
 
     @Override
     public Number playerLeave(Player player) {
+        RED.remove(player);
+        BLUE.remove(player);
+
+        if(CmbMinigamesRandom.DeveloperMode){
+            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
+        } else {
+            if(RED.isEmpty()){
+                GameManager.gameEnding = true;
+                BLUE.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                });
+                return 7;
+            } else if(BLUE.isEmpty()){
+                GameManager.gameEnding = true;
+                RED.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                });
+
+                return 7;
+            }
+        }
+
         return null;
     }
 

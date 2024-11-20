@@ -119,7 +119,7 @@ maps:
           z: 0
   Cooking Chaos:
     - map:
-        worldName: "",
+        worldName: ""
         voidHeight: 0
         redSpawn:
             x: 0
