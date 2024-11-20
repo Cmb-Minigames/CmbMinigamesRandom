@@ -127,9 +127,14 @@ public class KaboomersController implements Minigame {
 
                 Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                     MusicBox.playTrack("kaboomers");
-                    Bukkit.getOnlinePlayers().forEach(player -> {
+                    RED.forEach(player -> {
                         Map<?, List<?>> kit = Kits.kaboomers_kit;
-                        Kits.kitPlayer(kit, player, RED.contains(player) ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
+                        Kits.kitPlayer(kit, player, Material.RED_CONCRETE);
+                    });
+
+                    BLUE.forEach(player -> {
+                        Map<?, List<?>> kit = Kits.kaboomers_kit;
+                        Kits.kitPlayer(kit, player, Material.BLUE_CONCRETE);
                     });
 
                     GameManager.playersFrozen = false;

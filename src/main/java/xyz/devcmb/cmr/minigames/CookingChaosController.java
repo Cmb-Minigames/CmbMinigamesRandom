@@ -14,6 +14,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.ArrayList;
@@ -167,6 +168,17 @@ public class CookingChaosController implements Minigame {
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
             Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.AIR);
+
+            RED.forEach(player -> {
+                Map<?, List<?>> kit = Kits.cookingchaos_kit;
+                Kits.kitPlayer(kit, player, Material.RED_CONCRETE);
+            });
+
+            BLUE.forEach(player -> {
+                Map<?, List<?>> kit = Kits.cookingchaos_kit;
+                Kits.kitPlayer(kit, player, Material.BLUE_CONCRETE);
+            });
+
             boneMealChestRefill = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -230,7 +242,8 @@ public class CookingChaosController implements Minigame {
             MinigameFlag.DISABLE_FALL_DAMAGE,
             MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
             MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
-            MinigameFlag.CANNOT_TRAMPLE_FARMLAND
+            MinigameFlag.CANNOT_TRAMPLE_FARMLAND,
+            MinigameFlag.CANNOT_PLACE_BLOCKS
         );
     }
 
