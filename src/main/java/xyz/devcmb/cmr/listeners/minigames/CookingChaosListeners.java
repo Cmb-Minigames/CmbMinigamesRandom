@@ -2,40 +2,46 @@ package xyz.devcmb.cmr.listeners.minigames;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.CookingChaosController;
+import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class CookingChaosListeners implements Listener {
     private final List<Material> whitelist = List.of(
         Material.WHEAT,
         Material.PUMPKIN,
-        Material.PUMPKIN_STEM,
         Material.MELON,
         Material.MELON_SLICE,
         Material.WHEAT_SEEDS,
         Material.MELON_SEEDS,
         Material.PUMPKIN_SEEDS,
-        Material.OAK_SAPLING,
-        Material.SWEET_BERRIES
+        Material.SWEET_BERRIES,
+        Material.SUGAR_CANE,
+        Material.CARROT
     );
 
     private final List<Material> breakWhitelist = List.of(
-        Material.OAK_LOG,
-        Material.OAK_LEAVES
+        Material.ATTACHED_PUMPKIN_STEM,
+        Material.ATTACHED_MELON_STEM
     );
 
     private final List<Material> ore_list = List.of(
@@ -91,6 +97,108 @@ public class CookingChaosListeners implements Listener {
             if (new Random().nextInt(4) == 0) {
                 event.getDrops().add(new ItemStack(Material.EGG));
                 killer.sendMessage(ChatColor.GOLD + "The chicken seems to have dropped something...");
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        Entity entity = event.getRightClicked();
+        Player player = event.getPlayer();
+
+        CookingChaosController controller = (CookingChaosController) GameManager.getMinigameByName("Cooking Chaos");
+        if (controller == null || GameManager.currentMinigame != controller) return;
+
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        Map<String, Object> redEntrance = (Map<String, Object>) mapData.get("redEntrance");
+        Map<String, Object> blueEntrance = (Map<String, Object>) mapData.get("blueEntrance");
+
+        Location redEntranceLocation = new Location(
+            Bukkit.getWorld((String) mapData.get("worldName")),
+            ((Integer) redEntrance.get("x")).doubleValue(),
+            ((Integer) redEntrance.get("y")).doubleValue(),
+            ((Integer) redEntrance.get("z")).doubleValue()
+        );
+
+        Location blueEntranceLocation = new Location(
+            Bukkit.getWorld((String) mapData.get("worldName")),
+            ((Integer) blueEntrance.get("x")).doubleValue(),
+            ((Integer) blueEntrance.get("y")).doubleValue(),
+            ((Integer) blueEntrance.get("z")).doubleValue()
+        );
+
+        if(controller.RED.contains(player)){
+            for (Map<String, ?> customer : controller.redCustomers) {
+                if (customer.get("entity").equals(entity)) {
+                    Material order = (Material) customer.get("order");
+                    if(player.getInventory().contains(order)){
+                        player.getInventory().removeItem(new ItemStack(order, 1));
+                        player.sendMessage(ChatColor.GREEN + "You have successfully served the customer!");
+                        Integer tableIndex = (Integer) customer.get("tableIndex");
+                        List<Entity> customers = (List<Entity>) controller.redTables.get(tableIndex).get("customers");
+
+                        ((Entity) customer.get("orderTextEntity")).remove();
+
+                        Utilities.moveEntity(entity, redEntranceLocation, 5 * 20);
+                        customers.remove(entity);
+                        if(customers.isEmpty()){
+                            controller.redTables.get(tableIndex).put("taken", false);
+                        }
+
+                        controller.redCustomers.remove(customer);
+                        controller.redScore += 1;
+
+                        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), entity::remove, 5 * 20);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You do not have the required item to serve the customer!");
+                    }
+
+                    break;
+                }
+            }
+        } else if(controller.BLUE.contains(player)) {
+            for (Map<String, ?> customer : controller.blueCustomers) {
+                if (customer.get("entity").equals(entity)) {
+                    Material order = (Material) customer.get("order");
+                    if(player.getInventory().contains(order)){
+                        player.getInventory().removeItem(new ItemStack(order, 1));
+                        player.sendMessage(ChatColor.GREEN + "You have successfully served the customer!");
+                        Integer tableIndex = (Integer) customer.get("tableIndex");
+                        List<Entity> customers = (List<Entity>) controller.blueTables.get(tableIndex).get("customers");
+
+                        ((Entity) customer.get("orderTextEntity")).remove();
+
+                        Utilities.moveEntity(entity, blueEntranceLocation, 5 * 20);
+                        customers.remove(entity);
+
+                        if(customers.isEmpty()){
+                            controller.blueTables.get(tableIndex).put("taken", false);
+                        }
+
+                        controller.blueCustomers.remove(customer);
+                        controller.blueScore += 1;
+
+                        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), entity::remove, 5 * 20);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You do not have the required item to serve the customer!");
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerAttack(EntityDamageByEntityEvent event){
+        CookingChaosController controller = (CookingChaosController) GameManager.getMinigameByName("Cooking Chaos");
+        if (controller == null || GameManager.currentMinigame != controller) return;
+        if (event.getEntity() instanceof Player player && event.getDamager() instanceof Player damager) {
+            if(controller.RED.contains(player) && controller.RED.contains(damager)){
+                event.setCancelled(true);
+            } else if(controller.BLUE.contains(player) && controller.BLUE.contains(damager)){
+                event.setCancelled(true);
             }
         }
     }

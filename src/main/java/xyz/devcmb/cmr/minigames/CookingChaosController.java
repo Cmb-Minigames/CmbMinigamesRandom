@@ -16,6 +16,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -31,6 +32,7 @@ public class CookingChaosController implements Minigame {
     private final Team blueTeam;
     private BukkitRunnable boneMealChestRefill;
     private BukkitRunnable customerRunnable;
+    private BukkitRunnable timerRunnable;
 
     private final List<EntityType> customerEntities = List.of(
         EntityType.ZOMBIE,
@@ -52,8 +54,7 @@ public class CookingChaosController implements Minigame {
         Material.COOKED_MUTTON,
         Material.COOKED_CHICKEN,
         Material.PUMPKIN_PIE,
-        Material.COOKED_PORKCHOP,
-        Material.RABBIT_STEW
+        Material.COOKED_PORKCHOP
     );
 
     private final Map<Material, String> fontItems = Map.ofEntries(
@@ -63,8 +64,7 @@ public class CookingChaosController implements Minigame {
         Map.entry(Material.GLISTERING_MELON_SLICE, "\uE012"),
         Map.entry(Material.COOKED_MUTTON, "\uE013"),
         Map.entry(Material.COOKED_CHICKEN, "\uE014"),
-        Map.entry(Material.COOKED_PORKCHOP, "\uE015"),
-        Map.entry(Material.RABBIT_STEW, "\uE016")
+        Map.entry(Material.COOKED_PORKCHOP, "\uE015")
     );
 
     public List<Map<String, ?>> blueCustomers = new ArrayList<>();
@@ -73,8 +73,10 @@ public class CookingChaosController implements Minigame {
     public Integer redScore = 0;
     public Integer blueScore = 0;
 
-    private final List<Map<String, Object>> blueTables = new ArrayList<>();
-    private final List<Map<String, Object>> redTables = new ArrayList<>();
+    public final List<Map<String, Object>> blueTables = new ArrayList<>();
+    public final List<Map<String, Object>> redTables = new ArrayList<>();
+
+    public Integer timeLeft = 0;
 
     public CookingChaosController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -242,6 +244,7 @@ public class CookingChaosController implements Minigame {
         redTeamTables.forEach(table -> {
             Map<String, Object> newTable = new HashMap<>();
             newTable.put("seatLocations", new ArrayList<>());
+            newTable.put("customers", new ArrayList<>());
 
             List<Map<String, Number>> seats = table.get("seats");
             seats.forEach(seat -> {
@@ -264,6 +267,7 @@ public class CookingChaosController implements Minigame {
         blueTeamTables.forEach(table -> {
             Map<String, Object> newTable = new HashMap<>();
             newTable.put("seatLocations", new ArrayList<>());
+            newTable.put("customers", new ArrayList<>());
 
             List<Map<String, Number>> seats = table.get("seats");
             seats.forEach(seat -> {
@@ -288,14 +292,18 @@ public class CookingChaosController implements Minigame {
             Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
             Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.AIR);
 
+            timeLeft = 10 * 60;
+
             RED.forEach(player -> {
                 Map<?, List<?>> kit = Kits.cookingchaos_kit;
                 Kits.kitPlayer(kit, player, Material.RED_CONCRETE);
+                player.setSaturation(0.0f);
             });
 
             BLUE.forEach(player -> {
                 Map<?, List<?>> kit = Kits.cookingchaos_kit;
                 Kits.kitPlayer(kit, player, Material.BLUE_CONCRETE);
+                player.setSaturation(0.0f);
             });
 
             boneMealChestRefill = new BukkitRunnable() {
@@ -335,21 +343,27 @@ public class CookingChaosController implements Minigame {
                 public void run() {
                     if(!redTables.stream().allMatch(table -> (Boolean) table.get("taken"))){
                         Map<String, Object> selectedTable;
+                        int selectedTableIndex;
 
                         do {
-                            selectedTable = redTables.get(new Random().nextInt(redTables.size()));
+                            selectedTableIndex = new Random().nextInt(redTables.size());
+                            selectedTable = redTables.get(selectedTableIndex);
                         } while ((Boolean) selectedTable.get("taken"));
 
                         AtomicInteger i = new AtomicInteger(); // what is this
 
+                        int finalSelectedTableIndex = selectedTableIndex;
                         ((List<Location>)selectedTable.get("seatLocations")).forEach(loc -> {
                             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                                 Map<String, Object> newCustomer = new HashMap<>();
                                 Entity spawnedEntity = world.spawnEntity(redEntranceLocation, Utilities.getRandom(customerEntities));
                                 spawnedEntity.setInvulnerable(true);
                                 ((LivingEntity) spawnedEntity).setAI(false);
+                                ((LivingEntity) spawnedEntity).setRemoveWhenFarAway(false);
                                 newCustomer.put("entity", spawnedEntity);
                                 newCustomer.put("order", Utilities.getRandom(customerOrders));
+                                newCustomer.put("tableIndex", finalSelectedTableIndex);
+                                ((List<Entity>)redTables.get(finalSelectedTableIndex).get("customers")).add(spawnedEntity);
 
                                 Location textLocation = loc.clone().add(0, 2, 0);
 
@@ -371,21 +385,28 @@ public class CookingChaosController implements Minigame {
 
                     if(!blueTables.stream().allMatch(table -> (Boolean) table.get("taken"))){
                         Map<String, Object> selectedTable;
+                        int selectedTableIndex;
 
                         do {
-                            selectedTable = blueTables.get(new Random().nextInt(blueTables.size()));
+                            selectedTableIndex = new Random().nextInt(blueTables.size());
+                            selectedTable = blueTables.get(selectedTableIndex);
                         } while ((Boolean) selectedTable.get("taken"));
 
                         AtomicInteger i = new AtomicInteger(); // what is this
 
+                        int finalSelectedTableIndex = selectedTableIndex;
                         ((List<Location>)selectedTable.get("seatLocations")).forEach(loc -> {
                             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                                 Map<String, Object> newCustomer = new HashMap<>();
                                 Entity spawnedEntity = world.spawnEntity(blueEntranceLocation, Utilities.getRandom(customerEntities));
                                 spawnedEntity.setInvulnerable(true);
                                 ((LivingEntity) spawnedEntity).setAI(false);
+                                ((LivingEntity) spawnedEntity).setRemoveWhenFarAway(false);
                                 newCustomer.put("entity", spawnedEntity);
                                 newCustomer.put("order", Utilities.getRandom(customerOrders));
+                                newCustomer.put("tableIndex", finalSelectedTableIndex);
+
+                                ((List<Entity>)blueTables.get(finalSelectedTableIndex).get("customers")).add(spawnedEntity);
 
                                 Location textLocation = loc.clone().add(0, 2, 0);
 
@@ -409,7 +430,80 @@ public class CookingChaosController implements Minigame {
                 }
             };
             customerRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 40);
+
+            timerRunnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if(timeLeft <= 0){
+                        this.cancel();
+                        endGame();
+                        return;
+                    }
+
+                    timeLeft--;
+                }
+            };
+            timerRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
         }, 10 * 20);
+    }
+
+    public void endGame(){
+        GameManager.gameEnding = true;
+
+        if(boneMealChestRefill != null) boneMealChestRefill.cancel();
+        boneMealChestRefill = null;
+        if(customerRunnable != null) customerRunnable.cancel();
+        customerRunnable = null;
+        if(timerRunnable != null) timerRunnable.cancel();
+        timerRunnable = null;
+
+        RED.forEach(player -> {
+            player.getInventory().clear();
+            player.setGameMode(GameMode.SPECTATOR);
+
+            if(redScore > blueScore){
+                player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                player.getInventory().clear();
+                player.setGameMode(GameMode.SPECTATOR);
+                Database.addUserStars(player, getStarSources().get(StarSource.WIN).intValue());
+            } else if(blueScore > redScore){
+                player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                player.getInventory().clear();
+                player.setGameMode(GameMode.SPECTATOR);
+            } else {
+                player.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                player.getInventory().clear();
+                player.setGameMode(GameMode.SPECTATOR);
+            }
+        });
+
+        BLUE.forEach(player -> {
+            player.getInventory().clear();
+            player.setGameMode(GameMode.SPECTATOR);
+
+            if(blueScore > redScore){
+                player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                player.getInventory().clear();
+                player.setGameMode(GameMode.SPECTATOR);
+                Database.addUserStars(player, getStarSources().get(StarSource.WIN).intValue());
+            } else if(redScore > blueScore){
+                player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                player.getInventory().clear();
+                player.setGameMode(GameMode.SPECTATOR);
+            } else {
+                player.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                player.getInventory().clear();
+                player.setGameMode(GameMode.SPECTATOR);
+            }
+        });
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), this::stop, 8 * 20);
     }
 
     @Override
@@ -418,10 +512,12 @@ public class CookingChaosController implements Minigame {
         BLUE.clear();
         redTeam.getEntries().forEach(redTeam::removeEntry);
         blueTeam.getEntries().forEach(blueTeam::removeEntry);
-        boneMealChestRefill.cancel();
+        if(boneMealChestRefill != null) boneMealChestRefill.cancel();
         boneMealChestRefill = null;
-        customerRunnable.cancel();
+        if(customerRunnable != null) customerRunnable.cancel();
         customerRunnable = null;
+        if(timerRunnable != null) timerRunnable.cancel();
+        timerRunnable = null;
         redScore = 0;
         blueScore = 0;
 
@@ -430,6 +526,10 @@ public class CookingChaosController implements Minigame {
 
         redCustomers.clear();
         blueCustomers.clear();
+
+        RED.forEach(player -> player.removePotionEffect(PotionEffectType.SPEED));
+
+        BLUE.forEach(player -> player.removePotionEffect(PotionEffectType.SPEED));
 
         Utilities.endGameResuable();
     }
@@ -451,6 +551,7 @@ public class CookingChaosController implements Minigame {
 
     @Override
     public Number playerLeave(Player player) {
+        player.removePotionEffect(PotionEffectType.SPEED);
         RED.remove(player);
         BLUE.remove(player);
 
@@ -522,12 +623,21 @@ public class CookingChaosController implements Minigame {
 
     @Override
     public void updateScoreboard(Player player) {
-
+        CMScoreboardManager.sendScoreboardAlongDefaults(
+                player,
+                CMScoreboardManager.mergeScoreboards(
+                        CMScoreboardManager.scoreboards.get("cookingchaos").getScoreboard(player),
+                        scoreboard
+                )
+        );
     }
 
     @Override
     public Map<StarSource, Number> getStarSources() {
-        return Map.of();
+        return Map.of(
+            StarSource.KILL, 2,
+            StarSource.WIN, 20
+        );
     }
 
     @Override
