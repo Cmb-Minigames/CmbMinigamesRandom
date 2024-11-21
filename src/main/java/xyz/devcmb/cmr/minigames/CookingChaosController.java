@@ -3,11 +3,13 @@ package xyz.devcmb.cmr.minigames;
 import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -18,10 +20,8 @@ import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CookingChaosController implements Minigame {
     public List<Player> RED = new ArrayList<>();
@@ -30,9 +30,51 @@ public class CookingChaosController implements Minigame {
     private final Team redTeam;
     private final Team blueTeam;
     private BukkitRunnable boneMealChestRefill;
+    private BukkitRunnable customerRunnable;
+
+    private final List<EntityType> customerEntities = List.of(
+        EntityType.ZOMBIE,
+        EntityType.SKELETON,
+        EntityType.BLAZE,
+        EntityType.CREEPER,
+        EntityType.PIGLIN,
+        EntityType.PIGLIN_BRUTE,
+        EntityType.PILLAGER,
+        EntityType.BREEZE,
+        EntityType.BOGGED
+    );
+
+    private final List<Material> customerOrders = List.of(
+        Material.PUMPKIN_PIE,
+        Material.BREAD,
+        Material.GOLDEN_APPLE,
+        Material.GLISTERING_MELON_SLICE,
+        Material.COOKED_MUTTON,
+        Material.COOKED_CHICKEN,
+        Material.PUMPKIN_PIE,
+        Material.COOKED_PORKCHOP,
+        Material.RABBIT_STEW
+    );
+
+    private final Map<Material, String> fontItems = Map.ofEntries(
+        Map.entry(Material.PUMPKIN_PIE, "\uE00F"),
+        Map.entry(Material.BREAD, "\uE010"),
+        Map.entry(Material.GOLDEN_APPLE, "\uE011"),
+        Map.entry(Material.GLISTERING_MELON_SLICE, "\uE012"),
+        Map.entry(Material.COOKED_MUTTON, "\uE013"),
+        Map.entry(Material.COOKED_CHICKEN, "\uE014"),
+        Map.entry(Material.COOKED_PORKCHOP, "\uE015"),
+        Map.entry(Material.RABBIT_STEW, "\uE016")
+    );
+
+    public List<Map<String, ?>> blueCustomers = new ArrayList<>();
+    public List<Map<String, ?>> redCustomers = new ArrayList<>();
 
     public Integer redScore = 0;
     public Integer blueScore = 0;
+
+    private final List<Map<String, Object>> blueTables = new ArrayList<>();
+    private final List<Map<String, Object>> redTables = new ArrayList<>();
 
     public CookingChaosController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -156,15 +198,91 @@ public class CookingChaosController implements Minigame {
             player.teleport(redSpawnLocation);
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
         });
 
         BLUE.forEach(player -> {
             player.teleport(blueSpawnLocation);
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
         });
 
         List<Map<String, Map<String, Number>>> bonemealChests = (List<Map<String, Map<String, Number>>>) mapData.get("boneMealChests");
+        Map<String, Object> redEntrance = (Map<String, Object>) mapData.get("redEntrance");
+        Map<String, Object> blueEntrance = (Map<String, Object>) mapData.get("blueEntrance");
+
+        if (bonemealChests == null || redEntrance == null || blueEntrance == null) {
+            CmbMinigamesRandom.LOGGER.warning("Chests or entrances are not defined.");
+            return;
+        }
+
+        Location redEntranceLocation = new Location(
+            world,
+            ((Number) redEntrance.get("x")).doubleValue(),
+            ((Number) redEntrance.get("y")).doubleValue(),
+            ((Number) redEntrance.get("z")).doubleValue()
+        );
+
+        Location blueEntranceLocation = new Location(
+            world,
+            ((Number) blueEntrance.get("x")).doubleValue(),
+            ((Number) blueEntrance.get("y")).doubleValue(),
+            ((Number) blueEntrance.get("z")).doubleValue()
+        );
+
+        List<Map<String, List<Map<String, Number>>>> redTeamTables = (List<Map<String, List<Map<String, Number>>>>) mapData.get("redTables");
+        List<Map<String, List<Map<String, Number>>>> blueTeamTables = (List<Map<String, List<Map<String, Number>>>>) mapData.get("blueTables");
+
+        if(redTeamTables == null || blueTeamTables == null){
+            CmbMinigamesRandom.LOGGER.warning("Tables are not defined.");
+            return;
+        }
+
+        redTeamTables.forEach(table -> {
+            Map<String, Object> newTable = new HashMap<>();
+            newTable.put("seatLocations", new ArrayList<>());
+
+            List<Map<String, Number>> seats = table.get("seats");
+            seats.forEach(seat -> {
+                Map<String, Number> location = (Map<String, Number>) seat.get("location");
+                double x = location.get("x").doubleValue();
+                double y = location.get("y").doubleValue();
+                double z = location.get("z").doubleValue();
+                float yaw = location.get("yaw").floatValue();
+                float pitch = location.get("pitch").floatValue();
+
+                Location seatLocation = new Location(world, x, y, z, yaw, pitch);
+                ((List<Location>)newTable.get("seatLocations")).add(seatLocation);
+            });
+
+            newTable.put("taken", false);
+            redTables.add(newTable);
+            CmbMinigamesRandom.LOGGER.info("A new red table has been registered");
+        });
+
+        blueTeamTables.forEach(table -> {
+            Map<String, Object> newTable = new HashMap<>();
+            newTable.put("seatLocations", new ArrayList<>());
+
+            List<Map<String, Number>> seats = table.get("seats");
+            seats.forEach(seat -> {
+                Map<String, Number> location = (Map<String, Number>) seat.get("location");
+                double x = location.get("x").doubleValue();
+                double y = location.get("y").doubleValue();
+                double z = location.get("z").doubleValue();
+                float yaw = location.get("yaw").floatValue();
+                float pitch = location.get("pitch").floatValue();
+
+                Location seatLocation = new Location(world, x, y, z, yaw, pitch);
+                ((List<Location>)newTable.get("seatLocations")).add(seatLocation);
+            });
+
+            newTable.put("taken", false);
+            blueTables.add(newTable);
+
+            CmbMinigamesRandom.LOGGER.info("A new blue table has been registered");
+        });
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
@@ -197,19 +315,100 @@ public class CookingChaosController implements Minigame {
                             CmbMinigamesRandom.LOGGER.warning("Chest at " + chestLocation + " is not a chest.");
                         } else {
                             chestData.getInventory().clear();
-                            for (int i = 1; i < 3; i++){
-                                chestData.getInventory().setItem(11 + i, new ItemStack(Material.BONE_MEAL, 64));
-                            }
-
-                            chestData.getInventory().setItem(10, new ItemStack(Material.WHEAT_SEEDS, 32));
-                            chestData.getInventory().setItem(15, new ItemStack(Material.MELON_SEEDS, 32));
+                            chestData.getInventory().setItem(10, new ItemStack(Material.APPLE, 3));
+                            chestData.getInventory().setItem(11, new ItemStack(Material.WHEAT_SEEDS, 12));
+                            chestData.getInventory().setItem(12, new ItemStack(Material.MELON_SEEDS, 2));
+                            chestData.getInventory().setItem(13, new ItemStack(Material.PUMPKIN_SEEDS, 2));
+                            chestData.getInventory().setItem(14, new ItemStack(Material.CARROT, 1));
+                            chestData.getInventory().setItem(15, new ItemStack(Material.BONE_MEAL, 16));
+                            chestData.getInventory().setItem(16, new ItemStack(Material.SUGAR_CANE, 3));
                         }
                     });
                     Bukkit.broadcastMessage(ChatColor.GREEN + "Crop chests have been refilled!");
                 }
             };
 
-            boneMealChestRefill.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 60);
+            boneMealChestRefill.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 60 * 2);
+
+            customerRunnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if(!redTables.stream().allMatch(table -> (Boolean) table.get("taken"))){
+                        Map<String, Object> selectedTable;
+
+                        do {
+                            selectedTable = redTables.get(new Random().nextInt(redTables.size()));
+                        } while ((Boolean) selectedTable.get("taken"));
+
+                        AtomicInteger i = new AtomicInteger(); // what is this
+
+                        ((List<Location>)selectedTable.get("seatLocations")).forEach(loc -> {
+                            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                                Map<String, Object> newCustomer = new HashMap<>();
+                                Entity spawnedEntity = world.spawnEntity(redEntranceLocation, Utilities.getRandom(customerEntities));
+                                spawnedEntity.setInvulnerable(true);
+                                ((LivingEntity) spawnedEntity).setAI(false);
+                                newCustomer.put("entity", spawnedEntity);
+                                newCustomer.put("order", Utilities.getRandom(customerOrders));
+
+                                Location textLocation = loc.clone().add(0, 2, 0);
+
+                                TextDisplay text = (TextDisplay) world.spawnEntity(textLocation, EntityType.TEXT_DISPLAY);
+                                text.setText(fontItems.get(newCustomer.get("order")));
+                                text.setBillboard(Display.Billboard.CENTER);
+
+                                newCustomer.put("orderTextEntity", text);
+
+                                redCustomers.add(newCustomer);
+                                Utilities.moveEntity(spawnedEntity, loc, 5 * 20);
+                            }, 10L * i.get());
+                            i.getAndIncrement();
+                        });
+
+                        selectedTable.put("taken", true);
+                        RED.forEach(player -> player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "A customer has arrived at your resturant!"));
+                    }
+
+                    if(!blueTables.stream().allMatch(table -> (Boolean) table.get("taken"))){
+                        Map<String, Object> selectedTable;
+
+                        do {
+                            selectedTable = blueTables.get(new Random().nextInt(blueTables.size()));
+                        } while ((Boolean) selectedTable.get("taken"));
+
+                        AtomicInteger i = new AtomicInteger(); // what is this
+
+                        ((List<Location>)selectedTable.get("seatLocations")).forEach(loc -> {
+                            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                                Map<String, Object> newCustomer = new HashMap<>();
+                                Entity spawnedEntity = world.spawnEntity(blueEntranceLocation, Utilities.getRandom(customerEntities));
+                                spawnedEntity.setInvulnerable(true);
+                                ((LivingEntity) spawnedEntity).setAI(false);
+                                newCustomer.put("entity", spawnedEntity);
+                                newCustomer.put("order", Utilities.getRandom(customerOrders));
+
+                                Location textLocation = loc.clone().add(0, 2, 0);
+
+                                TextDisplay text = (TextDisplay) world.spawnEntity(textLocation, EntityType.TEXT_DISPLAY);
+                                text.setText(fontItems.get(newCustomer.get("order")));
+                                text.setBillboard(Display.Billboard.CENTER);
+
+                                newCustomer.put("orderTextEntity", text);
+
+                                blueCustomers.add(newCustomer);
+                                Utilities.moveEntity(spawnedEntity, loc, 5 * 20);
+                            }, 10L * i.get());
+                            i.getAndIncrement();
+                        });
+
+                        selectedTable.put("taken", true);
+                        BLUE.forEach(player -> player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "A customer has arrived at your resturant!"));
+                    }
+
+                    CmbMinigamesRandom.LOGGER.info("Sent new customers to tables");
+                }
+            };
+            customerRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 40);
         }, 10 * 20);
     }
 
@@ -221,8 +420,16 @@ public class CookingChaosController implements Minigame {
         blueTeam.getEntries().forEach(blueTeam::removeEntry);
         boneMealChestRefill.cancel();
         boneMealChestRefill = null;
+        customerRunnable.cancel();
+        customerRunnable = null;
         redScore = 0;
         blueScore = 0;
+
+        redTables.clear();
+        blueTables.clear();
+
+        redCustomers.clear();
+        blueCustomers.clear();
 
         Utilities.endGameResuable();
     }
@@ -283,14 +490,29 @@ public class CookingChaosController implements Minigame {
             MinigameFlag.DISABLE_FALL_DAMAGE,
             MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
             MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
-            MinigameFlag.CANNOT_TRAMPLE_FARMLAND,
-            MinigameFlag.CANNOT_PLACE_BLOCKS
+            MinigameFlag.CANNOT_TRAMPLE_FARMLAND
         );
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void playerRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        String worldName = (String) mapData.get("worldName");
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
+        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
+        World world = Bukkit.getWorld(worldName);
 
+        if(RED.contains(player)){
+            Kits.kitPlayer(Kits.cookingchaos_kit, player, Material.RED_CONCRETE);
+            event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+        } else if(BLUE.contains(player)){
+            Kits.kitPlayer(Kits.cookingchaos_kit, player, Material.BLUE_CONCRETE);
+            event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+        }
+
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
     }
 
     @Override
