@@ -29,6 +29,8 @@ public class CookingChaosListeners implements Listener {
     private final List<Material> whitelist = List.of(
         Material.WHEAT,
         Material.PUMPKIN,
+        Material.PUMPKIN_STEM,
+        Material.MELON_STEM,
         Material.MELON,
         Material.MELON_SLICE,
         Material.WHEAT_SEEDS,
@@ -84,7 +86,7 @@ public class CookingChaosListeners implements Listener {
         Block block = event.getBlock();
         Block blockBelow = block.getLocation().add(0, -1, 0).getBlock();
 
-        if ((!whitelist.contains(block.getType())) || (!block.getType().equals(Material.FARMLAND) || !blockBelow.getType().equals(Material.FARMLAND))) {
+        if (!whitelist.contains(block.getType()) || !(blockBelow.getType() == Material.FARMLAND || blockBelow.getType() == Material.SAND)) {
             event.setCancelled(true);
         }
     }

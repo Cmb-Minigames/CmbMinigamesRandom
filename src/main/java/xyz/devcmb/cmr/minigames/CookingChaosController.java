@@ -612,7 +612,7 @@ public class CookingChaosController implements Minigame {
             event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
         }
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false)), 20 * 2);
     }
 
     @Override
