@@ -589,7 +589,6 @@ public class CookingChaosController implements Minigame {
     public List<MinigameFlag> getFlags() {
         return List.of(
             MinigameFlag.DISABLE_FALL_DAMAGE,
-            MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
             MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
             MinigameFlag.CANNOT_TRAMPLE_FARMLAND
         );

@@ -34,8 +34,8 @@ public class CookingChaosListeners implements Listener {
         Material.WHEAT_SEEDS,
         Material.MELON_SEEDS,
         Material.PUMPKIN_SEEDS,
-        Material.SWEET_BERRIES,
         Material.SUGAR_CANE,
+        Material.CARROTS,
         Material.CARROT
     );
 
@@ -84,7 +84,7 @@ public class CookingChaosListeners implements Listener {
         Block block = event.getBlock();
         Block blockBelow = block.getLocation().add(0, -1, 0).getBlock();
 
-        if (!whitelist.contains(block.getType()) && blockBelow.getType() != Material.FARMLAND) {
+        if ((!whitelist.contains(block.getType())) || (!block.getType().equals(Material.FARMLAND) || !blockBelow.getType().equals(Material.FARMLAND))) {
             event.setCancelled(true);
         }
     }
