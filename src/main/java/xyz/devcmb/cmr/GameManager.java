@@ -185,14 +185,16 @@ public class GameManager {
                         @Override
                         public void run() {
                             currentMap = MapLoader.loadRandomMap(minigame);
-                            pregame = false;
-                            ingame = true;
-                            currentMinigame = minigame;
+                            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                                pregame = false;
+                                ingame = true;
+                                currentMinigame = minigame;
 
-                            minigamePlays.put(minigame, minigamePlays.get(minigame).intValue() + 1);
-                            minigame.start();
+                                minigamePlays.put(minigame, minigamePlays.get(minigame).intValue() + 1);
+                                minigame.start();
+                            }, 40);
                         }
-                    }.runTaskLater(CmbMinigamesRandom.getPlugin(), 75);
+                    }.runTaskLater(CmbMinigamesRandom.getPlugin(), 45);
                     this.cancel();
                 }
             }

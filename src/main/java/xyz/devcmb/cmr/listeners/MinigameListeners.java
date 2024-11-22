@@ -24,6 +24,7 @@ import xyz.devcmb.cmr.minigames.MinigameFlag;
 import xyz.devcmb.cmr.minigames.StarSource;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Format;
+import xyz.devcmb.cmr.utils.MapLoader;
 
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class MinigameListeners implements Listener {
                 event.setCancelled(true);
             }
         } else if(GameManager.currentMap != null){
-            String worldName = (String)((Map<?,?>)GameManager.currentMap.get("map")).get("worldName");
+            String worldName = MapLoader.LOADED_MAP;
             Number voidHeight = (Number)((Map<?,?>)GameManager.currentMap.get("map")).get("voidHeight");
             if(worldName.equals(event.getPlayer().getWorld().getName()) && event.getPlayer().getLocation().getY() < voidHeight.intValue()){
                 event.getPlayer().setHealth(0);
@@ -181,6 +182,10 @@ public class MinigameListeners implements Listener {
         Player killer = player.getKiller();
         if(minigame.getFlags().contains(MinigameFlag.DISABLE_PLAYER_DEATH_DROP)){
             event.getDrops().clear();
+        }
+
+        if(minigame.getFlags().contains(MinigameFlag.INSTANT_RESPAWN)){
+            player.spigot().respawn();
         }
 
         minigame.playerDeath(event);

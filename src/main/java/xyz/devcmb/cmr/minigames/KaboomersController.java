@@ -82,7 +82,7 @@ public class KaboomersController implements Minigame {
             return;
         }
 
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         World world = Bukkit.getWorld(worldName);
 
         if (world == null) {
@@ -223,7 +223,7 @@ public class KaboomersController implements Minigame {
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -275,7 +275,8 @@ public class KaboomersController implements Minigame {
             MinigameFlag.UNLIMITED_BLOCKS,
             MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
             MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
-            MinigameFlag.DO_NOT_CONSUME_FIREWORKS
+            MinigameFlag.DO_NOT_CONSUME_FIREWORKS,
+            MinigameFlag.INSTANT_RESPAWN
         );
     }
 
@@ -284,7 +285,7 @@ public class KaboomersController implements Minigame {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
         World world = Bukkit.getWorld(worldName);

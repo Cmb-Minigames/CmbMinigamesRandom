@@ -19,6 +19,7 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
+import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
@@ -123,7 +124,7 @@ public class CookingChaosController implements Minigame {
             return;
         }
 
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         World world = Bukkit.getWorld(worldName);
 
         if (world == null) {
@@ -539,7 +540,7 @@ public class CookingChaosController implements Minigame {
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -599,7 +600,7 @@ public class CookingChaosController implements Minigame {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
         World world = Bukkit.getWorld(worldName);

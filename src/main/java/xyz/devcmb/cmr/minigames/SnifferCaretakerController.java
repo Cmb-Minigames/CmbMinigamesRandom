@@ -15,6 +15,7 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
+import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class SnifferCaretakerController implements Minigame {
             return;
         }
 
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         World world = Bukkit.getWorld(worldName);
 
         if (world == null) {
@@ -217,7 +218,7 @@ public class SnifferCaretakerController implements Minigame {
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -275,7 +276,7 @@ public class SnifferCaretakerController implements Minigame {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
         World world = Bukkit.getWorld(worldName);
