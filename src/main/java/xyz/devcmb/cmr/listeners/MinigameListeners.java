@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -263,6 +264,15 @@ public class MinigameListeners implements Listener {
                     Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.getInventory().addItem(new ItemStack(Material.FIREWORK_ROCKET, 1)), 3 * 20); // delay 3 seconds before giving another one
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onEntityChangeBlock(EntityChangeBlockEvent event){
+        if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        Minigame minigame = GameManager.currentMinigame;
+        if(minigame.getFlags().contains(MinigameFlag.CANNOT_TRAMPLE_FARMLAND)){
+            event.setCancelled(true);
         }
     }
 }

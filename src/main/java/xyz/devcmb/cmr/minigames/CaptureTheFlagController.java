@@ -54,9 +54,6 @@ public class CaptureTheFlagController implements Minigame {
         redTeam.setColor(ChatColor.RED);
         blueTeam.setColor(ChatColor.BLUE);
 
-        redTeam.setPrefix(ChatColor.RED.toString());
-        blueTeam.setPrefix(ChatColor.BLUE.toString());
-
         ItemStack harmingArrow = new ItemStack(Material.TIPPED_ARROW);
         PotionMeta harmingArrowItemMeta = (PotionMeta) harmingArrow.getItemMeta();
         if (harmingArrowItemMeta == null) return;
@@ -192,10 +189,16 @@ public class CaptureTheFlagController implements Minigame {
                     @Override
                     public void run() {
                         GameManager.playersFrozen = false;
-                        Bukkit.getOnlinePlayers().forEach(player -> {
+                        RED.forEach(player -> {
                             Map<?, List<?>> kit = Kits.ctf_kit;
-                            Kits.kitPlayer(kit, player, RED.contains(player) ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
+                            Kits.kitPlayer(kit, player, Material.RED_CONCRETE);
                         });
+
+                        BLUE.forEach(player -> {
+                            Map<?, List<?>> kit = Kits.ctf_kit;
+                            Kits.kitPlayer(kit, player, Material.BLUE_CONCRETE);
+                        });
+
                         timePassedRunnable = new BukkitRunnable(){
                             @Override
                             public void run() {
