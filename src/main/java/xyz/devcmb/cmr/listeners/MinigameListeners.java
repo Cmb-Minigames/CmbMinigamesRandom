@@ -153,7 +153,7 @@ public class MinigameListeners implements Listener {
                 event.getFrom().getZ() != event.getTo().getZ()) {
                 event.setCancelled(true);
             }
-        } else if(GameManager.currentMap != null){
+        } else if(GameManager.currentMap != null && MapLoader.LOADED_MAP != null){
             String worldName = MapLoader.LOADED_MAP;
             Number voidHeight = (Number)((Map<?,?>)GameManager.currentMap.get("map")).get("voidHeight");
             if(worldName.equals(event.getPlayer().getWorld().getName()) && event.getPlayer().getLocation().getY() < voidHeight.intValue()){
@@ -184,9 +184,7 @@ public class MinigameListeners implements Listener {
             event.getDrops().clear();
         }
 
-        if(minigame.getFlags().contains(MinigameFlag.INSTANT_RESPAWN)){
-            player.spigot().respawn();
-        }
+        Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> player.spigot().respawn());
 
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){
