@@ -59,5 +59,6 @@ public final class CmbMinigamesRandom extends JavaPlugin {
             GameManager.currentMinigame.stop();
         }
         Database.disconnect();
+        MapLoader.cleanup();
     }
 }

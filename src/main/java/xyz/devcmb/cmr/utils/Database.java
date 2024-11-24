@@ -294,9 +294,11 @@ public class Database {
             if(userExists(player)){
                 return getUser(player);
             }
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Users (uuid, stars) VALUES (?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Users (uuid, stars, cosmetics, crates) VALUES (?, ?, ?, ?)");
             statement.setBytes(1, uuidToBytes(player.getUniqueId()));
             statement.setInt(2, 0);
+            statement.setString(3, "");
+            statement.setString(4, "");
             statement.executeUpdate();
             return getUser(player);
         } catch (SQLException e) {

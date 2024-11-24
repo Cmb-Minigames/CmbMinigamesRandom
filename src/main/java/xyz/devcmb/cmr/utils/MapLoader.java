@@ -88,4 +88,20 @@ public class MapLoader {
         loadMap((String)((Map<String, ?>) map.get("map")).get("worldName"));
         return map;
     }
+
+    public static void cleanup(){
+        File rootDirectory = Bukkit.getWorldContainer();
+        File[] files = rootDirectory.listFiles((dir, name) -> name.startsWith("minigame-") && new File(dir, name).isDirectory());
+
+        if (files != null) {
+            for (File file : files) {
+                try {
+                    FileUtils.deleteDirectory(file);
+                    CmbMinigamesRandom.LOGGER.info("Deleted minigame world: " + file.getName());
+                } catch (IOException e) {
+                    CmbMinigamesRandom.LOGGER.warning("Failed to delete world: " + file.getName() + " - " + e.getMessage());
+                }
+            }
+        }
+    }
 }

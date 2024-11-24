@@ -80,7 +80,7 @@ public class GameManager {
     public static void playerDisconnect(Player player){
         kills.remove(player);
         teamColors.remove(player);
-        if(ingame || pregame){
+        if((ingame || pregame) && !gameEnding){
             Number endTimer = currentMinigame.playerLeave(player);
             if(endTimer == null) return;
 
