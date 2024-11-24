@@ -6,7 +6,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 
 import java.nio.ByteBuffer;
 import java.sql.*;
-import java.util.UUID;
+import java.util.*;
 
 public class Database {
     private static Connection connection;
@@ -88,6 +88,191 @@ public class Database {
         } catch (SQLException e) {
             CmbMinigamesRandom.LOGGER.severe("Failed to update user stars by UUID: " + e.getMessage());
         }
+    }
+
+    public static List<String> getUserCosmetics(Player player){
+        try {
+            if (!userExists(player)) {
+                createUser(player);
+            }
+
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Users WHERE uuid = ?");
+            statement.setBytes(1, uuidToBytes(player.getUniqueId()));
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String cosmetics = resultSet.getString("cosmetics");
+                if (cosmetics == null || cosmetics.isEmpty()) {
+                    return List.of();
+                }
+                return Arrays.asList(cosmetics.split("\\|"));
+            }
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get user cosmetics by UUID: " + e.getMessage());
+        }
+
+        return List.of();
+    }
+
+    public static Map<String, Map<String, Object>> getAllCosmetics(){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Cosmetics");
+            ResultSet resultSet = statement.executeQuery();
+            Map<String, Map<String, Object>> resultMap = new HashMap<>();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                Map<String, Object> fieldMap = new HashMap<>();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    fieldMap.put(columnName, value);
+                }
+
+                resultMap.put(name, fieldMap);
+            }
+
+            return resultMap;
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get all cosmetics: " + e.getMessage());
+        }
+
+        return new HashMap<>();
+    }
+
+    public static Map<String, Object> getCosmetic(String name){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Cosmetics WHERE name = ?");
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            Map<String, Object> resultMap = new HashMap<>();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            if (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    resultMap.put(columnName, value);
+                }
+            }
+
+            return resultMap;
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get cosmetic: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static void giveCosmetic(Player player, String name){
+        try {
+            if (!userExists(player)) {
+                createUser(player);
+            }
+            PreparedStatement statement = connection.prepareStatement("UPDATE Users SET cosmetics = CONCAT(coalesce(cosmetics, ''), ?, '|') WHERE uuid = ?");
+            statement.setString(1, name);
+            statement.setBytes(2, uuidToBytes(player.getUniqueId()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            CmbMinigamesRandom.LOGGER.severe("Failed to give user cosmetic by UUID: " + e.getMessage());
+        }
+    }
+
+    public static Map<String, Map<String, Object>> getAllCrates(){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Crates");
+            ResultSet resultSet = statement.executeQuery();
+            Map<String, Map<String, Object>> resultMap = new HashMap<>();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                Map<String, Object> fieldMap = new HashMap<>();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    fieldMap.put(columnName, value);
+                }
+
+                resultMap.put(name, fieldMap);
+            }
+
+            return resultMap;
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get all crates: " + e.getMessage());
+        }
+
+        return new HashMap<>();
+    }
+
+    public static List<String> getUserCrates(Player player){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Users WHERE uuid = ?");
+            statement.setBytes(1, uuidToBytes(player.getUniqueId()));
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String crates = resultSet.getString("crates");
+                if (crates == null || crates.isEmpty()) {
+                    return List.of();
+                }
+                return Arrays.asList(crates.split("\\|"));
+            }
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get user crates by UUID: " + e.getMessage());
+        }
+        return List.of();
+    }
+
+    public static Map<String, Object> getCrate(String name){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Crates WHERE name = ?");
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            Map<String, Object> resultMap = new HashMap<>();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            if (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    resultMap.put(columnName, value);
+                }
+            }
+
+            return resultMap;
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get crate: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static Map<String, Number> getRaritySet(Integer id){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM RaritySets WHERE id = ?");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            Map<String, Number> resultMap = new HashMap<>();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            if (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+                    resultMap.put(columnName, (Number) value);
+                }
+            }
+
+            return resultMap;
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get rarity set: " + e.getMessage());
+        }
+        return null;
     }
 
     public static void addUserStars(Player player, int stars){

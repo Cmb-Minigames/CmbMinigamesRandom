@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 import xyz.devcmb.cmr.interfaces.Stars;
 import xyz.devcmb.cmr.interfaces.TabList;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
@@ -36,6 +37,7 @@ public class PlayerListeners implements Listener {
         player.getInventory().clear();
         player.teleport(spawnPoint);
         player.setRespawnLocation(spawnPoint);
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> CosmeticInventory.giveInventoryItem(player), 2);
 
         if(!Database.userExists(player)){
             Database.createUser(player);

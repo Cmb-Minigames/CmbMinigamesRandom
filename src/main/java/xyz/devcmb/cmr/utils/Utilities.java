@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 
 import java.util.*;
 
@@ -188,6 +189,7 @@ public class Utilities {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
             player.setGlowing(false);
             GameManager.teamColors.put(player, ChatColor.WHITE);
+            CosmeticInventory.giveInventoryItem(player);
         });
 
         GameManager.prepare();

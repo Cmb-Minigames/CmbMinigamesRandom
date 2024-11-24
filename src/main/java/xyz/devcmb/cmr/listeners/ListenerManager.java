@@ -15,6 +15,7 @@ public class ListenerManager {
         pluginManager.registerEvents(new PregameLobbyProtections(), plugin);
         pluginManager.registerEvents(new DeathEffects(), plugin);
         pluginManager.registerEvents(new GeneralListeners(), plugin);
+        pluginManager.registerEvents(new CosmeticInventoryListeners(), plugin);
 
         // Minigame Listeners
         pluginManager.registerEvents(new MinigameListeners(), plugin);

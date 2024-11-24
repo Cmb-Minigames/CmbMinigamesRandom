@@ -10,7 +10,8 @@ public class CustomModelDataConstants {
             "blue_flag", 1,
             "red_flag", 2,
             "rocket_launcher", 3,
-            "star_shower", 4
+            "star_shower", 4,
+            "cosmetic_inventory", 5
         )
     );
 }
