@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.Format;
 
@@ -109,6 +111,18 @@ public class GeneralListeners implements Listener {
                 event.getBlock().getWorld().spawn(event.getBlock().getLocation(), TNTPrimed.class);
                 event.getItemInHand().setAmount(event.getItemInHand().getAmount() - 1);
             }, 3); // This is required to prevent the unlimited blocks from giving you it back
+        }
+    }
+
+    @EventHandler
+    public void onPotionDrink(PlayerItemConsumeEvent event) {
+        if (event.getItem().getType() == Material.POTION) {
+            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                ItemStack itemInHand = event.getPlayer().getInventory().getItemInMainHand();
+                if (itemInHand.getType() == Material.GLASS_BOTTLE) {
+                    itemInHand.setAmount(itemInHand.getAmount() - 1);
+                }
+            }, 1L);
         }
     }
 }

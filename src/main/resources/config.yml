@@ -117,6 +117,33 @@ maps:
           x: 0
           y: 0
           z: 0
+        eventSpawnLocations:
+          from:
+            x: 0
+            y: 0
+            z: 0
+          to:
+            x: 0
+            y: 0
+            z: 0
+        redBasePreventPlace:
+          from:
+            x: 0
+            y: 0
+            z: 0
+          to:
+            x: 0
+            y: 0
+            z: 0
+        blueBasePreventPlace:
+          from:
+            x: 0
+            y: 0
+            z: 0
+          to:
+            x: 0
+            y: 0
+            z: 0
 
 
 database:
