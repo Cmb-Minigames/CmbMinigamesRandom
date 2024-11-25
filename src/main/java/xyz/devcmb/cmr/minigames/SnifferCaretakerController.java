@@ -25,7 +25,6 @@ import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
-import xyz.devcmb.cmr.utils.MapLoader;
 
 import java.util.*;
 
@@ -386,15 +385,25 @@ public class SnifferCaretakerController implements Minigame {
         redSniffer = null;
         blueSniffer = null;
 
-        happinessDepreciation.cancel();
-        happinessDepreciation = null;
-        difficultyIncrease.cancel();
-        difficultyIncrease = null;
-        itemSpawn.cancel();
-        itemSpawn = null;
-        sheepSpawn.cancel();
-        sheepSpawn = null;
+        if(happinessDepreciation != null) {
+            happinessDepreciation.cancel();
+            happinessDepreciation = null;
+        }
 
+        if(difficultyIncrease != null) {
+            difficultyIncrease.cancel();
+            difficultyIncrease = null;
+        }
+
+        if(itemSpawn != null) {
+            itemSpawn.cancel();
+            itemSpawn = null;
+        }
+
+        if(sheepSpawn != null){
+            sheepSpawn.cancel();
+            sheepSpawn = null;
+        }
         redSnifferHappiness = 0;
         blueSnifferHappiness = 0;
 
