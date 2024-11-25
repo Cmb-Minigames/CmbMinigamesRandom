@@ -251,6 +251,44 @@ public class Database {
         return null;
     }
 
+    public static void giveCrate(Player player, String name){
+        try {
+            if (!userExists(player)) {
+                createUser(player);
+            }
+            PreparedStatement statement = connection.prepareStatement("UPDATE Users SET crates = CONCAT(coalesce(crates, ''), ?, '|') WHERE uuid = ?");
+            statement.setString(1, name);
+            statement.setBytes(2, uuidToBytes(player.getUniqueId()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            CmbMinigamesRandom.LOGGER.severe("Failed to give user crate by UUID: " + e.getMessage());
+        }
+    }
+
+    public static void removeCrate(Player player, String name){
+        try {
+            if (!userExists(player)) {
+                createUser(player);
+            }
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE Users SET crates = " +
+                            "CASE " +
+                            "WHEN crates LIKE ? THEN CONCAT(SUBSTRING_INDEX(crates, ?, 1), SUBSTRING(crates FROM LENGTH(SUBSTRING_INDEX(crates, ?, 1)) + LENGTH(?) + 1)) " +
+                            "ELSE crates " +
+                            "END " +
+                            "WHERE uuid = ?"
+            );
+            statement.setString(1, "%" + name + "|%");
+            statement.setString(2, name + "|");
+            statement.setString(3, name + "|");
+            statement.setString(4, name + "|");
+            statement.setBytes(5, uuidToBytes(player.getUniqueId()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            CmbMinigamesRandom.LOGGER.severe("Failed to remove user crate by UUID: " + e.getMessage());
+        }
+    }
+
     public static Map<String, Number> getRaritySet(Integer id){
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM RaritySets WHERE id = ?");

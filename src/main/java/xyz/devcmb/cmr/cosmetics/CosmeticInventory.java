@@ -3,15 +3,20 @@ package xyz.devcmb.cmr.cosmetics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Database;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CosmeticInventory {
     public static void giveInventoryItem(Player player){
@@ -94,12 +99,65 @@ public class CosmeticInventory {
             List<String> userCrates = Database.getUserCrates(player);
             int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
             for (int i = 0; i < userCrates.size() && i < slots.length; i++) {
-                ItemStack cosmeticItem = CrateManager.crates.get(userCrates.get(i));
-                if (cosmeticItem != null) {
-                    inventory.setItem(slots[i], cosmeticItem);
+                ItemStack crateItem = CrateManager.crates.get(userCrates.get(i));
+                if (crateItem != null) {
+                    inventory.setItem(slots[i], crateItem);
                 }
             }
         }
         player.openInventory(inventory);
+    }
+
+    public static void rollCrateInventory(Player player, String crate){
+        Map<String, Object> crateData = CrateManager.crateData.get(crate);
+        if(crateData == null) return;
+
+        Inventory inventory = Bukkit.createInventory(player, 27, "Crate");
+        for (int i = 0; i < 9; i++) {
+            inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+        }
+
+        for (int i = 18; i < 27; i++) {
+            inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+        }
+
+        player.openInventory(inventory);
+
+        List<ItemStack> cosmetics = new ArrayList<>();
+        for (int i = 0; i < 29; i++) {
+            String cosmeticName = CrateManager.rollRandomCosmeticFromCrate(crate);
+            ItemStack cosmeticItem = CosmeticManager.cosmetics.get(cosmeticName);
+            if (cosmeticItem != null) {
+                cosmetics.add(cosmeticItem);
+            }
+        }
+        cosmetics.add(CosmeticManager.cosmetics.get(CrateManager.rollCrate(player, crate)));
+        for (int i = 0; i < 4; i++) {
+            String cosmeticName = CrateManager.rollRandomCosmeticFromCrate(crate);
+            ItemStack cosmeticItem = CosmeticManager.cosmetics.get(cosmeticName);
+            if (cosmeticItem != null) {
+                cosmetics.add(cosmeticItem);
+            }
+        }
+
+        new BukkitRunnable() {
+            int index = 0;
+
+            @Override
+            public void run() {
+                if (index == cosmetics.size()) {
+                    this.cancel();
+                    return;
+                }
+
+                for (int i = 9; i < 17; i++) {
+                    inventory.setItem(i, inventory.getItem(i + 1));
+                }
+
+                inventory.setItem(17, cosmetics.get(index));
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 10, 1);
+                index++;
+            }
+        }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 3);
     }
 }

@@ -70,25 +70,43 @@ public class CrateManager {
             return null;
         }
 
+        String selectedCosmetic = rollRandomCosmeticFromCrate(name);
+        Database.giveCosmetic(player, selectedCosmetic);
+        return selectedCosmetic;
+    }
+
+    public static Map<String, Object> getFromDisplayName(String display_name) {
+        for (Map.Entry<String, Map<String, Object>> entry : crateData.entrySet()) {
+            if (entry.getValue().get("display_name").equals(display_name)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+    public static String rollRandomCosmeticFromCrate(String crate){
+        Map<String, Object> crateData = CrateManager.crateData.get(crate);
+        if(crateData == null) return null;
+
+        Map<String, Number> raritySet = Database.getRaritySet((Integer) crateData.get("rarity_set"));
+        if(raritySet == null) return null;
+
         String selectedRarity = rollRandomRarity(raritySet);
 
-        List<String> cosmeticNames = List.of(crate.get("cosmetics").toString().split("\\|"));
+        List<String> cosmeticNames = List.of(crateData.get("cosmetics").toString().split("\\|"));
         List<String> selectedCosmetics = cosmeticNames.stream().filter(s -> {
             Map<String, Object> cosmetic = CosmeticManager.cosmeticData.get(s);
-            if (cosmetic == null) return false;
+            if(cosmetic == null) return false;
             return cosmetic.get("rarity").equals(selectedRarity);
         }).toList();
 
-        if (selectedCosmetics.isEmpty()) {
+        if(selectedCosmetics.isEmpty()){
             selectedCosmetics = cosmeticNames.stream().filter(s -> {
                 Map<String, Object> cosmetic = CosmeticManager.cosmeticData.get(s);
                 return cosmetic != null;
             }).toList();
         }
 
-        String selectedCosmetic = selectedCosmetics.get(new Random().nextInt(selectedCosmetics.size()));
-        Database.giveCosmetic(player, selectedCosmetic);
-        return selectedCosmetic;
+        return selectedCosmetics.get(new Random().nextInt(selectedCosmetics.size()));
     }
 
     public static String rollRandomRarity(Map<String, Number> raritySet){

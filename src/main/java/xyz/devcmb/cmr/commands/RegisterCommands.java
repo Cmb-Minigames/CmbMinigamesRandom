@@ -20,6 +20,7 @@ public class RegisterCommands {
         Objects.requireNonNull(plugin.getCommand("cosmeticitem")).setExecutor(new CosmeticCommand());
         Objects.requireNonNull(plugin.getCommand("crateitem")).setExecutor(new CrateCommand());
         Objects.requireNonNull(plugin.getCommand("rollcrate")).setExecutor(new RollCrateCommand());
+        Objects.requireNonNull(plugin.getCommand("rc")).setExecutor(new ReloadCosmeticsCommand());
 
         // Completions
         Objects.requireNonNull(plugin.getCommand("minigame")).setTabCompleter(new MinigameCompletion());

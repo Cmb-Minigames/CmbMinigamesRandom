@@ -10,7 +10,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
+import xyz.devcmb.cmr.cosmetics.CrateManager;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
+import xyz.devcmb.cmr.utils.Database;
+
+import java.util.Map;
 
 public class CosmeticInventoryListeners implements Listener {
     @EventHandler
@@ -26,17 +30,24 @@ public class CosmeticInventoryListeners implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
         if (event.getView().getTitle().equals("Cosmetic Inventory")) {
             event.setCancelled(true);
-            if(event.getCurrentItem() == null) return;
-            ItemMeta meta = event.getCurrentItem().getItemMeta();
+            ItemStack item = event.getCurrentItem();
+            if(item == null) return;
+            ItemMeta meta = item.getItemMeta();
             if (meta == null) return;
             if (meta.getItemName().equals(ChatColor.GREEN + ChatColor.BOLD.toString() + "Inventory")) {
                 CosmeticInventory.page = "inventory";
-                CosmeticInventory.openInventory((Player) event.getWhoClicked());
+                CosmeticInventory.openInventory(player);
             } else if (meta.getItemName().equals(ChatColor.GOLD + ChatColor.BOLD.toString() + "Crates")) {
                 CosmeticInventory.page = "crates";
-                CosmeticInventory.openInventory((Player) event.getWhoClicked());
+                CosmeticInventory.openInventory(player);
+            } else if(item.getType() == Material.CHEST){
+                Map<String, Object> crate = CrateManager.getFromDisplayName(meta.getItemName());
+                if(crate == null) return;
+                CosmeticInventory.rollCrateInventory(player, crate.get("name").toString());
+                Database.removeCrate(player, crate.get("name").toString());
             }
         }
     }

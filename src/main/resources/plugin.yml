@@ -42,6 +42,10 @@ commands:
     description: Roll a crate for a player
     usage: /<command> <player> <crate>
     permission: cmbminigames.debug
+  rc:
+    description: Reload all cosmetics
+    usage: /<command>
+    permission: cmbminigames.rc
 permissions:
   cmbminigames.pause:
     description: Pause the loop
@@ -54,4 +58,7 @@ permissions:
     default: false
   cmbminigames.debug:
     description: Debug commands
+    default: false
+  cmbminigames.rc:
+    description: Reload cosmetics command
     default: false
