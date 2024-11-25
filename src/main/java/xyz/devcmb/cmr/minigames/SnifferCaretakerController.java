@@ -572,6 +572,6 @@ public class SnifferCaretakerController implements Minigame {
 
     @Override
     public String getDescription() {
-        return "Keep your team’s sniffer alive by giving it food, dirt, and torchflower seeds stolen from the other team. You win if the other team’s sniffer is not taken care of enough and dies.";
+        return "Keep your team’s sniffer alive by giving it food, dirt, and other resources found around the map. You win if the other team’s sniffer is not taken care of enough and dies.";
     }
 }
