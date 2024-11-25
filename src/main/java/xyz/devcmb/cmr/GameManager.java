@@ -6,7 +6,6 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.minigames.*;
 import xyz.devcmb.cmr.utils.MapLoader;
@@ -191,7 +190,14 @@ public class GameManager {
                                 currentMinigame = minigame;
 
                                 minigamePlays.put(minigame, minigamePlays.get(minigame).intValue() + 1);
+
                                 minigame.start();
+                                Bukkit.getOnlinePlayers().forEach(player -> {
+                                    player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+                                    player.setHealth(20);
+                                    player.setSaturation(0);
+                                    player.setFoodLevel(20);
+                                });
                             }, 40);
                         }
                     }.runTaskLater(CmbMinigamesRandom.getPlugin(), 45);
@@ -206,9 +212,6 @@ public class GameManager {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
             player.getInventory().clear();
             player.setGlowing(false);
-            for (PotionEffect effect : player.getActivePotionEffects()) {
-                player.removePotionEffect(effect.getType());
-            }
         }), 20);
     }
 }
