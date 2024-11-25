@@ -25,6 +25,7 @@ import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
+import xyz.devcmb.cmr.utils.MapLoader;
 
 import java.util.*;
 
@@ -94,7 +95,6 @@ public class SnifferCaretakerController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        Utilities.gameStartReusable();
         List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(allPlayers);
 
@@ -341,31 +341,31 @@ public class SnifferCaretakerController implements Minigame {
             sheepSpawn = new BukkitRunnable() {
                 @Override
                 public void run() {
-                for (int i = 1; i <= 15; i++) {
-                    int sheepCount = 0;
+                    for (int i = 1; i <= 15; i++) {
+                        int sheepCount = 0;
 
-                    for (Entity entity : world.getEntities()) {
-                        if (entity.getType() == EntityType.SHEEP) {
-                            sheepCount++;
+                        for (Entity entity : world.getEntities()) {
+                            if (entity.getType() == EntityType.SHEEP) {
+                                sheepCount++;
+                            }
+                        }
+
+                        if (sheepCount >= 15) {
+                            break;
+                        }
+
+                        int spawnX = new Random().nextInt(spawnAreaFromLocation.getBlockX(), spawnAreaToLocation.getBlockX());
+                        int spawnZ = new Random().nextInt(spawnAreaFromLocation.getBlockZ(), spawnAreaToLocation.getBlockZ());
+
+                        Block block = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY(), spawnZ);
+                        Block blockBelow = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY() - 1, spawnZ);
+
+                        if (block.getType() == Material.AIR && blockBelow.getType() == Material.GRASS_BLOCK) {
+                            world.spawnEntity(block.getLocation(), EntityType.SHEEP);
+                        } else {
+                            i--;
                         }
                     }
-
-                    if (sheepCount >= 15) {
-                        break;
-                    }
-
-                    int spawnX = new Random().nextInt(spawnAreaFromLocation.getBlockX(), spawnAreaToLocation.getBlockX());
-                    int spawnZ = new Random().nextInt(spawnAreaFromLocation.getBlockZ(), spawnAreaToLocation.getBlockZ());
-
-                    Block block = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY(), spawnZ);
-                    Block blockBelow = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY() - 1, spawnZ);
-
-                    if (block.getType() == Material.AIR && blockBelow.getType() == Material.GRASS_BLOCK) {
-                        world.spawnEntity(block.getLocation(), EntityType.SHEEP);
-                    } else {
-                        i--;
-                    }
-                }
                 }
             };
 
@@ -386,25 +386,15 @@ public class SnifferCaretakerController implements Minigame {
         redSniffer = null;
         blueSniffer = null;
 
-        if(happinessDepreciation != null) {
-            happinessDepreciation.cancel();
-            happinessDepreciation = null;
-        }
+        happinessDepreciation.cancel();
+        happinessDepreciation = null;
+        difficultyIncrease.cancel();
+        difficultyIncrease = null;
+        itemSpawn.cancel();
+        itemSpawn = null;
+        sheepSpawn.cancel();
+        sheepSpawn = null;
 
-        if(difficultyIncrease != null) {
-            difficultyIncrease.cancel();
-            difficultyIncrease = null;
-        }
-
-        if(itemSpawn != null) {
-            itemSpawn.cancel();
-            itemSpawn = null;
-        }
-
-        if(sheepSpawn != null){
-            sheepSpawn.cancel();
-            sheepSpawn = null;
-        }
         redSnifferHappiness = 0;
         blueSnifferHappiness = 0;
 
@@ -511,9 +501,9 @@ public class SnifferCaretakerController implements Minigame {
     @Override
     public List<MinigameFlag> getFlags() {
         return List.of(
-            MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
-            MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
-            MinigameFlag.UNLIMITED_BLOCKS
+                MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
+                MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
+                MinigameFlag.UNLIMITED_BLOCKS
         );
     }
 
@@ -544,20 +534,20 @@ public class SnifferCaretakerController implements Minigame {
     @Override
     public void updateScoreboard(Player player) {
         CMScoreboardManager.sendScoreboardAlongDefaults(
-            player,
-            CMScoreboardManager.mergeScoreboards(
-                CMScoreboardManager.scoreboards.get("sniffercaretaker").getScoreboard(player),
-                scoreboard
-            )
+                player,
+                CMScoreboardManager.mergeScoreboards(
+                        CMScoreboardManager.scoreboards.get("sniffercaretaker").getScoreboard(player),
+                        scoreboard
+                )
         );
     }
 
     @Override
     public Map<StarSource, Number> getStarSources() {
         return Map.of(
-            StarSource.KILL, 2,
-            StarSource.WIN, 20,
-            StarSource.OBJECTIVE, 1
+                StarSource.KILL, 2,
+                StarSource.WIN, 20,
+                StarSource.OBJECTIVE, 1
         );
     }
 

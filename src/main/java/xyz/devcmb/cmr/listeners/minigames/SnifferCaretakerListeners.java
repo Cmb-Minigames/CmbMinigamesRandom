@@ -27,30 +27,30 @@ import java.util.Random;
 
 public class SnifferCaretakerListeners implements Listener {
     private final List<Material> breakableBlocks = List.of(
-        Material.DIRT,
-        Material.GRASS_BLOCK,
-        Material.HAY_BLOCK,
-        Material.WHEAT,
-        Material.COCOA,
-        Material.ACACIA_LOG,
-        Material.ACACIA_LEAVES,
-        Material.COAL_ORE,
-        Material.DEEPSLATE_COAL_ORE,
-        Material.SHORT_GRASS,
-        Material.TALL_GRASS,
-        Material.POPPY,
-        Material.DANDELION,
-        Material.RED_CONCRETE,
-        Material.BLUE_CONCRETE
+            Material.DIRT,
+            Material.GRASS_BLOCK,
+            Material.HAY_BLOCK,
+            Material.WHEAT,
+            Material.COCOA,
+            Material.ACACIA_LOG,
+            Material.ACACIA_LEAVES,
+            Material.COAL_ORE,
+            Material.DEEPSLATE_COAL_ORE,
+            Material.SHORT_GRASS,
+            Material.TALL_GRASS,
+            Material.POPPY,
+            Material.DANDELION,
+            Material.RED_CONCRETE,
+            Material.BLUE_CONCRETE
     );
 
     private final Map<Material, Integer> snifferRequestedItems = Map.of(
-        Material.DIRT, 1,
-        Material.WHEAT, 2,
-        Material.HAY_BLOCK, 20,
-        Material.BREAD, 10,
-        Material.MUTTON, 5,
-        Material.COOKED_MUTTON, 40
+            Material.DIRT, 1,
+            Material.WHEAT, 2,
+            Material.HAY_BLOCK, 20,
+            Material.BREAD, 10,
+            Material.MUTTON, 5,
+            Material.COOKED_MUTTON, 40
     );
 
     private Location redBaseFromLocation;
@@ -82,16 +82,8 @@ public class SnifferCaretakerListeners implements Listener {
             return;
         }
 
-        Map<String, Object> redBasePreventPlace = (Map<String, Object>) mapData.get("redBasePreventPlace");
-        Map<String, Object> blueBasePreventPlace = (Map<String, Object>) mapData.get("blueBasePreventPlace");
-
-        if (redBasePreventPlace == null || blueBasePreventPlace == null) {
-            CmbMinigamesRandom.LOGGER.warning("Red or blue base points are not defined.");
-            return;
-        }
-
-        Map<String, Object> redBaseFrom = (Map<String, Object>)redBasePreventPlace.get("from");
-        Map<String, Object> redBaseTo = (Map<String, Object>)blueBasePreventPlace.get("to");
+        Map<String, Object> redBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("from");
+        Map<String, Object> redBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("to");
 
         if (redBaseFrom == null || redBaseTo == null) {
             CmbMinigamesRandom.LOGGER.warning("Red base points are not defined.");
@@ -272,7 +264,8 @@ public class SnifferCaretakerListeners implements Listener {
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
                 player.sendMessage(ChatColor.RED + "[Red Sniffer] " + ChatColor.RESET + (happinessIncrease >= 10 ? "This makes me VERY happy!" : "This makes me happy!"));
                 itemDrop.getWorld().spawnParticle(Particle.HEART, controller.redSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
-            } else if (controller.BLUE.contains(player)) {
+            }
+            if (controller.BLUE.contains(player)) {
                 controller.blueSnifferHappiness = Math.clamp(controller.blueSnifferHappiness + happinessIncrease, 0, 1000);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
