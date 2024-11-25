@@ -20,18 +20,6 @@ public class CTFScoreboard implements HandledScoreboard {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
-//        Scoreboard teams = ctfController.scoreboard;
-//
-//        teams.getTeams().forEach(team -> {
-//            Team newTeam = board.registerNewTeam(team.getName());
-//            newTeam.setPrefix(team.getPrefix());
-//            newTeam.setSuffix(team.getSuffix());
-//            newTeam.setColor(team.getColor());
-//            newTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, team.getOption(Team.Option.NAME_TAG_VISIBILITY));
-//            newTeam.setOption(Team.Option.COLLISION_RULE, team.getOption(Team.Option.COLLISION_RULE));
-//            newTeam.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, team.getOption(Team.Option.DEATH_MESSAGE_VISIBILITY));
-//            team.getEntries().forEach(newTeam::addEntry);
-//        });
 
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Capture the Flag" + " ".repeat(5));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);

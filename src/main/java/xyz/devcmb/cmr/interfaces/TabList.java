@@ -8,6 +8,7 @@ import xyz.devcmb.cmr.utils.Format;
 public class TabList {
     public static void updateTabListName(Player player){
         String prefix = Format.getPrefix(player);
+        Integer priority = Format.getPriority(player);
         ChatColor teamColor = GameManager.teamColors.get(player);
         if(prefix == null){
             prefix = "";
@@ -17,6 +18,6 @@ public class TabList {
             teamColor = ChatColor.WHITE;
         }
 
-        player.setPlayerListName(prefix + teamColor + player.getName());
+        player.setPlayerListName(ChatColor.values()[priority].toString() + ChatColor.RESET + prefix + teamColor + player.getName());
     }
 }

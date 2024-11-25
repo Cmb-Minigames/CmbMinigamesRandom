@@ -1,6 +1,5 @@
 package xyz.devcmb.cmr.listeners.minigames;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -33,7 +32,6 @@ public class KaboomersListeners implements Listener {
         long currentTime = System.currentTimeMillis();
 
         if (cooldowns.containsKey(playerId) && (currentTime - cooldowns.get(playerId)) < 1000) {
-            player.sendMessage(ChatColor.RED + "You must wait before using this item again!");
             return;
         }
 
