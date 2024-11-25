@@ -2,6 +2,7 @@ package xyz.devcmb.cmr.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,11 +45,37 @@ public class CosmeticInventoryListeners implements Listener {
             } else if (meta.getItemName().equals(ChatColor.GOLD + ChatColor.BOLD.toString() + "Crates")) {
                 CosmeticInventory.page = "crates";
                 CosmeticInventory.openInventory(player);
-            } else if(item.getType() == Material.CHEST) {
-                Map<String, Object> crate = CrateManager.getFromDisplayName(meta.getItemName());
-                if (crate == null) return;
-                CosmeticInventory.rollCrateInventory(player, crate.get("name").toString());
-                Database.removeCrate(player, crate.get("name").toString());
+            } else if(meta.getItemName().equals(ChatColor.AQUA + ChatColor.BOLD.toString() + "Shop")){
+                CosmeticInventory.page = "shop";
+                CosmeticInventory.openInventory(player);
+            }
+
+            if(item.getType() == Material.CHEST){
+                if(CosmeticInventory.page.equals("crates")){
+                    Map<String, Object> crate = CrateManager.getFromDisplayName(meta.getItemName());
+                    if (crate == null) return;
+                    CosmeticInventory.rollCrateInventory(player, crate.get("name").toString());
+                    Database.removeCrate(player, crate.get("name").toString());
+                } else if(CosmeticInventory.page.equals("shop")){
+                    Map<String, Object> crate = CrateManager.getFromDisplayName(meta.getItemName());
+                    if (crate == null) return;
+
+                    if(event.getClick().isLeftClick()){
+                        if(Database.getUserStars(player) >= (int) crate.get("shop_price")){
+                            Database.setUserStars(player, Database.getUserStars(player) - (int) crate.get("shop_price"));
+                            Database.giveCrate(player, crate.get("name").toString());
+                            CosmeticInventory.page = "crates";
+                            CosmeticInventory.openInventory(player);
+                            player.sendMessage(ChatColor.GREEN + "You have purchased a " + ChatColor.GOLD + crate.get("display_name") + ChatColor.GREEN + " crate!");
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You do not have enough stars to purchase this crate.");
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                        }
+                    } else if(event.getClick().isRightClick()) {
+                        CosmeticInventory.openPreviewWindow(player, crate.get("name").toString());
+                    }
+                }
             }
 
             if(CosmeticInventory.page.equals("inventory")){
@@ -76,6 +103,12 @@ public class CosmeticInventoryListeners implements Listener {
             }
         } else if (event.getView().getTitle().equals("Crate")){
             event.setCancelled(true);
+        } else if (event.getView().getTitle().equals("Crate Preview")){
+            event.setCancelled(true);
+            if(event.getCurrentItem() == null) return;
+            if(event.getCurrentItem().getType() == Material.ARROW){
+                CosmeticInventory.openInventory(player);
+            }
         }
     }
 }
