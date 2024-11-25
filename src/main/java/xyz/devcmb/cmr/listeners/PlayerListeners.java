@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
@@ -44,6 +46,11 @@ public class PlayerListeners implements Listener {
         if(!Database.userExists(player)){
             Database.createUser(player);
         }
+
+        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+
+        PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0, true, false, false);
+        player.addPotionEffect(hungerEffect);
 
         Audience audience = (Audience) player;
         audience.sendPlayerListHeader(Component.text(" ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames - Random" + " ".repeat(5)));

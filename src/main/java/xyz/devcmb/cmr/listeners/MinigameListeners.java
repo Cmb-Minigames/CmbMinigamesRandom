@@ -132,14 +132,17 @@ public class MinigameListeners implements Listener {
             event.setCancelled(true);
         } else if(minigame.getFlags().contains(MinigameFlag.UNLIMITED_BLOCKS) && event.getBlock().getType() != Material.TNT){
             ItemStack itemInHand = event.getItemInHand();
-            Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> {
-                itemInHand.setAmount(itemInHand.getAmount() + 1);
-                if (event.getHand() == EquipmentSlot.HAND) {
-                    event.getPlayer().getInventory().setItemInMainHand(itemInHand);
-                } else if (event.getHand() == EquipmentSlot.OFF_HAND) {
-                    event.getPlayer().getInventory().setItemInOffHand(itemInHand);
-                }
-            });
+
+            if (itemInHand.getType() != Material.STONE_HOE) {
+                Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> {
+                    itemInHand.setAmount(itemInHand.getAmount() + 1);
+                    if (event.getHand() == EquipmentSlot.HAND) {
+                        event.getPlayer().getInventory().setItemInMainHand(itemInHand);
+                    } else if (event.getHand() == EquipmentSlot.OFF_HAND) {
+                        event.getPlayer().getInventory().setItemInOffHand(itemInHand);
+                    }
+                });
+            }
         }
     }
 
@@ -184,7 +187,9 @@ public class MinigameListeners implements Listener {
             event.getDrops().clear();
         }
 
-        Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> player.spigot().respawn());
+        if(minigame.getFlags().contains(MinigameFlag.INSTANT_RESPAWN)){
+            Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> player.spigot().respawn());
+        }
 
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){

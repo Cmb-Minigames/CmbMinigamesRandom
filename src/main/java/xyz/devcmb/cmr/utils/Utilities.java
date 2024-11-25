@@ -8,6 +8,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
@@ -16,21 +18,6 @@ import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 import java.util.*;
 
 public class Utilities {
-    private static final Map<Character, String> lowNumbersMap = new HashMap<>();
-
-    static {
-        lowNumbersMap.put('0', "\uE00C");
-        lowNumbersMap.put('1', "\uE003");
-        lowNumbersMap.put('2', "\uE004");
-        lowNumbersMap.put('3', "\uE005");
-        lowNumbersMap.put('4', "\uE006");
-        lowNumbersMap.put('5', "\uE007");
-        lowNumbersMap.put('6', "\uE008");
-        lowNumbersMap.put('7', "\uE009");
-        lowNumbersMap.put('8', "\uE00A");
-        lowNumbersMap.put('9', "\uE00B");
-    }
-
     public static void Countdown(Player player, int totalSeconds){
         new BukkitRunnable(){
             int seconds = totalSeconds;
@@ -70,18 +57,6 @@ public class Utilities {
         Random random = new Random();
         int randomIndex = random.nextInt(list.size());
         return list.get(randomIndex);
-    }
-
-    public static String replaceNumbersWithLowOnes(String stringWithNumbers) {
-        StringBuilder result = new StringBuilder();
-        for (char c : stringWithNumbers.toCharArray()) {
-            if (lowNumbersMap.containsKey(c)) {
-                result.append(lowNumbersMap.get(c));
-            } else {
-                result.append(c);
-            }
-        }
-        return result.toString();
     }
 
     public static Location findValidLocation(Location spawnLocation) {
@@ -197,6 +172,9 @@ public class Utilities {
             player.setGlowing(false);
             GameManager.teamColors.put(player, ChatColor.WHITE);
             CosmeticInventory.giveInventoryItem(player);
+
+            PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0, true, false, false);
+            player.addPotionEffect(hungerEffect);
         });
 
         GameManager.prepare();

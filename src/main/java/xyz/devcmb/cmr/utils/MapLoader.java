@@ -88,7 +88,7 @@ public class MapLoader {
         loadMap((String)((Map<String, ?>) map.get("map")).get("worldName"));
         return map;
     }
-
+  
     public static void cleanup(){
         File rootDirectory = Bukkit.getWorldContainer();
         File[] files = rootDirectory.listFiles((dir, name) -> name.startsWith("minigame-") && new File(dir, name).isDirectory());
