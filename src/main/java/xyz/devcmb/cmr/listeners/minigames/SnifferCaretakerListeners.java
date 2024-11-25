@@ -262,14 +262,14 @@ public class SnifferCaretakerListeners implements Listener {
                 controller.redSnifferHappiness = Math.clamp(controller.redSnifferHappiness + happinessIncrease, 0, 1000);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
-                player.sendMessage(ChatColor.RED + "[Red Sniffer] " + ChatColor.RESET + (happinessIncrease >= 50 ? "This makes me VERY happy!" : "This makes me happy!"));
+                player.sendMessage(ChatColor.RED + "[Red Sniffer] " + ChatColor.RESET + (happinessIncrease >= 10 ? "This makes me VERY happy!" : "This makes me happy!"));
                 itemDrop.getWorld().spawnParticle(Particle.HEART, controller.redSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
             }
             if (controller.BLUE.contains(player)) {
                 controller.blueSnifferHappiness = Math.clamp(controller.blueSnifferHappiness + happinessIncrease, 0, 1000);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
-                player.sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RESET + (happinessIncrease >= 50 ? "This makes me VERY happy!" : "This makes me happy!"));
+                player.sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RESET + (happinessIncrease >= 10 ? "This makes me VERY happy!" : "This makes me happy!"));
                 itemDrop.getWorld().spawnParticle(Particle.HEART, controller.blueSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
             }
             itemDrop.remove();
