@@ -54,8 +54,8 @@ public class Kits {
             Map.entry(Material.IRON_PICKAXE, List.of(1, 1)), // Iron pickaxe of quantity 1 on inventory slot 1
             Map.entry(Material.STONE_SHOVEL, List.of(1, 2)), // Stone shovel of quantity 1 on inventory slot 2
             Map.entry(Material.STONE_HOE, List.of(1, 3)), // Stone hoe of quantity 1 on inventory slot 3
-            Map.entry(Material.BONE_MEAL, List.of(64, 4)), // Bone meal of quantity 64 on inventory slot 4
-            Map.entry(Material.COCOA_BEANS, List.of(64, 5)), // Cocoa beans of quantity 64 on inventory slot 5
+            Map.entry(Material.BONE_MEAL, List.of(10, 4)), // Bone meal of quantity 10 on inventory slot 4
+            Map.entry(Material.WHEAT_SEEDS, List.of(64, 5)), // Seeds of quantity 64 on inventory slot 5
             Map.entry(KitEnums.COLORED_CONCRETE, List.of(64, 8)), // 64 colored concrete on inventory slot 8
             Map.entry(Material.LEATHER_HELMET, List.of(1, KitEnums.HELMET)), // Leather helmet of quantity 1 on helmet slot
             Map.entry(Material.LEATHER_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE)), // Leather chestplate of quantity 1 on chestplate slot

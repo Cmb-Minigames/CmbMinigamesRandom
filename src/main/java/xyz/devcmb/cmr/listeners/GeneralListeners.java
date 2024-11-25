@@ -119,8 +119,13 @@ public class GeneralListeners implements Listener {
         if (event.getItem().getType() == Material.POTION) {
             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                 ItemStack itemInHand = event.getPlayer().getInventory().getItemInMainHand();
+                ItemStack itemInOffhand = event.getPlayer().getInventory().getItemInOffHand();
                 if (itemInHand.getType() == Material.GLASS_BOTTLE) {
                     itemInHand.setAmount(itemInHand.getAmount() - 1);
+                }
+
+                if (itemInOffhand.getType() == Material.GLASS_BOTTLE) {
+                    itemInOffhand.setAmount(itemInOffhand.getAmount() - 1);
                 }
             }, 1L);
         }

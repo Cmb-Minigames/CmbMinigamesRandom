@@ -82,7 +82,8 @@ public class SnifferCaretakerController implements Minigame {
         items.add(new ItemStack(Material.GOLDEN_APPLE, 2));
         items.add(new ItemStack(Material.WIND_CHARGE, 3));
         items.add(new ItemStack(Material.IRON_SWORD));
-        items.add(new ItemStack(Material.HAY_BLOCK, 5));
+        items.add(new ItemStack(Material.HAY_BLOCK, 1));
+        items.add(new ItemStack(Material.MUTTON, 2));
     }
 
     private BukkitRunnable happinessDepreciation;
@@ -93,8 +94,6 @@ public class SnifferCaretakerController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-
-
         List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(allPlayers);
 
@@ -107,9 +106,11 @@ public class SnifferCaretakerController implements Minigame {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
                 redTeam.addEntry(allPlayers.get(i).getName());
+                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
                 blueTeam.addEntry(allPlayers.get(i).getName());
+                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
 
@@ -209,8 +210,8 @@ public class SnifferCaretakerController implements Minigame {
         redSniffer.setInvulnerable(true);
         blueSniffer.setInvulnerable(true);
 
-        redSnifferHappiness = 500;
-        blueSnifferHappiness = 500;
+        redSnifferHappiness = 300;
+        blueSnifferHappiness = 300;
         happinessDecreaseAmount = 1;
 
         Location redSpawnLocation = new Location(
@@ -289,10 +290,15 @@ public class SnifferCaretakerController implements Minigame {
                 public void run() {
                     redSnifferHappiness = Math.clamp(redSnifferHappiness - happinessDecreaseAmount, 0, 1000);
                     blueSnifferHappiness = Math.clamp(blueSnifferHappiness - happinessDecreaseAmount, 0, 1000);
+                    if (GameManager.gameEnding) {
+                        this.cancel();
+                        return;
+                    }
+                    if ((redSnifferHappiness == 0 || blueSnifferHappiness == 0) && !RED.isEmpty() && !BLUE.isEmpty()) endGame();
                 }
             };
 
-            happinessDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 3);
+            happinessDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 2);
 
             difficultyIncrease = new BukkitRunnable() {
                 @Override
@@ -334,31 +340,31 @@ public class SnifferCaretakerController implements Minigame {
             sheepSpawn = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for (int i = 1; i <= 5; i++) {
-                        int sheepCount = 0;
+                for (int i = 1; i <= 15; i++) {
+                    int sheepCount = 0;
 
-                        for (Entity entity : world.getEntities()) {
-                            if (entity.getType() == EntityType.SHEEP) {
-                                sheepCount++;
-                            }
-                        }
-
-                        if (sheepCount >= 5) {
-                            break;
-                        }
-
-                        int spawnX = new Random().nextInt(spawnAreaFromLocation.getBlockX(), spawnAreaToLocation.getBlockX());
-                        int spawnZ = new Random().nextInt(spawnAreaFromLocation.getBlockZ(), spawnAreaToLocation.getBlockZ());
-
-                        Block block = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY(), spawnZ);
-                        Block blockBelow = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY() - 1, spawnZ);
-
-                        if (block.getType() == Material.AIR && blockBelow.getType() == Material.GRASS_BLOCK) {
-                            world.spawnEntity(block.getLocation(), EntityType.SHEEP);
-                        } else {
-                            i--;
+                    for (Entity entity : world.getEntities()) {
+                        if (entity.getType() == EntityType.SHEEP) {
+                            sheepCount++;
                         }
                     }
+
+                    if (sheepCount >= 15) {
+                        break;
+                    }
+
+                    int spawnX = new Random().nextInt(spawnAreaFromLocation.getBlockX(), spawnAreaToLocation.getBlockX());
+                    int spawnZ = new Random().nextInt(spawnAreaFromLocation.getBlockZ(), spawnAreaToLocation.getBlockZ());
+
+                    Block block = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY(), spawnZ);
+                    Block blockBelow = world.getBlockAt(spawnX, spawnAreaToLocation.getBlockY() - 1, spawnZ);
+
+                    if (block.getType() == Material.AIR && blockBelow.getType() == Material.GRASS_BLOCK) {
+                        world.spawnEntity(block.getLocation(), EntityType.SHEEP);
+                    } else {
+                        i--;
+                    }
+                }
                 }
             };
 
@@ -379,17 +385,67 @@ public class SnifferCaretakerController implements Minigame {
         redSniffer = null;
         blueSniffer = null;
 
-        redSnifferHappiness = 0;
-        blueSnifferHappiness = 0;
-
         happinessDepreciation.cancel();
         happinessDepreciation = null;
         difficultyIncrease.cancel();
         difficultyIncrease = null;
         itemSpawn.cancel();
         itemSpawn = null;
+        sheepSpawn.cancel();
+        sheepSpawn = null;
+
+        redSnifferHappiness = 0;
+        blueSnifferHappiness = 0;
 
         Utilities.endGameResuable();
+    }
+
+    private void endGame() {
+        GameManager.gameEnding = true;
+
+        if (redSnifferHappiness == 0 && blueSnifferHappiness == 0) {
+            Bukkit.getOnlinePlayers().forEach(plr -> {
+                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else if(blueSnifferHappiness == 0){
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else if(redSnifferHappiness == 0){
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        }
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                stop();
+            }
+        }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
     }
     @SuppressWarnings("unchecked")
     @Override

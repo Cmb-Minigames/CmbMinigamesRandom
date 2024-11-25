@@ -9,9 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
-import org.bukkit.event.inventory.FurnaceStartSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.FurnaceInventory;
@@ -21,7 +21,6 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.SnifferCaretakerController;
 import xyz.devcmb.cmr.utils.MapLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -46,18 +45,22 @@ public class SnifferCaretakerListeners implements Listener {
     );
 
     private final Map<Material, Integer> snifferRequestedItems = Map.of(
-        Material.DIRT, 2,
-        Material.WHEAT, 5,
-        Material.HAY_BLOCK, 50,
-        Material.COOKIE, 25,
-        Material.MUTTON, 10,
-        Material.COOKED_MUTTON, 70
+        Material.DIRT, 1,
+        Material.WHEAT, 2,
+        Material.HAY_BLOCK, 20,
+        Material.BREAD, 10,
+        Material.MUTTON, 5,
+        Material.COOKED_MUTTON, 40
     );
 
     private Location redBaseFromLocation;
     private Location redBaseToLocation;
     private Location blueBaseFromLocation;
     private Location blueBaseToLocation;
+    private Location redSnifferZoneFromLocation;
+    private Location redSnifferZoneToLocation;
+    private Location blueSnifferZoneFromLocation;
+    private Location blueSnifferZoneToLocation;
 
     @SuppressWarnings("unchecked")
     private void InitializeLocations() {
@@ -121,6 +124,50 @@ public class SnifferCaretakerListeners implements Listener {
                 ((Number) blueBaseTo.get("x")).doubleValue(),
                 ((Number) blueBaseTo.get("y")).doubleValue(),
                 ((Number) blueBaseTo.get("z")).doubleValue()
+        );
+
+        Map<String, Object> redSnifferZoneFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redSnifferZone")).get("from");
+        Map<String, Object> redSnifferZoneTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redSnifferZone")).get("to");
+
+        if (redSnifferZoneFrom == null || redSnifferZoneTo == null) {
+            CmbMinigamesRandom.LOGGER.warning("Red sniffer zone points are not defined.");
+            return;
+        }
+
+        redSnifferZoneFromLocation = new Location(
+                world,
+                ((Number) redSnifferZoneFrom.get("x")).doubleValue(),
+                ((Number) redSnifferZoneFrom.get("y")).doubleValue(),
+                ((Number) redSnifferZoneFrom.get("z")).doubleValue()
+        );
+
+        redSnifferZoneToLocation = new Location(
+                world,
+                ((Number) redSnifferZoneTo.get("x")).doubleValue(),
+                ((Number) redSnifferZoneTo.get("y")).doubleValue(),
+                ((Number) redSnifferZoneTo.get("z")).doubleValue()
+        );
+
+        Map<String, Object> blueSnifferZoneFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("blueSnifferZone")).get("from");
+        Map<String, Object> blueSnifferZoneTo = (Map<String, Object>)((Map<String, Object>) mapData.get("blueSnifferZone")).get("to");
+
+        if (blueSnifferZoneFrom == null || blueSnifferZoneTo == null) {
+            CmbMinigamesRandom.LOGGER.warning("Blue sniffer zone points are not defined.");
+            return;
+        }
+
+        blueSnifferZoneFromLocation = new Location(
+                world,
+                ((Number) blueSnifferZoneFrom.get("x")).doubleValue(),
+                ((Number) blueSnifferZoneFrom.get("y")).doubleValue(),
+                ((Number) blueSnifferZoneFrom.get("z")).doubleValue()
+        );
+
+        blueSnifferZoneToLocation = new Location(
+                world,
+                ((Number) blueSnifferZoneTo.get("x")).doubleValue(),
+                ((Number) blueSnifferZoneTo.get("y")).doubleValue(),
+                ((Number) blueSnifferZoneTo.get("z")).doubleValue()
         );
     }
 
@@ -206,25 +253,49 @@ public class SnifferCaretakerListeners implements Listener {
         if (controller.RED.contains(player) && itemDrop.getLocation().distance(controller.redSniffer.getLocation()) > 7.0) return;
         if (controller.BLUE.contains(player) && itemDrop.getLocation().distance(controller.blueSniffer.getLocation()) > 7.0) return;
 
+        if (controller.RED.contains(player) && !isWithin(player.getLocation(), redSnifferZoneFromLocation, redSnifferZoneToLocation)) return;
+        if (controller.BLUE.contains(player) && !isWithin(player.getLocation(), blueSnifferZoneFromLocation, blueSnifferZoneToLocation)) return;
+
         if (snifferRequestedItems.containsKey(material)) {
             int happinessIncrease = snifferRequestedItems.get(material) * itemDrop.getItemStack().getAmount();
             if (controller.RED.contains(player)) {
                 controller.redSnifferHappiness = Math.clamp(controller.redSnifferHappiness + happinessIncrease, 0, 1000);
-                player.playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
-                player.playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
+                itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
+                itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
                 player.sendMessage(ChatColor.RED + "[Red Sniffer] " + ChatColor.RESET + (happinessIncrease >= 50 ? "This makes me VERY happy!" : "This makes me happy!"));
+                itemDrop.getWorld().spawnParticle(Particle.HEART, controller.redSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
             }
             if (controller.BLUE.contains(player)) {
                 controller.blueSnifferHappiness = Math.clamp(controller.blueSnifferHappiness + happinessIncrease, 0, 1000);
-                player.playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
-                player.playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
+                itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
+                itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
                 player.sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RESET + (happinessIncrease >= 50 ? "This makes me VERY happy!" : "This makes me happy!"));
+                itemDrop.getWorld().spawnParticle(Particle.HEART, controller.blueSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
             }
             itemDrop.remove();
         } else {
-            player.playSound(player.getLocation(), Sound.ENTITY_SNIFFER_SNIFFING, 10, 1);
+            itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_SNIFFING, 10, 1);
             if (controller.RED.contains(player)) player.sendMessage(ChatColor.RED + "[Red Sniffer] I don't want that!");
             if (controller.BLUE.contains(player)) player.sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RED + "I don't want that!");
+            itemDrop.getWorld().spawnParticle(
+                    Particle.ANGRY_VILLAGER,
+                    controller.RED.contains(player) ? controller.redSniffer.getLocation().clone().add(0, 2, 0) : controller.blueSniffer.getLocation().clone().add(0, 2, 0),
+                    10, 0.5, 0.5, 0.5, 0.1
+            );
+        }
+    }
+
+    @EventHandler
+    public void onPlayerAttack(EntityDamageByEntityEvent event){
+        SnifferCaretakerController controller = (SnifferCaretakerController) GameManager.getMinigameByName("Sniffer Caretaker");
+        if (controller == null || GameManager.currentMinigame != controller) return;
+
+        if (event.getEntity() instanceof Player player && event.getDamager() instanceof Player damager) {
+            if(controller.RED.contains(player) && controller.RED.contains(damager)){
+                event.setCancelled(true);
+            } else if(controller.BLUE.contains(player) && controller.BLUE.contains(damager)){
+                event.setCancelled(true);
+            }
         }
     }
 }
