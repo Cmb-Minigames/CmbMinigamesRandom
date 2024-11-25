@@ -6,6 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -25,7 +26,6 @@ import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
-import xyz.devcmb.cmr.utils.MapLoader;
 
 import java.util.*;
 
@@ -38,6 +38,11 @@ public class SnifferCaretakerController implements Minigame {
 
     public Entity redSniffer;
     public Entity blueSniffer;
+
+    private Location redBaseFromLocation;
+    private Location redBaseToLocation;
+    private Location blueBaseFromLocation;
+    private Location blueBaseToLocation;
 
     public int redSnifferHappiness = 0;
     public int blueSnifferHappiness = 0;
@@ -258,6 +263,50 @@ public class SnifferCaretakerController implements Minigame {
                 ((Number) spawnAreaTo.get("z")).doubleValue()
         );
 
+        Map<String, Object> redBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("from");
+        Map<String, Object> redBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("to");
+
+        if (redBaseFrom == null || redBaseTo == null) {
+            CmbMinigamesRandom.LOGGER.warning("Red base points are not defined.");
+            return;
+        }
+
+        redBaseFromLocation = new Location(
+                world,
+                ((Number) redBaseFrom.get("x")).doubleValue(),
+                ((Number) redBaseFrom.get("y")).doubleValue(),
+                ((Number) redBaseFrom.get("z")).doubleValue()
+        );
+
+        redBaseToLocation = new Location(
+                world,
+                ((Number) redBaseTo.get("x")).doubleValue(),
+                ((Number) redBaseTo.get("y")).doubleValue(),
+                ((Number) redBaseTo.get("z")).doubleValue()
+        );
+
+        Map<String, Object> blueBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("blueBasePreventPlace")).get("from");
+        Map<String, Object> blueBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("blueBasePreventPlace")).get("to");
+
+        if (blueBaseFrom == null || blueBaseTo == null) {
+            CmbMinigamesRandom.LOGGER.warning("Blue base points are not defined.");
+            return;
+        }
+
+        blueBaseFromLocation = new Location(
+                world,
+                ((Number) blueBaseFrom.get("x")).doubleValue(),
+                ((Number) blueBaseFrom.get("y")).doubleValue(),
+                ((Number) blueBaseFrom.get("z")).doubleValue()
+        );
+
+        blueBaseToLocation = new Location(
+                world,
+                ((Number) blueBaseTo.get("x")).doubleValue(),
+                ((Number) blueBaseTo.get("y")).doubleValue(),
+                ((Number) blueBaseTo.get("z")).doubleValue()
+        );
+
         RED.forEach(player -> {
             player.teleport(Utilities.findValidLocation(redSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
@@ -295,7 +344,7 @@ public class SnifferCaretakerController implements Minigame {
                         this.cancel();
                         return;
                     }
-                    if ((redSnifferHappiness == 0 || blueSnifferHappiness == 0) && !RED.isEmpty() && !BLUE.isEmpty()) endGame();
+                    if ((redSnifferHappiness <= 0 || blueSnifferHappiness <= 0) && (CmbMinigamesRandom.DeveloperMode ? !(RED.isEmpty() && BLUE.isEmpty()) : (!RED.isEmpty() && !BLUE.isEmpty()))) endGame();
                 }
             };
 
@@ -540,6 +589,24 @@ public class SnifferCaretakerController implements Minigame {
                         scoreboard
                 )
         );
+    }
+
+    private static boolean isWithin(Location loc, Location point1, Location point2) {
+        double minX = Math.min(point1.getX(), point2.getX());
+        double minY = Math.min(point1.getY(), point2.getY());
+        double minZ = Math.min(point1.getZ(), point2.getZ());
+        double maxX = Math.max(point1.getX(), point2.getX());
+        double maxY = Math.max(point1.getY(), point2.getY());
+        double maxZ = Math.max(point1.getZ(), point2.getZ());
+
+        return loc.getX() >= minX && loc.getX() <= maxX &&
+                loc.getY() >= minY && loc.getY() <= maxY &&
+                loc.getZ() >= minZ && loc.getZ() <= maxZ;
+    }
+
+    @Override
+    public Boolean dontReturnBlock(BlockPlaceEvent event) {
+        return isWithin(event.getBlock().getLocation(), redBaseFromLocation, redBaseToLocation) || isWithin(event.getBlock().getLocation(), blueBaseFromLocation, blueBaseToLocation);
     }
 
     @Override

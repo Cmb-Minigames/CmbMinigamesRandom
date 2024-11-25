@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.minigames;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -56,6 +57,14 @@ public interface Minigame {
      * @return A map of all the star sources and how many stars they give
      */
     Map<StarSource, Number> getStarSources();
+    /**
+     * A condition if the block place event, when used with the unlimited block place event, should not give the block back
+     * @param event The BlockPlaceEvent from the event listener in MinigameListeners
+     * @return Whether to not give the block back, defaulting to false
+     */
+    default Boolean dontReturnBlock(BlockPlaceEvent event){
+        return false;
+    }
 
     // All the information about the minigame
     String getId();

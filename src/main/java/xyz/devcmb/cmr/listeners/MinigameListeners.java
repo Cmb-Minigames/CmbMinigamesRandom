@@ -3,6 +3,7 @@ package xyz.devcmb.cmr.listeners;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -124,7 +125,7 @@ public class MinigameListeners implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onBlockPlace(BlockPlaceEvent event){
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
@@ -132,7 +133,7 @@ public class MinigameListeners implements Listener {
             event.setCancelled(true);
         } else if(minigame.getFlags().contains(MinigameFlag.UNLIMITED_BLOCKS) && event.getBlock().getType() != Material.TNT){
             ItemStack itemInHand = event.getItemInHand();
-
+            if(minigame.dontReturnBlock(event)) return;
             if (itemInHand.getType() != Material.STONE_HOE) {
                 Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> {
                     itemInHand.setAmount(itemInHand.getAmount() + 1);
