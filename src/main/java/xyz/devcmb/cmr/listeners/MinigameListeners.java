@@ -184,7 +184,9 @@ public class MinigameListeners implements Listener {
             event.getDrops().clear();
         }
 
-        Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> player.spigot().respawn());
+        if(minigame.getFlags().contains(MinigameFlag.INSTANT_RESPAWN)){
+            Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> player.spigot().respawn());
+        }
 
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){
