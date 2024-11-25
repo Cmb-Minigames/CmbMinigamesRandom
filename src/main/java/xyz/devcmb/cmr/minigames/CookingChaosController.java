@@ -90,6 +90,7 @@ public class CookingChaosController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
+        Utilities.gameStartReusable();
         List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(allPlayers);
 

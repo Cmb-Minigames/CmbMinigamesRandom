@@ -4,7 +4,8 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import xyz.devcmb.cmr.commands.RegisterCommands;
-import xyz.devcmb.cmr.interfaces.inventories.CMInventoryManager;
+import xyz.devcmb.cmr.cosmetics.CosmeticManager;
+import xyz.devcmb.cmr.cosmetics.CrateManager;
 import xyz.devcmb.cmr.items.ItemManager;
 import xyz.devcmb.cmr.listeners.ListenerManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
@@ -41,8 +42,9 @@ public final class CmbMinigamesRandom extends JavaPlugin {
 
         adventure = BukkitAudiences.create(this);
         Database.connect();
+        CosmeticManager.registerAllCosmetics();
+        CrateManager.registerAllCrates();
         MusicBox.registerAllTracks();
-        CMInventoryManager.registerAllInventories();
         ListenerManager.initialize();
         RegisterCommands.register();
         ItemManager.registerAllItems();
@@ -57,5 +59,6 @@ public final class CmbMinigamesRandom extends JavaPlugin {
             GameManager.currentMinigame.stop();
         }
         Database.disconnect();
+        MapLoader.cleanup();
     }
 }

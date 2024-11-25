@@ -210,7 +210,6 @@ public class GameManager {
     public static void cleanup(){
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> Bukkit.getOnlinePlayers().forEach(player -> {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-            player.getInventory().clear();
             player.setGlowing(false);
         }), 20);
     }

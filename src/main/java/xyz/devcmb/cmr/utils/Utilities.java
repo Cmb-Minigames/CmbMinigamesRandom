@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 
 import java.util.*;
 
@@ -150,6 +151,13 @@ public class Utilities {
         }
     }
 
+    public static void gameStartReusable(){
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
+        });
+    }
+
     public static void endGameResuable() {
         if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
         GameManager.intermisionRunnable = null;
@@ -163,6 +171,8 @@ public class Utilities {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
             player.setGlowing(false);
             GameManager.teamColors.put(player, ChatColor.WHITE);
+            CosmeticInventory.giveInventoryItem(player);
+
             PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0, true, false, false);
             player.addPotionEffect(hungerEffect);
         });

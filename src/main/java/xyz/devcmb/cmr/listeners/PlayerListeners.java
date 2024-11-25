@@ -16,6 +16,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
+import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.interfaces.Stars;
 import xyz.devcmb.cmr.interfaces.TabList;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
@@ -37,7 +39,9 @@ public class PlayerListeners implements Listener {
         GameManager.playerConnect(event);
         player.getInventory().clear();
         player.teleport(spawnPoint);
+        CosmeticManager.equipHat(player);
         player.setRespawnLocation(spawnPoint);
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> CosmeticInventory.giveInventoryItem(player), 2);
 
         if(!Database.userExists(player)){
             Database.createUser(player);

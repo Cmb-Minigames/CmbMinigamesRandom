@@ -25,13 +25,40 @@ commands:
   select:
     description: Select a minigame
     usage: /<command> <minigame>
+    permission: cmbminigames.select
   ui:
     description: Create an empty UI to test positionings
     usage: /<command> <slots> <name>
+    permission: cmbminigames.debug
+  cosmeticitem:
+    description: Give the cosmetic item to a player for testing purposes
+    usage: /<command> <player> <cosmetic>
+    permission: cmbminigames.debug
+  crateitem:
+    description: Give the crate item to a player for testing purposes
+    usage: /<command> <player> <crate>
+    permission: cmbminigames.debug
+  rollcrate:
+    description: Roll a crate for a player
+    usage: /<command> <player> <crate>
+    permission: cmbminigames.debug
+  rc:
+    description: Reload all cosmetics
+    usage: /<command>
+    permission: cmbminigames.rc
 permissions:
   cmbminigames.pause:
     description: Pause the loop
     default: false
   cmbminigames.end:
     description: End the current minigame
+    default: false
+  cmbminigames.select:
+    description: Select the next minigame
+    default: false
+  cmbminigames.debug:
+    description: Debug commands
+    default: false
+  cmbminigames.rc:
+    description: Reload cosmetics command
     default: false

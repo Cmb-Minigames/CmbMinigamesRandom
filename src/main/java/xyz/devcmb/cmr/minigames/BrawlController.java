@@ -100,6 +100,7 @@ public class BrawlController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
+        Utilities.gameStartReusable();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
             CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");

@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,6 @@ public class Kits {
             Map.entry(Material.COOKED_BEEF, List.of(8, 2)), // 8 cooked beef on inventory slot 2
             Map.entry(Material.GOLDEN_APPLE, List.of(2, 3)), // 2 golden apples on inventory slot 3
             Map.entry(KitEnums.COLORED_CONCRETE, List.of(64, 8)), // 64 colored concrete on inventory slot 8
-            Map.entry(Material.LEATHER_HELMET, List.of(1, KitEnums.HELMET)), // Leather helmet of quantity 1 on helmet slot
             Map.entry(Material.LEATHER_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE)), // Leather chestplate of quantity 1 on chestplate slot
             Map.entry(Material.LEATHER_LEGGINGS, List.of(1, KitEnums.LEGGINGS)), // Leather leggings of quantity 1 on leggings slot
             Map.entry(Material.LEATHER_BOOTS, List.of(1, KitEnums.BOOTS)) // Leather boots of quantity 1 on boots slot
@@ -57,7 +57,6 @@ public class Kits {
             Map.entry(Material.BONE_MEAL, List.of(10, 4)), // Bone meal of quantity 10 on inventory slot 4
             Map.entry(Material.WHEAT_SEEDS, List.of(64, 5)), // Seeds of quantity 64 on inventory slot 5
             Map.entry(KitEnums.COLORED_CONCRETE, List.of(64, 8)), // 64 colored concrete on inventory slot 8
-            Map.entry(Material.LEATHER_HELMET, List.of(1, KitEnums.HELMET)), // Leather helmet of quantity 1 on helmet slot
             Map.entry(Material.LEATHER_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE)), // Leather chestplate of quantity 1 on chestplate slot
             Map.entry(Material.LEATHER_LEGGINGS, List.of(1, KitEnums.LEGGINGS)), // Leather leggings of quantity 1 on leggings slot
             Map.entry(Material.LEATHER_BOOTS, List.of(1, KitEnums.BOOTS)) // Leather boots of quantity 1 on boots slot
@@ -99,5 +98,7 @@ public class Kits {
                 }
             }
         });
+
+        CosmeticManager.equipHat(player);
     }
 }
