@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -23,6 +24,7 @@ import xyz.devcmb.cmr.minigames.MinigameFlag;
 import xyz.devcmb.cmr.minigames.StarSource;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Format;
+import xyz.devcmb.cmr.utils.MapLoader;
 
 import java.util.List;
 import java.util.Map;
@@ -154,8 +156,8 @@ public class MinigameListeners implements Listener {
                 event.getFrom().getZ() != event.getTo().getZ()) {
                 event.setCancelled(true);
             }
-        } else if(GameManager.currentMap != null){
-            String worldName = (String)((Map<?,?>)GameManager.currentMap.get("map")).get("worldName");
+        } else if(GameManager.currentMap != null && MapLoader.LOADED_MAP != null){
+            String worldName = MapLoader.LOADED_MAP;
             Number voidHeight = (Number)((Map<?,?>)GameManager.currentMap.get("map")).get("voidHeight");
             if(worldName.equals(event.getPlayer().getWorld().getName()) && event.getPlayer().getLocation().getY() < voidHeight.intValue()){
                 event.getPlayer().setHealth(0);
@@ -184,6 +186,8 @@ public class MinigameListeners implements Listener {
         if(minigame.getFlags().contains(MinigameFlag.DISABLE_PLAYER_DEATH_DROP)){
             event.getDrops().clear();
         }
+
+        Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> player.spigot().respawn());
 
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){
@@ -266,6 +270,15 @@ public class MinigameListeners implements Listener {
                     Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.getInventory().addItem(new ItemStack(Material.FIREWORK_ROCKET, 1)), 3 * 20); // delay 3 seconds before giving another one
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onEntityChangeBlock(EntityChangeBlockEvent event){
+        if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        Minigame minigame = GameManager.currentMinigame;
+        if(minigame.getFlags().contains(MinigameFlag.CANNOT_TRAMPLE_FARMLAND)){
+            event.setCancelled(true);
         }
     }
 }

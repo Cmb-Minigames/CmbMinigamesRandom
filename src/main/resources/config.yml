@@ -162,7 +162,65 @@ maps:
             x: 0
             y: 0
             z: 0
-
+  Cooking Chaos:
+    - map:
+        worldName: ""
+        voidHeight: 0
+        redSpawn:
+            x: 0
+            y: 0
+            z: 0
+        blueSpawn:
+            x: 0
+            y: 0
+            z: 0
+        redBarrier:
+            from:
+                x: 0
+                y: 0
+                z: 0
+            to:
+                x: 0
+                y: 0
+                z: 0
+        blueBarrier:
+            from:
+                x: 0
+                y: 0
+                z: 0
+            to:
+                x: 0
+                y: 0
+                z: 0
+        boneMealChests:
+          - location:
+              x: 0
+              y: 0
+              z: 0
+        redEntrance:
+            x: 0
+            y: 0
+            z: 0
+        redTables:
+          - seats:
+              - location:
+                  x: 0
+                  y: 0
+                  z: 0
+                  yaw: 0
+                  pitch: 0
+        blueEntrance:
+            x: 0
+            y: 0
+            z: 0
+        blueTables:
+            - seats:
+                - location:
+                    x: 0
+                    y: 0
+                    z: 0
+                    yaw: 0
+                    pitch: 0
 
 database:
   host: ""

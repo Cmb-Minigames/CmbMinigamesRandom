@@ -4,6 +4,7 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -190,5 +191,34 @@ public class Utilities {
         });
 
         GameManager.prepare();
+    }
+
+    public static void moveEntity(Entity entity, Location newLocation, int duration) {
+        new BukkitRunnable() {
+            private final Location startLocation = entity.getLocation();
+            private final double deltaX = (newLocation.getX() - startLocation.getX()) / duration;
+            private final double deltaY = (newLocation.getY() - startLocation.getY()) / duration;
+            private final double deltaZ = (newLocation.getZ() - startLocation.getZ()) / duration;
+            private int ticksElapsed = 0;
+
+            @Override
+            public void run() {
+                if (ticksElapsed >= duration) {
+                    entity.teleport(newLocation);
+                    this.cancel();
+                    return;
+                }
+
+                Location currentLocation = entity.getLocation();
+
+                currentLocation.setYaw(newLocation.getYaw());
+                currentLocation.setPitch(newLocation.getPitch());
+
+                currentLocation.add(deltaX, deltaY, deltaZ);
+                entity.teleport(currentLocation);
+
+                ticksElapsed++;
+            }
+        }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 1);
     }
 }

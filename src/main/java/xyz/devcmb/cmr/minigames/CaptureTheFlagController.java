@@ -54,9 +54,6 @@ public class CaptureTheFlagController implements Minigame {
         redTeam.setColor(ChatColor.RED);
         blueTeam.setColor(ChatColor.BLUE);
 
-        redTeam.setPrefix(ChatColor.RED.toString());
-        blueTeam.setPrefix(ChatColor.BLUE.toString());
-
         ItemStack harmingArrow = new ItemStack(Material.TIPPED_ARROW);
         PotionMeta harmingArrowItemMeta = (PotionMeta) harmingArrow.getItemMeta();
         if (harmingArrowItemMeta == null) return;
@@ -139,7 +136,7 @@ public class CaptureTheFlagController implements Minigame {
             return;
         }
 
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         World world = Bukkit.getWorld(worldName);
 
         if (world == null) {
@@ -192,10 +189,16 @@ public class CaptureTheFlagController implements Minigame {
                     @Override
                     public void run() {
                         GameManager.playersFrozen = false;
-                        Bukkit.getOnlinePlayers().forEach(player -> {
+                        RED.forEach(player -> {
                             Map<?, List<?>> kit = Kits.ctf_kit;
-                            Kits.kitPlayer(kit, player, RED.contains(player) ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
+                            Kits.kitPlayer(kit, player, Material.RED_CONCRETE);
                         });
+
+                        BLUE.forEach(player -> {
+                            Map<?, List<?>> kit = Kits.ctf_kit;
+                            Kits.kitPlayer(kit, player, Material.BLUE_CONCRETE);
+                        });
+
                         timePassedRunnable = new BukkitRunnable(){
                             @Override
                             public void run() {
@@ -292,7 +295,7 @@ public class CaptureTheFlagController implements Minigame {
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -340,7 +343,7 @@ public class CaptureTheFlagController implements Minigame {
     public void handlePlayerMove(PlayerMoveEvent event){
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<?, ?> flags = (Map<?, ?>) mapData.get("flags");
         Map<String, Object> redFlag = (Map<String, Object>) flags.get("redFlag");
         Map<String, Object> blueFlag = (Map<String, Object>) flags.get("blueFlag");
@@ -532,7 +535,7 @@ public class CaptureTheFlagController implements Minigame {
     public void teleportToTeamBase(Player player){
         CmbMinigamesRandom.LOGGER.info("Player respawn event called from ctf controller");
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
         World world = Bukkit.getWorld(worldName);
@@ -577,7 +580,7 @@ public class CaptureTheFlagController implements Minigame {
     @SuppressWarnings("unchecked")
     private void revokeFlag(Player player){
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
 
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.getType() == Material.ECHO_SHARD && offHandItem.getItemMeta() != null) {
@@ -636,7 +639,7 @@ public class CaptureTheFlagController implements Minigame {
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
         World world = Bukkit.getWorld(worldName);

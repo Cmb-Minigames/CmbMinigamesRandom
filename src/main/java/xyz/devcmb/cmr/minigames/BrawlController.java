@@ -116,7 +116,7 @@ public class BrawlController implements Minigame {
         players.addAll(Bukkit.getOnlinePlayers());
         allPlayers.addAll(Bukkit.getOnlinePlayers());
 
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         World world = Bukkit.getWorld(worldName);
 
         if (world == null) {
@@ -145,7 +145,7 @@ public class BrawlController implements Minigame {
             players.forEach(player -> {
                 Kits.kitPlayer(kit, player, Material.WHITE_CONCRETE);
                 player.setSaturation(0);
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(40);
                 player.setHealth(40);
             });
 
@@ -208,7 +208,7 @@ public class BrawlController implements Minigame {
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = (String) mapData.get("worldName");
+        String worldName = MapLoader.LOADED_MAP;
         Map<String, Object> spawn = (Map<String, Object>) mapData.get("spawn");
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -276,6 +276,7 @@ public class BrawlController implements Minigame {
     @Override
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
+        if(spawnLocation == null) return;
         event.setRespawnLocation(spawnLocation);
         player.setGameMode(GameMode.SPECTATOR);
     }
