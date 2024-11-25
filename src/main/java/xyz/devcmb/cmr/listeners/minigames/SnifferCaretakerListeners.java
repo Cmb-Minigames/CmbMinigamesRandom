@@ -82,8 +82,16 @@ public class SnifferCaretakerListeners implements Listener {
             return;
         }
 
-        Map<String, Object> redBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("from");
-        Map<String, Object> redBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("to");
+        Map<String, Object> redBasePreventPlace = (Map<String, Object>) mapData.get("redBasePreventPlace");
+        Map<String, Object> blueBasePreventPlace = (Map<String, Object>) mapData.get("blueBasePreventPlace");
+
+        if (redBasePreventPlace == null || blueBasePreventPlace == null) {
+            CmbMinigamesRandom.LOGGER.warning("Red or blue base points are not defined.");
+            return;
+        }
+
+        Map<String, Object> redBaseFrom = (Map<String, Object>)redBasePreventPlace.get("from");
+        Map<String, Object> redBaseTo = (Map<String, Object>)blueBasePreventPlace.get("to");
 
         if (redBaseFrom == null || redBaseTo == null) {
             CmbMinigamesRandom.LOGGER.warning("Red base points are not defined.");
@@ -264,8 +272,7 @@ public class SnifferCaretakerListeners implements Listener {
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
                 player.sendMessage(ChatColor.RED + "[Red Sniffer] " + ChatColor.RESET + (happinessIncrease >= 10 ? "This makes me VERY happy!" : "This makes me happy!"));
                 itemDrop.getWorld().spawnParticle(Particle.HEART, controller.redSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
-            }
-            if (controller.BLUE.contains(player)) {
+            } else if (controller.BLUE.contains(player)) {
                 controller.blueSnifferHappiness = Math.clamp(controller.blueSnifferHappiness + happinessIncrease, 0, 1000);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
