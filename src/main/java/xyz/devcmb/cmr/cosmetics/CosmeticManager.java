@@ -54,6 +54,21 @@ public class CosmeticManager {
         cosmeticData.put(name, cosmetic);
     }
 
+    public static Map<String, Object> getFromDisplayName(String display_name){
+        for(Map.Entry<String, Map<String, Object>> entry : cosmeticData.entrySet()){
+            if(entry.getValue().get("display_name").equals(display_name)){
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    public static void equipHat(Player player){
+        ItemStack cosmetic = cosmetics.get(Database.getEquipped(player));
+        if(cosmetic == null) player.sendMessage("❓ " + ChatColor.RED + "That cosmetic does not exist.");
+        player.getInventory().setHelmet(cosmetic);
+    }
+
     public static void giveCosmetic(Player player, String name){
         ItemStack cosmetic = cosmetics.get(name);
         if(cosmetic == null) player.sendMessage("❓ " + ChatColor.RED + "That cosmetic does not exist.");

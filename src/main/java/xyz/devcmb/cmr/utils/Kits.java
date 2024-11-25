@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 
 import java.util.List;
 import java.util.Map;
@@ -94,5 +95,7 @@ public class Kits {
                 }
             }
         });
+
+        CosmeticManager.equipHat(player);
     }
 }

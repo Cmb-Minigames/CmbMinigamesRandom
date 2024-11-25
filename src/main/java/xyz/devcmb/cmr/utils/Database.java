@@ -289,6 +289,50 @@ public class Database {
         }
     }
 
+    public static boolean isCosmeticEquipped(Player player, String cosmeticName) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT equipped FROM Users WHERE uuid = ?"
+            );
+            statement.setBytes(1, uuidToBytes(player.getUniqueId()));
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return cosmeticName.equals(resultSet.getString("equipped"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String getEquipped(Player player){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT equipped FROM Users WHERE uuid = ?");
+            statement.setBytes(1, uuidToBytes(player.getUniqueId()));
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("equipped");
+            }
+        } catch (SQLException e){
+            CmbMinigamesRandom.LOGGER.severe("Failed to get equipped cosmetic by UUID: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static void equipCosmetic(Player player, String cosmetic){
+        try {
+            if (!userExists(player)) {
+                createUser(player);
+            }
+            PreparedStatement statement = connection.prepareStatement("UPDATE Users SET equipped = ? WHERE uuid = ?");
+            statement.setString(1, cosmetic);
+            statement.setBytes(2, uuidToBytes(player.getUniqueId()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            CmbMinigamesRandom.LOGGER.severe("Failed to equip cosmetic by UUID: " + e.getMessage());
+        }
+    }
+
     public static Map<String, Number> getRaritySet(Integer id){
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM RaritySets WHERE id = ?");

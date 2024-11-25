@@ -17,6 +17,7 @@ import xyz.devcmb.cmr.utils.Database;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CosmeticInventory {
     public static void giveInventoryItem(Player player){
@@ -31,6 +32,8 @@ public class CosmeticInventory {
     }
 
     public static String page = "inventory";
+    public static Integer inventoryPage = 1;
+    public static Integer cratePage = 1;
     public static void openInventory(Player player){
         Inventory inventory = Bukkit.createInventory(player, 45, "Cosmetic Inventory");
         if(page.equals("inventory")){
@@ -62,12 +65,44 @@ public class CosmeticInventory {
             }
 
             List<String> userCosmetics = Database.getUserCosmetics(player);
+            int itemsPerPage = 14;
+            int startIndex = (inventoryPage - 1) * itemsPerPage;
+            int endIndex = Math.min(startIndex + itemsPerPage, userCosmetics.size());
             int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
-            for (int i = 0; i < userCosmetics.size() && i < slots.length; i++) {
-                ItemStack cosmeticItem = CosmeticManager.cosmetics.get(userCosmetics.get(i));
-                if (cosmeticItem != null) {
-                    inventory.setItem(slots[i], cosmeticItem);
+
+            for (int i = startIndex; i < endIndex && i - startIndex < slots.length; i++) {
+                ItemStack cosmeticItem = CosmeticManager.cosmetics.get(userCosmetics.get(i)).clone();
+                ItemMeta cosmeticMeta = cosmeticItem.getItemMeta();
+                if (cosmeticMeta == null) return;
+                if (Database.isCosmeticEquipped(player, userCosmetics.get(i))) {
+                    if(cosmeticMeta.getLore() == null) return;
+                    List<String> lore = new ArrayList<>(cosmeticMeta.getLore());
+                    lore.add(ChatColor.WHITE + "Equipped");
+                    cosmeticMeta.setLore(lore);
                 }
+
+                cosmeticItem.setItemMeta(cosmeticMeta);
+                inventory.setItem(slots[i - startIndex], cosmeticItem);
+            }
+
+            if (inventoryPage > 1) {
+                ItemStack previousPage = new ItemStack(Material.ARROW);
+                ItemMeta previousPageMeta = previousPage.getItemMeta();
+                if (previousPageMeta != null) {
+                    previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
+                    previousPage.setItemMeta(previousPageMeta);
+                }
+                inventory.setItem(36, previousPage);
+            }
+
+            if (endIndex < userCosmetics.size()) {
+                ItemStack nextPage = new ItemStack(Material.ARROW);
+                ItemMeta nextPageMeta = nextPage.getItemMeta();
+                if (nextPageMeta != null) {
+                    nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
+                    nextPage.setItemMeta(nextPageMeta);
+                }
+                inventory.setItem(44, nextPage);
             }
         } else if (page.equals("crates")) {
             ItemStack inventoryItem = new ItemStack(Material.PLAYER_HEAD);
@@ -97,12 +132,36 @@ public class CosmeticInventory {
             }
 
             List<String> userCrates = Database.getUserCrates(player);
+            int itemsPerPage = 14;
+            int startIndex = (CosmeticInventory.cratePage - 1) * itemsPerPage;
+            int endIndex = Math.min(startIndex + itemsPerPage, userCrates.size());
             int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
-            for (int i = 0; i < userCrates.size() && i < slots.length; i++) {
+
+            for (int i = startIndex; i < endIndex && i - startIndex < slots.length; i++) {
                 ItemStack crateItem = CrateManager.crates.get(userCrates.get(i));
                 if (crateItem != null) {
-                    inventory.setItem(slots[i], crateItem);
+                    inventory.setItem(slots[i - startIndex], crateItem);
                 }
+            }
+
+            if (CosmeticInventory.cratePage > 1) {
+                ItemStack previousPage = new ItemStack(Material.ARROW);
+                ItemMeta previousPageMeta = previousPage.getItemMeta();
+                if (previousPageMeta != null) {
+                    previousPageMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
+                    previousPage.setItemMeta(previousPageMeta);
+                }
+                inventory.setItem(36, previousPage);
+            }
+
+            if (endIndex < userCrates.size()) {
+                ItemStack nextPage = new ItemStack(Material.ARROW);
+                ItemMeta nextPageMeta = nextPage.getItemMeta();
+                if (nextPageMeta != null) {
+                    nextPageMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
+                    nextPage.setItemMeta(nextPageMeta);
+                }
+                inventory.setItem(44, nextPage);
             }
         }
         player.openInventory(inventory);
@@ -121,6 +180,9 @@ public class CosmeticInventory {
             inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
         }
 
+        inventory.setItem(4, new ItemStack(Material.YELLOW_STAINED_GLASS_PANE));
+        inventory.setItem(22, new ItemStack(Material.YELLOW_STAINED_GLASS_PANE));
+
         player.openInventory(inventory);
 
         List<ItemStack> cosmetics = new ArrayList<>();
@@ -131,7 +193,8 @@ public class CosmeticInventory {
                 cosmetics.add(cosmeticItem);
             }
         }
-        cosmetics.add(CosmeticManager.cosmetics.get(CrateManager.rollCrate(player, crate)));
+        ItemStack cosmetic = CosmeticManager.cosmetics.get(CrateManager.rollCrate(player, crate));
+        cosmetics.add(cosmetic);
         for (int i = 0; i < 4; i++) {
             String cosmeticName = CrateManager.rollRandomCosmeticFromCrate(crate);
             ItemStack cosmeticItem = CosmeticManager.cosmetics.get(cosmeticName);
@@ -147,6 +210,11 @@ public class CosmeticInventory {
             public void run() {
                 if (index == cosmetics.size()) {
                     this.cancel();
+                    player.sendMessage(ChatColor.GOLD + "You have rolled a " + ChatColor.RESET + Objects.requireNonNull(cosmetic.getItemMeta()).getItemName());
+                    Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                        page = "inventory";
+                        openInventory(player);
+                    }, 40);
                     return;
                 }
 

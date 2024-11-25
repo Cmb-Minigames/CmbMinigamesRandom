@@ -176,6 +176,13 @@ public class Utilities {
         }
     }
 
+    public static void gameStartReusable(){
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.setGameMode(GameMode.SURVIVAL);
+            player.getInventory().clear();
+        });
+    }
+
     public static void endGameResuable() {
         if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
         GameManager.intermisionRunnable = null;
