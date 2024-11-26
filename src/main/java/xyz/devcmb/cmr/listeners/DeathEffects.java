@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -62,6 +63,7 @@ public class DeathEffects implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
+        e.setDeathMessage(null);
         Player player = e.getEntity().getPlayer();
         if(player == null) return;
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 10, 1);
@@ -81,7 +83,7 @@ public class DeathEffects implements Listener {
         Player player = e.getEntity().getPlayer();
         if(player == null) return;
         String deathMessage = Utilities.getRandom(randomizedDeathMessages);
-        e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY));
+        Bukkit.broadcastMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY));
     }
 
     private static void doKillDeathMessage(PlayerDeathEvent e){
@@ -93,7 +95,7 @@ public class DeathEffects implements Listener {
             doRandomizedDeathMessages(e);
         } else {
             String deathMessage = Utilities.getRandom(randomizedKillMessages);
-            e.setDeathMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY).replace("{killer}", ChatColor.WHITE + Format.formatPlayerName(killer) + ChatColor.GRAY));
+            Bukkit.broadcastMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY).replace("{killer}", ChatColor.WHITE + Format.formatPlayerName(killer) + ChatColor.GRAY));
         }
     }
 }

@@ -592,7 +592,8 @@ public class CookingChaosController implements Minigame {
         return List.of(
             MinigameFlag.DISABLE_FALL_DAMAGE,
             MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
-            MinigameFlag.CANNOT_TRAMPLE_FARMLAND
+            MinigameFlag.CANNOT_TRAMPLE_FARMLAND,
+            MinigameFlag.USE_CUSTOM_RESPAWN
         );
     }
 
@@ -609,9 +610,11 @@ public class CookingChaosController implements Minigame {
         if(RED.contains(player)){
             Kits.kitPlayer(Kits.cookingchaos_kit, player, Material.RED_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+            player.teleport(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
         } else if(BLUE.contains(player)){
             Kits.kitPlayer(Kits.cookingchaos_kit, player, Material.BLUE_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+            player.teleport(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
         }
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false)), 20 * 2);

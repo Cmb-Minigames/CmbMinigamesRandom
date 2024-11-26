@@ -1,6 +1,8 @@
 package xyz.devcmb.cmr.listeners;
 
 import org.bukkit.*;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +28,7 @@ import xyz.devcmb.cmr.minigames.StarSource;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Format;
 import xyz.devcmb.cmr.utils.MapLoader;
+import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.List;
 import java.util.Map;
@@ -125,6 +128,22 @@ public class MinigameListeners implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        Minigame minigame = GameManager.currentMinigame;
+
+        if(minigame.getFlags().contains(MinigameFlag.USE_CUSTOM_RESPAWN)){
+            if (event.getEntity() instanceof Player player) {
+                double finalHealth = player.getHealth() - event.getFinalDamage();
+                if (finalHealth <= 0) {
+                    event.setCancelled(true);
+                    Utilities.customRespawn(player, event.getDamageSource());
+                }
+            }
+        }
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onBlockPlace(BlockPlaceEvent event){
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
@@ -151,6 +170,8 @@ public class MinigameListeners implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         if(GameManager.gameEnding) return;
         if(event.getTo() == null) return;
+        if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        Minigame minigame = GameManager.currentMinigame;
         if (GameManager.playersFrozen) {
             if (event.getFrom().getX() != event.getTo().getX() ||
                 event.getFrom().getY() != event.getTo().getY() ||
@@ -161,7 +182,11 @@ public class MinigameListeners implements Listener {
             String worldName = MapLoader.LOADED_MAP;
             Number voidHeight = (Number)((Map<?,?>)GameManager.currentMap.get("map")).get("voidHeight");
             if(worldName.equals(event.getPlayer().getWorld().getName()) && event.getPlayer().getLocation().getY() < voidHeight.intValue()){
-                event.getPlayer().setHealth(0);
+                if(minigame.getFlags().contains(MinigameFlag.USE_CUSTOM_RESPAWN)){
+                    Utilities.customRespawn(event.getPlayer(), DamageSource.builder(DamageType.OUT_OF_WORLD).build());
+                } else {
+                    event.getPlayer().setHealth(0);
+                }
             }
         }
     }
@@ -182,9 +207,12 @@ public class MinigameListeners implements Listener {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
         Player player = event.getEntity().getPlayer();
-        if(player == null) return;
+        if(player == null) {
+            CmbMinigamesRandom.LOGGER.warning("Player is null in playerDeathEvent.");
+            return;
+        }
         Player killer = player.getKiller();
-        if(minigame.getFlags().contains(MinigameFlag.DISABLE_PLAYER_DEATH_DROP)){
+        if(minigame.getFlags().contains(MinigameFlag.DISABLE_PLAYER_DEATH_DROP) && !event.getDrops().isEmpty()){
             event.getDrops().clear();
         }
 

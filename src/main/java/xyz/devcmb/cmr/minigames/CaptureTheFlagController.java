@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -631,7 +632,8 @@ public class CaptureTheFlagController implements Minigame {
             MinigameFlag.DISABLE_OFF_HAND,
             MinigameFlag.DISABLE_BLOCK_DROPS,
             MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
-            MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE
+            MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
+            MinigameFlag.USE_CUSTOM_RESPAWN
         );
     }
 
@@ -671,9 +673,11 @@ public class CaptureTheFlagController implements Minigame {
             Kits.kitPlayer(Kits.ctf_kit, player, Material.RED_CONCRETE);
 
             event.setRespawnLocation(redSpawnLocation);
+            event.getPlayer().teleport(redSpawnLocation);
         } else if(BLUE.contains(player)){
             Kits.kitPlayer(Kits.ctf_kit, player, Material.BLUE_CONCRETE);
             event.setRespawnLocation(blueSpawnLocation);
+            event.getPlayer().teleport(blueSpawnLocation);
         }
     }
 
@@ -681,6 +685,16 @@ public class CaptureTheFlagController implements Minigame {
     public void playerDeath(PlayerDeathEvent event) {
         Player player = Objects.requireNonNull(event.getEntity().getPlayer());
         revokeFlag(player);
+    }
+
+    @Override
+    public Boolean dontReturnBlock(BlockPlaceEvent event) {
+        Location redFlagLocation = redFlagEntity.getLocation();
+        Location blueFlagLocation = blueFlagEntity.getLocation();
+        Location blockLocation = event.getBlock().getLocation();
+
+        int blockPlacingDistance = 5;
+        return blockLocation.distance(redFlagLocation) <= blockPlacingDistance || blockLocation.distance(blueFlagLocation) <= blockPlacingDistance;
     }
 
     @Override

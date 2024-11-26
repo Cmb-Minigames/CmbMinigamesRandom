@@ -55,15 +55,21 @@ public class MapLoader {
 //        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(world.getSpawnLocation()));
     }
 
-    public static void unloadMap() {
+    public static void unloadMap(boolean closing) {
         if (LOADED_MAP != null) {
             World world = Bukkit.getWorld(LOADED_MAP);
-            if (world == null) return;
+            if (world == null){
+                CmbMinigamesRandom.LOGGER.warning("World not found: " + LOADED_MAP);
+                return;
+            }
+
+            world.setAutoSave(false);
             Bukkit.unloadWorld(LOADED_MAP, false);
 
             String oldWorldName = LOADED_MAP;
             LOADED_MAP = null;
 
+            if(closing) return;
             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                 File worldFolder = new File(Bukkit.getWorldContainer(), oldWorldName);
                 try {
@@ -71,7 +77,7 @@ public class MapLoader {
                 } catch (IOException e) {
                     CmbMinigamesRandom.LOGGER.warning("Failed to delete world folder: " + e.getMessage());
                 }
-            }, 60 * 20);
+            }, 40 * 20);
         } else {
             CmbMinigamesRandom.LOGGER.warning("No map loaded to unload.");
         }

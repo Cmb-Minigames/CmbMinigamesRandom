@@ -551,9 +551,10 @@ public class SnifferCaretakerController implements Minigame {
     @Override
     public List<MinigameFlag> getFlags() {
         return List.of(
-                MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
-                MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
-                MinigameFlag.UNLIMITED_BLOCKS
+            MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
+            MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
+            MinigameFlag.UNLIMITED_BLOCKS,
+            MinigameFlag.USE_CUSTOM_RESPAWN
         );
     }
 
@@ -570,9 +571,11 @@ public class SnifferCaretakerController implements Minigame {
         if(RED.contains(player)){
             Kits.kitPlayer(Kits.sniffercaretaker_kit, player, Material.RED_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+            player.teleport(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
         } else if(BLUE.contains(player)){
             Kits.kitPlayer(Kits.sniffercaretaker_kit, player, Material.BLUE_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+            player.teleport(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
         }
     }
 

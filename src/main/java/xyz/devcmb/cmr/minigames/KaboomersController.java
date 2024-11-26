@@ -277,7 +277,7 @@ public class KaboomersController implements Minigame {
             MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
             MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
             MinigameFlag.DO_NOT_CONSUME_FIREWORKS,
-            MinigameFlag.INSTANT_RESPAWN
+            MinigameFlag.USE_CUSTOM_RESPAWN
         );
     }
 
@@ -294,9 +294,11 @@ public class KaboomersController implements Minigame {
         if(RED.contains(player)){
             Kits.kitPlayer(Kits.kaboomers_kit, player, Material.RED_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+            player.teleport(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
         } else if(BLUE.contains(player)){
             Kits.kitPlayer(Kits.kaboomers_kit, player, Material.BLUE_CONCRETE);
             event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+            player.teleport(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
         }
     }
 
