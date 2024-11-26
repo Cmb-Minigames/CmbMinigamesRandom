@@ -235,16 +235,17 @@ public class Utilities {
     public static void customRespawn(Player player, DamageSource damageSource){
         if(respawningPlayers.contains(player)) return;
         respawningPlayers.add(player);
-        player.setAllowFlight(true);
-        player.setFlying(true);
-        player.setInvulnerable(true);
-        player.getInventory().clear();
-        setInvisible(player);
 
         List<ItemStack> inventoryContents = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
         inventoryContents.addAll(Arrays.asList(player.getInventory().getArmorContents()));
         PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, damageSource, inventoryContents, 0, null);
         Bukkit.getPluginManager().callEvent(deathEvent);
+        
+        player.setAllowFlight(true);
+        player.setFlying(true);
+        player.setInvulnerable(true);
+        setInvisible(player);
+        player.getInventory().clear();
 
         new BukkitRunnable(){
             Integer loops = 3;

@@ -128,7 +128,7 @@ public class MinigameListeners implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent event) {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
@@ -207,7 +207,10 @@ public class MinigameListeners implements Listener {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
         Player player = event.getEntity().getPlayer();
-        if(player == null) return;
+        if(player == null) {
+            CmbMinigamesRandom.LOGGER.warning("Player is null in playerDeathEvent.");
+            return;
+        }
         Player killer = player.getKiller();
         if(minigame.getFlags().contains(MinigameFlag.DISABLE_PLAYER_DEATH_DROP) && !event.getDrops().isEmpty()){
             event.getDrops().clear();

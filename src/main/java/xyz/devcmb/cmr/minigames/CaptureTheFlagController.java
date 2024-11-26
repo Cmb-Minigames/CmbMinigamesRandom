@@ -6,6 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -684,6 +685,16 @@ public class CaptureTheFlagController implements Minigame {
     public void playerDeath(PlayerDeathEvent event) {
         Player player = Objects.requireNonNull(event.getEntity().getPlayer());
         revokeFlag(player);
+    }
+
+    @Override
+    public Boolean dontReturnBlock(BlockPlaceEvent event) {
+        Location redFlagLocation = redFlagEntity.getLocation();
+        Location blueFlagLocation = blueFlagEntity.getLocation();
+        Location blockLocation = event.getBlock().getLocation();
+
+        int blockPlacingDistance = 5;
+        return blockLocation.distance(redFlagLocation) <= blockPlacingDistance || blockLocation.distance(blueFlagLocation) <= blockPlacingDistance;
     }
 
     @Override
