@@ -1,4 +1,4 @@
-package xyz.devcmb.cmr.commands;
+package xyz.devcmb.cmr.commands.cosmetics;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,11 +9,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.cosmetics.CrateManager;
 
-public class CrateCommand implements CommandExecutor {
+public class RollCrateCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if(args.length != 2){
-            commandSender.sendMessage("❓" + ChatColor.RED + " Usage: /crateitem <player> <name>");
+            commandSender.sendMessage("❓" + ChatColor.RED + " Usage: /rollcrate <player> <name>");
             return true;
         }
 
@@ -23,7 +23,10 @@ public class CrateCommand implements CommandExecutor {
             return true;
         }
 
-        CrateManager.giveCrate(player, args[1]);
+        String rolled = CrateManager.rollCrate(player, args[1]);
+        if(rolled == null) return true;
+
+        commandSender.sendMessage(ChatColor.GREEN + "Rolled a " + ChatColor.WHITE + rolled + ChatColor.GREEN + " from the crate.");
 
         return true;
     }

@@ -1,4 +1,4 @@
-package xyz.devcmb.cmr.commands;
+package xyz.devcmb.cmr.commands.development;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

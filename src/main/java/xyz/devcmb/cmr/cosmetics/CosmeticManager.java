@@ -64,7 +64,9 @@ public class CosmeticManager {
     }
 
     public static void equipHat(Player player){
-        ItemStack cosmetic = cosmetics.get(Database.getEquipped(player));
+        String equipped = Database.getEquipped(player);
+        if(equipped == null) return;
+        ItemStack cosmetic = cosmetics.get(equipped);
         if(cosmetic == null) player.sendMessage("❓ " + ChatColor.RED + "That cosmetic does not exist.");
         player.getInventory().setHelmet(cosmetic);
     }

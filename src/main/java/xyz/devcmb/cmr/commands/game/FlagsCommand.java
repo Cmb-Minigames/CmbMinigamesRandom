@@ -1,4 +1,4 @@
-package xyz.devcmb.cmr.commands;
+package xyz.devcmb.cmr.commands.game;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;

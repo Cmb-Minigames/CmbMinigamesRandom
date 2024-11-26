@@ -46,6 +46,18 @@ commands:
     description: Reload all cosmetics
     usage: /<command>
     permission: cmbminigames.rc
+  cosmetic:
+    description: Give a cosmetic to a player
+    usage: /<command> <player> <cosmetic>
+    permission: cmbminigames.admin
+  crate:
+    description: Give a crate to a player
+    usage: /<command> <player> <crate>
+    permission: cmbminigames.admin
+  setstars:
+    description: Set the stars of a player
+    usage: /<command> <player> <stars>
+    permission: cmbminigames.admin
 permissions:
   cmbminigames.pause:
     description: Pause the loop
@@ -61,4 +73,7 @@ permissions:
     default: false
   cmbminigames.rc:
     description: Reload cosmetics command
+    default: false
+  cmbminigames.admin:
+    description: Admin commands
     default: false

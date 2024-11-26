@@ -213,7 +213,7 @@ public class Utilities {
     }
 
     public static void setInvisible(Player player){
-        player.setInvisible(true);
+//        player.setInvisible(true);
         Bukkit.getOnlinePlayers().forEach(plr -> {
             if(plr != player){
                 plr.hidePlayer(CmbMinigamesRandom.getPlugin(), player);
@@ -222,7 +222,7 @@ public class Utilities {
     }
 
     public static void setVisible(Player player){
-        player.setInvisible(false);
+//        player.setInvisible(false);
         Bukkit.getOnlinePlayers().forEach(plr -> {
             if(plr != player){
                 plr.showPlayer(CmbMinigamesRandom.getPlugin(), player);
@@ -242,6 +242,8 @@ public class Utilities {
         Bukkit.getPluginManager().callEvent(deathEvent);
         
         player.setAllowFlight(true);
+        player.setHealth(20);
+        player.setFoodLevel(20);
         player.setFlying(true);
         player.setInvulnerable(true);
         setInvisible(player);
@@ -255,6 +257,8 @@ public class Utilities {
                     player.setFlying(false);
                     player.setAllowFlight(false);
                     player.setInvulnerable(false);
+                    player.setHealth(20);
+                    player.setFoodLevel(20);
                     setVisible(player);
                     player.sendTitle(ChatColor.AQUA + "RESPAWNED", "", 5, 40, 5);
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 2);

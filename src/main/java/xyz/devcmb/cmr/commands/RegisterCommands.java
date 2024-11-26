@@ -1,34 +1,51 @@
 package xyz.devcmb.cmr.commands;
 
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.TabCompleter;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
-import xyz.devcmb.cmr.commands.completions.CosmeticCommandCompletion;
-import xyz.devcmb.cmr.commands.completions.CrateCommandCompletion;
-import xyz.devcmb.cmr.commands.completions.MinigameCompletion;
-import xyz.devcmb.cmr.commands.completions.UICompletions;
+import xyz.devcmb.cmr.commands.completions.*;
+import xyz.devcmb.cmr.commands.cosmetics.*;
+import xyz.devcmb.cmr.commands.development.*;
+import xyz.devcmb.cmr.commands.game.*;
 
 import java.util.Objects;
 
 public class RegisterCommands {
     public static void register(){
-        CmbMinigamesRandom plugin = CmbMinigamesRandom.getPlugin();
-        Objects.requireNonNull(plugin.getCommand("pauseloop")).setExecutor(new StopLoopCommand());
-        Objects.requireNonNull(plugin.getCommand("end")).setExecutor(new EndMinigameCommand());
-        Objects.requireNonNull(plugin.getCommand("minigame")).setExecutor(new MinigameCommand(CmbMinigamesRandom.adventure()));
-        Objects.requireNonNull(plugin.getCommand("flags")).setExecutor(new FlagsCommand(CmbMinigamesRandom.adventure()));
-        Objects.requireNonNull(plugin.getCommand("select")).setExecutor(new SelectCommand());
-        Objects.requireNonNull(plugin.getCommand("ui")).setExecutor(new UICommand());
-        Objects.requireNonNull(plugin.getCommand("cosmeticitem")).setExecutor(new CosmeticCommand());
-        Objects.requireNonNull(plugin.getCommand("crateitem")).setExecutor(new CrateCommand());
-        Objects.requireNonNull(plugin.getCommand("rollcrate")).setExecutor(new RollCrateCommand());
-        Objects.requireNonNull(plugin.getCommand("rc")).setExecutor(new ReloadCosmeticsCommand());
+        registerSingleCommand("pauseloop", new StopLoopCommand());
+        registerSingleCommand("end", new EndMinigameCommand());
+        registerSingleCommand("minigame", new MinigameCommand(CmbMinigamesRandom.adventure()));
+        registerSingleCommand("flags", new FlagsCommand(CmbMinigamesRandom.adventure()));
+        registerSingleCommand("select", new SelectCommand());
+        registerSingleCommand("ui", new UICommand());
+        registerSingleCommand("cosmeticitem", new CosmeticCommand());
+        registerSingleCommand("crateitem", new CrateCommand());
+        registerSingleCommand("rollcrate", new RollCrateCommand());
+        registerSingleCommand("rc", new ReloadCosmeticsCommand());
+        registerSingleCommand("cosmetic", new GiveCosmeticCommand());
+        registerSingleCommand("crate", new GiveCrateCommand());
+        registerSingleCommand("setstars", new SetStarsCommand());
 
         // Completions
-        Objects.requireNonNull(plugin.getCommand("minigame")).setTabCompleter(new MinigameCompletion());
-        Objects.requireNonNull(plugin.getCommand("flags")).setTabCompleter(new MinigameCompletion());
-        Objects.requireNonNull(plugin.getCommand("select")).setTabCompleter(new MinigameCompletion());
-        Objects.requireNonNull(plugin.getCommand("ui")).setTabCompleter(new UICompletions());
-        Objects.requireNonNull(plugin.getCommand("cosmeticitem")).setTabCompleter(new CosmeticCommandCompletion());
-        Objects.requireNonNull(plugin.getCommand("crateitem")).setTabCompleter(new CrateCommandCompletion());
-        Objects.requireNonNull(plugin.getCommand("rollcrate")).setTabCompleter(new CrateCommandCompletion());
+        registerSingleTabCompletion("minigame", new MinigameCompletion());
+        registerSingleTabCompletion("flags", new MinigameCompletion());
+        registerSingleTabCompletion("select", new MinigameCompletion());
+        registerSingleTabCompletion("ui", new UICompletions());
+        registerSingleTabCompletion("cosmeticitem", new CosmeticCommandCompletion());
+        registerSingleTabCompletion("cosmetic", new CosmeticCommandCompletion());
+        registerSingleTabCompletion("crateitem", new CrateCommandCompletion());
+        registerSingleTabCompletion("rollcrate", new CrateCommandCompletion());
+        registerSingleTabCompletion("crate", new CrateCommandCompletion());
+
+    }
+
+    public static void registerSingleCommand(String command, CommandExecutor executor){
+        CmbMinigamesRandom plugin = CmbMinigamesRandom.getPlugin();
+        Objects.requireNonNull(plugin.getCommand(command)).setExecutor(executor);
+    }
+
+    public static void registerSingleTabCompletion(String command, TabCompleter completer){
+        CmbMinigamesRandom plugin = CmbMinigamesRandom.getPlugin();
+        Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(completer);
     }
 }

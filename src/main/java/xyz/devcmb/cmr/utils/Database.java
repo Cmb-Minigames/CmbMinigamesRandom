@@ -29,10 +29,6 @@ public class Database {
         }
     }
 
-    public static Connection getConnection() {
-        return connection;
-    }
-
     public static boolean userExists(Player player) {
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM Users WHERE uuid = ?");
@@ -142,30 +138,6 @@ public class Database {
         return new HashMap<>();
     }
 
-    public static Map<String, Object> getCosmetic(String name){
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Cosmetics WHERE name = ?");
-            statement.setString(1, name);
-            ResultSet resultSet = statement.executeQuery();
-            Map<String, Object> resultMap = new HashMap<>();
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-
-            if (resultSet.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnName(i);
-                    Object value = resultSet.getObject(i);
-                    resultMap.put(columnName, value);
-                }
-            }
-
-            return resultMap;
-        } catch (SQLException e){
-            CmbMinigamesRandom.LOGGER.severe("Failed to get cosmetic: " + e.getMessage());
-        }
-        return null;
-    }
-
     public static void giveCosmetic(Player player, String name){
         try {
             if (!userExists(player)) {
@@ -227,30 +199,6 @@ public class Database {
         return List.of();
     }
 
-    public static Map<String, Object> getCrate(String name){
-        try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Crates WHERE name = ?");
-            statement.setString(1, name);
-            ResultSet resultSet = statement.executeQuery();
-            Map<String, Object> resultMap = new HashMap<>();
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-
-            if (resultSet.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnName(i);
-                    Object value = resultSet.getObject(i);
-                    resultMap.put(columnName, value);
-                }
-            }
-
-            return resultMap;
-        } catch (SQLException e){
-            CmbMinigamesRandom.LOGGER.severe("Failed to get crate: " + e.getMessage());
-        }
-        return null;
-    }
-
     public static void giveCrate(Player player, String name){
         try {
             if (!userExists(player)) {
@@ -300,7 +248,7 @@ public class Database {
                 return cosmeticName.equals(resultSet.getString("equipped"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            CmbMinigamesRandom.LOGGER.severe("Failed to check if cosmetic is equipped by UUID: " + e.getMessage());
         }
         return false;
     }
