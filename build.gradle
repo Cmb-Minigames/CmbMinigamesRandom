@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'xyz.devcmb'
-version = '0.1'
+version = '1.0'
 
 repositories {
     mavenCentral()
@@ -21,7 +21,6 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT")
-    compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
     implementation "net.kyori:adventure-api:4.17.0"
     implementation 'net.kyori:adventure-platform-bukkit:4.1.1'
     implementation 'commons-io:commons-io:2.14.0'

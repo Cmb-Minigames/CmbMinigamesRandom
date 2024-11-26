@@ -1,11 +1,10 @@
 name: CmbMinigamesRandom
-version: '0.1'
+version: '1.0'
 main: xyz.devcmb.cmr.CmbMinigamesRandom
 api-version: '1.21'
 prefix: CmbMinigames
 authors: [ DevCmb ]
-depend: [ProtocolLib]
-description: The CmbMinigames server plugin, extension of CmbMinigames
+description: The CmbMinigames plugin for random minigames
 website: devcmb.xyz
 commands:
   pauseloop:
