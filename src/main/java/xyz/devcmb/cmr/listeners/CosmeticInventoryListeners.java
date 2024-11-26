@@ -7,7 +7,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
@@ -109,6 +112,20 @@ public class CosmeticInventoryListeners implements Listener {
             if(event.getCurrentItem().getType() == Material.ARROW){
                 CosmeticInventory.openInventory(player);
             }
+        }
+    }
+
+    @EventHandler
+    public void onArmorClick(InventoryClickEvent event) {
+        if (event.getSlotType() == InventoryType.SlotType.ARMOR && event.getSlot() == 39) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
+        if (event.getPlayer().getInventory().getHelmet() != null) {
+            event.setCancelled(true);
         }
     }
 }

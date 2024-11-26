@@ -152,7 +152,7 @@ public class CosmeticInventory {
 
                 List<String> userCrates = Database.getUserCrates(player);
                 int itemsPerPage = 14;
-                int startIndex = (CosmeticInventory.cratePage - 1) * itemsPerPage;
+                int startIndex = (cratePage - 1) * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, userCrates.size());
                 int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
 
@@ -163,11 +163,11 @@ public class CosmeticInventory {
                     }
                 }
 
-                if (CosmeticInventory.cratePage > 1) {
+                if (cratePage > 1) {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
-                        previousPageMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
+                        previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
                     inventory.setItem(36, previousPage);
@@ -177,7 +177,7 @@ public class CosmeticInventory {
                     ItemStack nextPage = new ItemStack(Material.ARROW);
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
-                        nextPageMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
+                        nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
                     inventory.setItem(44, nextPage);

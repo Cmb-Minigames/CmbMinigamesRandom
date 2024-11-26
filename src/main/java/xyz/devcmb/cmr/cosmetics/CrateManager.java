@@ -109,34 +109,31 @@ public class CrateManager {
         return selectedCosmetics.get(new Random().nextInt(selectedCosmetics.size()));
     }
 
-    public static String rollRandomRarity(Map<String, Number> raritySet){
+    public static String rollRandomRarity(Map<String, Number> raritySet) {
         double common = raritySet.get("common").doubleValue();
-        double uncommon = common + raritySet.get("uncommon").doubleValue();
-        double rare = uncommon + raritySet.get("rare").doubleValue();
-        double epic = rare + raritySet.get("epic").doubleValue();
-        double legendary = epic + raritySet.get("legendary").doubleValue();
-        double mythic = legendary + raritySet.get("mythic").doubleValue();
+        double uncommon = raritySet.get("uncommon").doubleValue();
+        double rare = raritySet.get("rare").doubleValue();
+        double epic = raritySet.get("epic").doubleValue();
+        double legendary = raritySet.get("legendary").doubleValue();
+        double mythic = raritySet.get("mythic").doubleValue();
 
-        Random random = new Random();
-        double randomValue = random.nextDouble() * 100;
+        double total = common + uncommon + rare + epic + legendary + mythic;
+        double randomValue = new Random().nextDouble() * total;
 
-        String selectedRarity;
-        if (randomValue <= common) {
-            selectedRarity = "common";
-        } else if (randomValue <= uncommon) {
-            selectedRarity = "uncommon";
-        } else if (randomValue <= rare) {
-            selectedRarity = "rare";
-        } else if (randomValue <= epic) {
-            selectedRarity = "epic";
-        } else if (randomValue <= legendary) {
-            selectedRarity = "legendary";
-        } else if (randomValue <= mythic) {
-            selectedRarity = "mythic";
+        if (randomValue < common) {
+            return "common";
+        } else if (randomValue < common + uncommon) {
+            return "uncommon";
+        } else if (randomValue < common + uncommon + rare) {
+            return "rare";
+        } else if (randomValue < common + uncommon + rare + epic) {
+            return "epic";
+        } else if (randomValue < common + uncommon + rare + epic + legendary) {
+            return "legendary";
+        } else if (randomValue < common + uncommon + rare + epic + legendary + mythic){
+            return "mythic";
         } else {
-            selectedRarity = "common";
+            return "common";
         }
-
-        return selectedRarity;
     }
 }
