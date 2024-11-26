@@ -12,6 +12,8 @@ There are currently a small group of added minigames, with more to come in the f
   - Keep your team’s sniffer alive by giving it food, dirt, and other resources found around the map. You win if the other team’s sniffer is not taken care of enough and dies.
 - [x] Cooking Chaos
   - Race for resources to cook for your animal patreons where pvp is enabled, you can sabotage the other team or play it safe and get your own resources. The team with the most customers fed in 10 minutes wins. 
+- [ ] Mace Murderers
+  - Collect materials around the map to craft weapons to fight an assasin with a mace and wind charges. The assasin will win if they hunt all of their targets, and the players will win if they can kill the assasin.
 > [!WARNING]\
 > This is a large-scale project maintained by a very small pool of people, so do not expect updates too frequently.
 

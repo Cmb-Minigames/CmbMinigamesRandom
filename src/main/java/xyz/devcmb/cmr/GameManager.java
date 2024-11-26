@@ -39,6 +39,7 @@ public class GameManager {
         registerMinigame(new BrawlController());
         registerMinigame(new SnifferCaretakerController());
         registerMinigame(new CookingChaosController());
+        registerMinigame(new MaceMurderers());
     }
 
     public static Minigame getMinigameByName(String name){
