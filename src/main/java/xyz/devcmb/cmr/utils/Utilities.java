@@ -4,8 +4,11 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -162,7 +165,7 @@ public class Utilities {
         if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
         GameManager.intermisionRunnable = null;
 
-        MapLoader.unloadMap();
+        MapLoader.unloadMap(false);
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.spigot().respawn();
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
@@ -207,5 +210,65 @@ public class Utilities {
                 ticksElapsed++;
             }
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 1);
+    }
+
+    public static void setInvisible(Player player){
+        player.setInvisible(true);
+        Bukkit.getOnlinePlayers().forEach(plr -> {
+            if(plr != player){
+                plr.hidePlayer(CmbMinigamesRandom.getPlugin(), player);
+            }
+        });
+    }
+
+    public static void setVisible(Player player){
+        player.setInvisible(false);
+        Bukkit.getOnlinePlayers().forEach(plr -> {
+            if(plr != player){
+                plr.showPlayer(CmbMinigamesRandom.getPlugin(), player);
+            }
+        });
+    }
+
+    public static List<Player> respawningPlayers = new ArrayList<>();
+
+    public static void customRespawn(Player player, DamageSource damageSource){
+        if(respawningPlayers.contains(player)) return;
+        respawningPlayers.add(player);
+        player.setAllowFlight(true);
+        player.setFlying(true);
+        player.setInvulnerable(true);
+        player.getInventory().clear();
+        setInvisible(player);
+
+        List<ItemStack> inventoryContents = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
+        inventoryContents.addAll(Arrays.asList(player.getInventory().getArmorContents()));
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, damageSource, inventoryContents, 0, null);
+        Bukkit.getPluginManager().callEvent(deathEvent);
+
+        new BukkitRunnable(){
+            Integer loops = 3;
+            @Override
+            public void run() {
+                if(loops == 0){
+                    player.setFlying(false);
+                    player.setAllowFlight(false);
+                    player.setInvulnerable(false);
+                    setVisible(player);
+                    player.sendTitle(ChatColor.AQUA + "RESPAWNED", "", 5, 40, 5);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 2);
+
+                    PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(player, new Location(player.getWorld(), 0, 100, 0), false);
+                    Bukkit.getPluginManager().callEvent(respawnEvent);
+
+                    respawningPlayers.remove(player);
+                    this.cancel();
+                    return;
+                }
+                player.sendTitle(ChatColor.AQUA + loops.toString(), "", 5, 10, 5);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 1);
+                loops--;
+            }
+        }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 }

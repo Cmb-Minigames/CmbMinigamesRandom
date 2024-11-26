@@ -277,7 +277,7 @@ public class KaboomersController implements Minigame {
             MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
             MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
             MinigameFlag.DO_NOT_CONSUME_FIREWORKS,
-            MinigameFlag.INSTANT_RESPAWN
+            MinigameFlag.USE_CUSTOM_RESPAWN
         );
     }
 

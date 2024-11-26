@@ -54,10 +54,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        MapLoader.unloadMap();
-        if(GameManager.ingame){
-            GameManager.currentMinigame.stop();
-        }
+        MapLoader.unloadMap(true);
         Database.disconnect();
         MapLoader.cleanup();
     }
