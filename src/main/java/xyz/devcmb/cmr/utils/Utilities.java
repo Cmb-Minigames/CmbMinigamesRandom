@@ -173,7 +173,7 @@ public class Utilities {
             GameManager.teamColors.put(player, ChatColor.WHITE);
             CosmeticInventory.giveInventoryItem(player);
 
-            PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0, true, false, false);
+            PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
             player.addPotionEffect(hungerEffect);
         });
 

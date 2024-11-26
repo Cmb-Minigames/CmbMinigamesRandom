@@ -49,7 +49,7 @@ public class PlayerListeners implements Listener {
 
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 
-        PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0, true, false, false);
+        PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
         player.addPotionEffect(hungerEffect);
 
         Audience audience = (Audience) player;
