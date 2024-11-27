@@ -133,72 +133,23 @@ public class CookingChaosController implements Minigame {
             return;
         }
 
-        Location redSpawnLocation = new Location(
-                world,
-                ((Number) redSpawn.get("x")).doubleValue(),
-                ((Number) redSpawn.get("y")).doubleValue(),
-                ((Number) redSpawn.get("z")).doubleValue()
-        );
-
-        Location blueSpawnLocation = new Location(
-                world,
-                ((Number) blueSpawn.get("x")).doubleValue(),
-                ((Number) blueSpawn.get("y")).doubleValue(),
-                ((Number) blueSpawn.get("z")).doubleValue()
-        );
+        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redSpawn");
+        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueSpawn");
 
 
-        Map<String, Object> redBarrier = (Map<String, Object>) mapData.get("redBarrier");
-        Map<String, Object> blueBarrier = (Map<String, Object>) mapData.get("blueBarrier");
+        Location redBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "from");
+        Location redBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "to");
 
-        if (redBarrier == null || blueBarrier == null) {
-            CmbMinigamesRandom.LOGGER.warning("Barrier points are not defined.");
-            return;
-        }
+        Location blueBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueBarrier", "from");
+        Location blueBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "blueBarrier", "to");
 
-        Map<String, Object> redBarrierFrom = (Map<String, Object>) redBarrier.get("from");
-        Map<String, Object> redBarrierTo = (Map<String, Object>) redBarrier.get("to");
-
-        Map<String, Object> blueBarrierFrom = (Map<String, Object>) blueBarrier.get("from");
-        Map<String, Object> blueBarrierTo = (Map<String, Object>) blueBarrier.get("to");
-
-        if (redBarrierFrom == null || redBarrierTo == null || blueBarrierFrom == null || blueBarrierTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Barrier points are not defined.");
-            return;
-        }
-
-        Location redBarrierFromLocation = new Location(
-                world,
-                ((Number) redBarrierFrom.get("x")).doubleValue(),
-                ((Number) redBarrierFrom.get("y")).doubleValue(),
-                ((Number) redBarrierFrom.get("z")).doubleValue()
-        );
-
-        Location redBarrierToLocation = new Location(
-                world,
-                ((Number) redBarrierTo.get("x")).doubleValue(),
-                ((Number) redBarrierTo.get("y")).doubleValue(),
-                ((Number) redBarrierTo.get("z")).doubleValue()
-        );
-
-        Location blueBarrierFromLocation = new Location(
-                world,
-                ((Number) blueBarrierFrom.get("x")).doubleValue(),
-                ((Number) blueBarrierFrom.get("y")).doubleValue(),
-                ((Number) blueBarrierFrom.get("z")).doubleValue()
-        );
-
-        Location blueBarrierToLocation = new Location(
-                world,
-                ((Number) blueBarrierTo.get("x")).doubleValue(),
-                ((Number) blueBarrierTo.get("y")).doubleValue(),
-                ((Number) blueBarrierTo.get("z")).doubleValue()
-        );
-
+        assert redBarrierFromLocation != null;
         Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.BARRIER);
+        assert blueBarrierFromLocation != null;
         Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.BARRIER);
 
         RED.forEach(player -> {
+            assert redSpawnLocation != null;
             player.teleport(redSpawnLocation);
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
@@ -206,6 +157,7 @@ public class CookingChaosController implements Minigame {
         });
 
         BLUE.forEach(player -> {
+            assert blueSpawnLocation != null;
             player.teleport(blueSpawnLocation);
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
@@ -213,27 +165,14 @@ public class CookingChaosController implements Minigame {
         });
 
         List<Map<String, Map<String, Number>>> bonemealChests = (List<Map<String, Map<String, Number>>>) mapData.get("boneMealChests");
-        Map<String, Object> redEntrance = (Map<String, Object>) mapData.get("redEntrance");
-        Map<String, Object> blueEntrance = (Map<String, Object>) mapData.get("blueEntrance");
 
-        if (bonemealChests == null || redEntrance == null || blueEntrance == null) {
-            CmbMinigamesRandom.LOGGER.warning("Chests or entrances are not defined.");
+        if (bonemealChests == null ) {
+            CmbMinigamesRandom.LOGGER.warning("Chests are not defined.");
             return;
         }
 
-        Location redEntranceLocation = new Location(
-            world,
-            ((Number) redEntrance.get("x")).doubleValue(),
-            ((Number) redEntrance.get("y")).doubleValue(),
-            ((Number) redEntrance.get("z")).doubleValue()
-        );
-
-        Location blueEntranceLocation = new Location(
-            world,
-            ((Number) blueEntrance.get("x")).doubleValue(),
-            ((Number) blueEntrance.get("y")).doubleValue(),
-            ((Number) blueEntrance.get("z")).doubleValue()
-        );
+        Location redEntranceLocation = Utilities.getLocationFromConfig(mapData, world, "redEntrance");
+        Location blueEntranceLocation = Utilities.getLocationFromConfig(mapData, world, "blueEntrance");
 
         List<Map<String, List<Map<String, Number>>>> redTeamTables = (List<Map<String, List<Map<String, Number>>>>) mapData.get("redTables");
         List<Map<String, List<Map<String, Number>>>> blueTeamTables = (List<Map<String, List<Map<String, Number>>>>) mapData.get("blueTables");

@@ -107,13 +107,6 @@ public class BrawlController implements Minigame {
             return;
         }
 
-        Map<String, Object> spawn = (Map<String, Object>) mapData.get("spawn");
-
-        if (spawn == null) {
-            CmbMinigamesRandom.LOGGER.warning("Spawn points are not defined.");
-            return;
-        }
-
         players.addAll(Bukkit.getOnlinePlayers());
         allPlayers.addAll(Bukkit.getOnlinePlayers());
 
@@ -125,12 +118,7 @@ public class BrawlController implements Minigame {
             return;
         }
 
-        spawnLocation = new Location(
-                world,
-                ((Number) spawn.get("x")).doubleValue(),
-                ((Number) spawn.get("y")).doubleValue(),
-                ((Number) spawn.get("z")).doubleValue()
-        );
+        spawnLocation = Utilities.getLocationFromConfig(mapData, world, "spawn");
 
         players.forEach(player -> {
             player.teleport(spawnLocation);

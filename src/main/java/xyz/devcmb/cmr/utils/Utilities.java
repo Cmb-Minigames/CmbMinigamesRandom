@@ -276,4 +276,45 @@ public class Utilities {
             }
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
+
+    @SuppressWarnings("unchecked")
+    public static Location getLocationFromConfig(Map<String, Object> mapData, World world, String key) {
+        Map<String, Object> locationData = (Map<String, Object>) mapData.get(key);
+
+        if (locationData == null) {
+            CmbMinigamesRandom.LOGGER.warning(key + " is not defined in the map data.");
+            return null;
+        }
+
+        return new Location(
+                world,
+                ((Number) locationData.get("x")).doubleValue(),
+                ((Number) locationData.get("y")).doubleValue(),
+                ((Number) locationData.get("z")).doubleValue()
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Location getLocationFromConfig(Map<String, Object> mapData, World world, String key, String subkey) {
+        Map<String, Object> parentData = (Map<String, Object>) mapData.get(key);
+
+        if (parentData == null) {
+            CmbMinigamesRandom.LOGGER.warning(key + " is not defined in the map data.");
+            return null;
+        }
+
+        Map<String, Object> locationData = (Map<String, Object>) parentData.get(subkey);
+
+        if (locationData == null) {
+            CmbMinigamesRandom.LOGGER.warning(key + "/" + subkey + " is not defined in the map data.");
+            return null;
+        }
+
+        return new Location(
+                world,
+                ((Number) locationData.get("x")).doubleValue(),
+                ((Number) locationData.get("y")).doubleValue(),
+                ((Number) locationData.get("z")).doubleValue()
+        );
+    }
 }

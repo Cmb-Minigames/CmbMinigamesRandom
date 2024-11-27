@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.minigames;
 
+import jdk.jshell.execution.Util;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -135,85 +136,26 @@ public class SnifferCaretakerController implements Minigame {
             return;
         }
 
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
 
-        if (redSpawn == null || blueSpawn == null) {
-            CmbMinigamesRandom.LOGGER.warning("Spawn points are not defined.");
-            return;
-        }
+        Location redBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamBarrier", "from");
+        Location redBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamBarrier", "to");
 
-        Map<String, Object> redBarrierFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redTeamBarrier")).get("from");
-        Map<String, Object> redBarrierTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redTeamBarrier")).get("to");
+        Location blueBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamBarrier", "from");
+        Location blueBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamBarrier", "to");
 
-        if (redBarrierFrom == null || redBarrierTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Red barrier points are not defined.");
-            return;
-        }
-
-        Location redBarrierFromLocation = new Location(
-                world,
-                ((Number) redBarrierFrom.get("x")).doubleValue(),
-                ((Number) redBarrierFrom.get("y")).doubleValue(),
-                ((Number) redBarrierFrom.get("z")).doubleValue()
-        );
-
-        Location redBarrierToLocation = new Location(
-                world,
-                ((Number) redBarrierTo.get("x")).doubleValue(),
-                ((Number) redBarrierTo.get("y")).doubleValue(),
-                ((Number) redBarrierTo.get("z")).doubleValue()
-        );
-
-        Map<String, Object> blueBarrierFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("blueTeamBarrier")).get("from");
-        Map<String, Object> blueBarrierTo = (Map<String, Object>)((Map<String, Object>) mapData.get("blueTeamBarrier")).get("to");
-
-        if (blueBarrierFrom == null || blueBarrierTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Blue barrier points are not defined.");
-            return;
-        }
-
-        Location blueBarrierFromLocation = new Location(
-                world,
-                ((Number) blueBarrierFrom.get("x")).doubleValue(),
-                ((Number) blueBarrierFrom.get("y")).doubleValue(),
-                ((Number) blueBarrierFrom.get("z")).doubleValue()
-        );
-
-        Location blueBarrierToLocation = new Location(
-                world,
-                ((Number) blueBarrierTo.get("x")).doubleValue(),
-                ((Number) blueBarrierTo.get("y")).doubleValue(),
-                ((Number) blueBarrierTo.get("z")).doubleValue()
-        );
-
+        assert redBarrierFromLocation != null;
         Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.BARRIER);
+        assert blueBarrierFromLocation != null;
         Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.BARRIER);
 
-        Map<String, Object> redSnifferSpawn = (Map<String, Object>) mapData.get("redTeamSnifferSpawn");
-        Map<String, Object> blueSnifferSpawn = (Map<String, Object>) mapData.get("blueTeamSnifferSpawn");
+        Location redSnifferSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamSnifferSpawn");
+        Location blueSnifferSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamSnifferSpawn");
 
-        if (redSnifferSpawn == null || blueSnifferSpawn == null) {
-            CmbMinigamesRandom.LOGGER.warning("Sniffer spawns are not defined.");
-            return;
-        }
-
-        Location redSnifferSpawnLocation = new Location(
-                world,
-                ((Number) redSnifferSpawn.get("x")).doubleValue(),
-                ((Number) redSnifferSpawn.get("y")).doubleValue(),
-                ((Number) redSnifferSpawn.get("z")).doubleValue()
-        );
-
-        Location blueSnifferSpawnLocation = new Location(
-                world,
-                ((Number) blueSnifferSpawn.get("x")).doubleValue(),
-                ((Number) blueSnifferSpawn.get("y")).doubleValue(),
-                ((Number) blueSnifferSpawn.get("z")).doubleValue()
-        );
-
+        assert redSnifferSpawnLocation != null;
         redSniffer = world.spawnEntity(redSnifferSpawnLocation, EntityType.SNIFFER);
+        assert blueSnifferSpawnLocation != null;
         blueSniffer = world.spawnEntity(blueSnifferSpawnLocation, EntityType.SNIFFER);
+
         redSniffer.setInvulnerable(true);
         blueSniffer.setInvulnerable(true);
 
@@ -221,48 +163,11 @@ public class SnifferCaretakerController implements Minigame {
         blueSnifferHappiness = 300;
         happinessDecreaseAmount = 1;
 
-        Location redSpawnLocation = new Location(
-                world,
-                ((Number) redSpawn.get("x")).doubleValue(),
-                ((Number) redSpawn.get("y")).doubleValue(),
-                ((Number) redSpawn.get("z")).doubleValue()
-        );
+        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamSpawn");
+        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamSpawn");
 
-        Location blueSpawnLocation = new Location(
-                world,
-                ((Number) blueSpawn.get("x")).doubleValue(),
-                ((Number) blueSpawn.get("y")).doubleValue(),
-                ((Number) blueSpawn.get("z")).doubleValue()
-        );
-
-        Map<String, Object> eventSpawnLocations = (Map<String, Object>) mapData.get("eventSpawnLocations");
-
-        if (eventSpawnLocations == null) {
-            CmbMinigamesRandom.LOGGER.warning("Event spawn area is not defined.");
-            return;
-        }
-
-        Map<String, Object> spawnAreaFrom = (Map<String, Object>) eventSpawnLocations.get("from");
-        Map<String, Object> spawnAreaTo = (Map<String, Object>) eventSpawnLocations.get("to");
-
-        if (spawnAreaFrom == null || spawnAreaTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Event spawn area from and to are not defined.");
-            return;
-        }
-
-        Location spawnAreaFromLocation = new Location(
-                world,
-                ((Number) spawnAreaFrom.get("x")).doubleValue(),
-                ((Number) spawnAreaFrom.get("y")).doubleValue(),
-                ((Number) spawnAreaFrom.get("z")).doubleValue()
-        );
-
-        Location spawnAreaToLocation = new Location(
-                world,
-                ((Number) spawnAreaTo.get("x")).doubleValue(),
-                ((Number) spawnAreaTo.get("y")).doubleValue(),
-                ((Number) spawnAreaTo.get("z")).doubleValue()
-        );
+        Location spawnAreaFromLocation = Utilities.getLocationFromConfig(mapData, world, "eventSpawnLocations", "from");
+        Location spawnAreaToLocation = Utilities.getLocationFromConfig(mapData, world, "eventSpawnLocations", "to");
 
         Map<String, Object> redBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("from");
         Map<String, Object> redBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("to");
@@ -272,49 +177,21 @@ public class SnifferCaretakerController implements Minigame {
             return;
         }
 
-        redBaseFromLocation = new Location(
-                world,
-                ((Number) redBaseFrom.get("x")).doubleValue(),
-                ((Number) redBaseFrom.get("y")).doubleValue(),
-                ((Number) redBaseFrom.get("z")).doubleValue()
-        );
+        redBaseFromLocation = Utilities.getLocationFromConfig(mapData, world, "redBasePreventPlace", "from");
+        redBaseToLocation = Utilities.getLocationFromConfig(mapData, world, "redBasePreventPlace", "to");
 
-        redBaseToLocation = new Location(
-                world,
-                ((Number) redBaseTo.get("x")).doubleValue(),
-                ((Number) redBaseTo.get("y")).doubleValue(),
-                ((Number) redBaseTo.get("z")).doubleValue()
-        );
-
-        Map<String, Object> blueBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("blueBasePreventPlace")).get("from");
-        Map<String, Object> blueBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("blueBasePreventPlace")).get("to");
-
-        if (blueBaseFrom == null || blueBaseTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Blue base points are not defined.");
-            return;
-        }
-
-        blueBaseFromLocation = new Location(
-                world,
-                ((Number) blueBaseFrom.get("x")).doubleValue(),
-                ((Number) blueBaseFrom.get("y")).doubleValue(),
-                ((Number) blueBaseFrom.get("z")).doubleValue()
-        );
-
-        blueBaseToLocation = new Location(
-                world,
-                ((Number) blueBaseTo.get("x")).doubleValue(),
-                ((Number) blueBaseTo.get("y")).doubleValue(),
-                ((Number) blueBaseTo.get("z")).doubleValue()
-        );
+        blueBaseFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueBasePreventPlace", "from");
+        blueBaseToLocation = Utilities.getLocationFromConfig(mapData, world, "blueBasePreventPlace", "to");
 
         RED.forEach(player -> {
+            assert redSpawnLocation != null;
             player.teleport(Utilities.findValidLocation(redSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
         });
 
         BLUE.forEach(player -> {
+            assert blueSpawnLocation != null;
             player.teleport(Utilities.findValidLocation(blueSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
@@ -366,6 +243,8 @@ public class SnifferCaretakerController implements Minigame {
                 @Override
                 public void run() {
                     for (int i = 1; i <= 5; i++) {
+                        assert spawnAreaFromLocation != null;
+                        assert spawnAreaToLocation != null;
                         int spawnX = new Random().nextInt(spawnAreaFromLocation.getBlockX(), spawnAreaToLocation.getBlockX());
                         int spawnZ = new Random().nextInt(spawnAreaFromLocation.getBlockZ(), spawnAreaToLocation.getBlockZ());
 
@@ -404,6 +283,8 @@ public class SnifferCaretakerController implements Minigame {
                             break;
                         }
 
+                        assert spawnAreaFromLocation != null;
+                        assert spawnAreaToLocation != null;
                         int spawnX = new Random().nextInt(spawnAreaFromLocation.getBlockX(), spawnAreaToLocation.getBlockX());
                         int spawnZ = new Random().nextInt(spawnAreaFromLocation.getBlockZ(), spawnAreaToLocation.getBlockZ());
 

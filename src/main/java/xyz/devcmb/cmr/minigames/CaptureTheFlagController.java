@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.minigames;
 
+import jdk.jshell.execution.Util;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
@@ -146,23 +147,14 @@ public class CaptureTheFlagController implements Minigame {
             return;
         }
 
-        Location redSpawnLocation = new Location(
-                world,
-                ((Number) redSpawn.get("x")).doubleValue(),
-                ((Number) redSpawn.get("y")).doubleValue(),
-                ((Number) redSpawn.get("z")).doubleValue()
-        );
+        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamSpawn");
+        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamSpawn");
 
-        Location blueSpawnLocation = new Location(
-                world,
-                ((Number) blueSpawn.get("x")).doubleValue(),
-                ((Number) blueSpawn.get("y")).doubleValue(),
-                ((Number) blueSpawn.get("z")).doubleValue()
-        );
-
+        assert redSpawnLocation != null;
         redSpawnLocation.setYaw(((Number) redSpawn.get("yaw")).floatValue());
         redSpawnLocation.setPitch(((Number) redSpawn.get("pitch")).floatValue());
 
+        assert blueSpawnLocation != null;
         blueSpawnLocation.setYaw(((Number) blueSpawn.get("yaw")).floatValue());
         blueSpawnLocation.setPitch(((Number) blueSpawn.get("pitch")).floatValue());
 
