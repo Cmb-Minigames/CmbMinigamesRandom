@@ -14,10 +14,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Database;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class CosmeticInventory {
     public static void giveInventoryItem(Player player){
@@ -75,11 +72,11 @@ public class CosmeticInventory {
 
                 List<String> userCosmetics = Database.getUserCosmetics(player);
 
-                userCosmetics.sort((cosmetic1, cosmetic2) -> {
+                userCosmetics.sort(Collections.reverseOrder((cosmetic1, cosmetic2) -> {
                     int rarityOrder1 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic1).get("rarity"));
                     int rarityOrder2 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic2).get("rarity"));
                     return Integer.compare(rarityOrder1, rarityOrder2);
-                });
+                }));
 
                 int itemsPerPage = 14;
                 int startIndex = (inventoryPage - 1) * itemsPerPage;
@@ -370,7 +367,13 @@ public class CosmeticInventory {
 
         inventory.setItem(0, back);
 
-        List<String> cosmeticNames = List.of(crateData.get("cosmetics").toString().split("\\|"));
+        List<String> cosmeticNames = new ArrayList<>(List.of(crateData.get("cosmetics").toString().split("\\|")));
+        cosmeticNames.sort((cosmetic1, cosmetic2) -> {
+            int rarityOrder1 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic1).get("rarity"));
+            int rarityOrder2 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic2).get("rarity"));
+            return Integer.compare(rarityOrder1, rarityOrder2);
+        });
+
         int[] slots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
 
         for (int i = 0; i < cosmeticNames.size() && i < slots.length; i++) {

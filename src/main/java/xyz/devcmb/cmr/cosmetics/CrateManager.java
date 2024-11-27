@@ -118,22 +118,14 @@ public class CrateManager {
         double mythic = raritySet.get("mythic").doubleValue();
 
         double total = common + uncommon + rare + epic + legendary + mythic;
-        double randomValue = new Random().nextDouble() * total;
+        double randomValue = Math.random() * total;
 
-        if (randomValue < common) {
-            return "common";
-        } else if (randomValue < common + uncommon) {
-            return "uncommon";
-        } else if (randomValue < common + uncommon + rare) {
-            return "rare";
-        } else if (randomValue < common + uncommon + rare + epic) {
-            return "epic";
-        } else if (randomValue < common + uncommon + rare + epic + legendary) {
-            return "legendary";
-        } else if (randomValue < common + uncommon + rare + epic + legendary + mythic){
-            return "mythic";
-        } else {
-            return "common";
-        }
+        double currentThreshold = 0;
+        if (randomValue < (currentThreshold += mythic)) return "mythic";
+        if (randomValue < (currentThreshold += legendary)) return "legendary";
+        if (randomValue < (currentThreshold += epic)) return "epic";
+        if (randomValue < (currentThreshold += rare)) return "rare";
+        if (randomValue < currentThreshold + uncommon) return "uncommon";
+        return "common";
     }
 }
