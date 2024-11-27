@@ -286,6 +286,11 @@ public class Utilities {
             return null;
         }
 
+        if(locationData.get("x") == null || locationData.get("y") == null || locationData.get("z") == null){
+            CmbMinigamesRandom.LOGGER.warning(key + " is not properly configured in the map data.");
+            return null;
+        }
+
         return new Location(
                 world,
                 ((Number) locationData.get("x")).doubleValue(),
