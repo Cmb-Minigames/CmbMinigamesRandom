@@ -63,6 +63,18 @@ public class CosmeticManager {
         return null;
     }
 
+    public static int getRarityOrder(String rarity){
+        return switch (rarity.toLowerCase()) {
+            case "common" -> 0;
+            case "uncommon" -> 1;
+            case "rare" -> 2;
+            case "epic" -> 3;
+            case "legendary" -> 4;
+            case "mythic" -> 5;
+            default -> -1;
+        };
+    }
+
     public static void equipHat(Player player){
         String equipped = Database.getEquipped(player);
         if(equipped == null) return;

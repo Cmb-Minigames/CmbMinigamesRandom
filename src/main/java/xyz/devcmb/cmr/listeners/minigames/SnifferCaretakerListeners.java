@@ -21,6 +21,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.SnifferCaretakerController;
 import xyz.devcmb.cmr.utils.MapLoader;
+import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.List;
 import java.util.Map;
@@ -83,93 +84,17 @@ public class SnifferCaretakerListeners implements Listener {
             return;
         }
 
-        Map<String, Object> redBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("from");
-        Map<String, Object> redBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redBasePreventPlace")).get("to");
+        redBaseFromLocation = Utilities.getLocationFromConfig(mapData, world, "redBasePreventPlace", "from");
+        redBaseToLocation = Utilities.getLocationFromConfig(mapData, world, "redBasePreventPlace", "to");
 
-        if (redBaseFrom == null || redBaseTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Red base points are not defined.");
-            return;
-        }
+        blueBaseFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueBasePreventPlace", "from");
+        blueBaseToLocation = Utilities.getLocationFromConfig(mapData, world, "blueBasePreventPlace", "to");
 
-        redBaseFromLocation = new Location(
-                world,
-                ((Number) redBaseFrom.get("x")).doubleValue(),
-                ((Number) redBaseFrom.get("y")).doubleValue(),
-                ((Number) redBaseFrom.get("z")).doubleValue()
-        );
+        redSnifferZoneFromLocation = Utilities.getLocationFromConfig(mapData, world, "redSnifferZone", "from");
+        redSnifferZoneToLocation = Utilities.getLocationFromConfig(mapData, world, "redSnifferZone", "to");
 
-        redBaseToLocation = new Location(
-                world,
-                ((Number) redBaseTo.get("x")).doubleValue(),
-                ((Number) redBaseTo.get("y")).doubleValue(),
-                ((Number) redBaseTo.get("z")).doubleValue()
-        );
-
-        Map<String, Object> blueBaseFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("blueBasePreventPlace")).get("from");
-        Map<String, Object> blueBaseTo = (Map<String, Object>)((Map<String, Object>) mapData.get("blueBasePreventPlace")).get("to");
-
-        if (blueBaseFrom == null || blueBaseTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Blue base points are not defined.");
-            return;
-        }
-
-        blueBaseFromLocation = new Location(
-                world,
-                ((Number) blueBaseFrom.get("x")).doubleValue(),
-                ((Number) blueBaseFrom.get("y")).doubleValue(),
-                ((Number) blueBaseFrom.get("z")).doubleValue()
-        );
-
-        blueBaseToLocation = new Location(
-                world,
-                ((Number) blueBaseTo.get("x")).doubleValue(),
-                ((Number) blueBaseTo.get("y")).doubleValue(),
-                ((Number) blueBaseTo.get("z")).doubleValue()
-        );
-
-        Map<String, Object> redSnifferZoneFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("redSnifferZone")).get("from");
-        Map<String, Object> redSnifferZoneTo = (Map<String, Object>)((Map<String, Object>) mapData.get("redSnifferZone")).get("to");
-
-        if (redSnifferZoneFrom == null || redSnifferZoneTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Red sniffer zone points are not defined.");
-            return;
-        }
-
-        redSnifferZoneFromLocation = new Location(
-                world,
-                ((Number) redSnifferZoneFrom.get("x")).doubleValue(),
-                ((Number) redSnifferZoneFrom.get("y")).doubleValue(),
-                ((Number) redSnifferZoneFrom.get("z")).doubleValue()
-        );
-
-        redSnifferZoneToLocation = new Location(
-                world,
-                ((Number) redSnifferZoneTo.get("x")).doubleValue(),
-                ((Number) redSnifferZoneTo.get("y")).doubleValue(),
-                ((Number) redSnifferZoneTo.get("z")).doubleValue()
-        );
-
-        Map<String, Object> blueSnifferZoneFrom = (Map<String, Object>)((Map<String, Object>) mapData.get("blueSnifferZone")).get("from");
-        Map<String, Object> blueSnifferZoneTo = (Map<String, Object>)((Map<String, Object>) mapData.get("blueSnifferZone")).get("to");
-
-        if (blueSnifferZoneFrom == null || blueSnifferZoneTo == null) {
-            CmbMinigamesRandom.LOGGER.warning("Blue sniffer zone points are not defined.");
-            return;
-        }
-
-        blueSnifferZoneFromLocation = new Location(
-                world,
-                ((Number) blueSnifferZoneFrom.get("x")).doubleValue(),
-                ((Number) blueSnifferZoneFrom.get("y")).doubleValue(),
-                ((Number) blueSnifferZoneFrom.get("z")).doubleValue()
-        );
-
-        blueSnifferZoneToLocation = new Location(
-                world,
-                ((Number) blueSnifferZoneTo.get("x")).doubleValue(),
-                ((Number) blueSnifferZoneTo.get("y")).doubleValue(),
-                ((Number) blueSnifferZoneTo.get("z")).doubleValue()
-        );
+        blueSnifferZoneFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueSnifferZone", "from");
+        blueSnifferZoneToLocation = Utilities.getLocationFromConfig(mapData, world, "blueSnifferZone", "to");
     }
 
     private static boolean isWithin(Location loc, Location point1, Location point2) {

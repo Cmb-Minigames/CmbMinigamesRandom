@@ -75,14 +75,6 @@ public class KaboomersController implements Minigame {
             return;
         }
 
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
-
-        if (redSpawn == null || blueSpawn == null) {
-            CmbMinigamesRandom.LOGGER.warning("Spawn points are not defined.");
-            return;
-        }
-
         String worldName = MapLoader.LOADED_MAP;
         World world = Bukkit.getWorld(worldName);
 
@@ -91,26 +83,18 @@ public class KaboomersController implements Minigame {
             return;
         }
 
-        Location redSpawnLocation = new Location(
-                world,
-                ((Number) redSpawn.get("x")).doubleValue(),
-                ((Number) redSpawn.get("y")).doubleValue(),
-                ((Number) redSpawn.get("z")).doubleValue()
-        );
+        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamSpawn");
 
-        Location blueSpawnLocation = new Location(
-                world,
-                ((Number) blueSpawn.get("x")).doubleValue(),
-                ((Number) blueSpawn.get("y")).doubleValue(),
-                ((Number) blueSpawn.get("z")).doubleValue()
-        );
+        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamSpawn");
 
         RED.forEach(player -> {
+            assert redSpawnLocation != null;
             player.teleport(Utilities.findValidLocation(redSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
         });
 
         BLUE.forEach(player -> {
+            assert blueSpawnLocation != null;
             player.teleport(Utilities.findValidLocation(blueSpawnLocation));
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
         });
