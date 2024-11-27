@@ -297,6 +297,7 @@ public class CookingChaosController implements Minigame {
                         ((List<Location>)selectedTable.get("seatLocations")).forEach(loc -> {
                             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                                 Map<String, Object> newCustomer = new HashMap<>();
+                                assert redEntranceLocation != null;
                                 Entity spawnedEntity = world.spawnEntity(redEntranceLocation, Utilities.getRandom(customerEntities));
                                 spawnedEntity.setInvulnerable(true);
                                 ((LivingEntity) spawnedEntity).setAI(false);
@@ -339,6 +340,7 @@ public class CookingChaosController implements Minigame {
                         ((List<Location>)selectedTable.get("seatLocations")).forEach(loc -> {
                             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                                 Map<String, Object> newCustomer = new HashMap<>();
+                                assert blueEntranceLocation != null;
                                 Entity spawnedEntity = world.spawnEntity(blueEntranceLocation, Utilities.getRandom(customerEntities));
                                 spawnedEntity.setInvulnerable(true);
                                 ((LivingEntity) spawnedEntity).setAI(false);

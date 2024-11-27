@@ -45,12 +45,15 @@ public class CosmeticInventoryListeners implements Listener {
             if (meta.getItemName().equals(ChatColor.GREEN + ChatColor.BOLD.toString() + "Inventory")) {
                 CosmeticInventory.page = "inventory";
                 CosmeticInventory.openInventory(player);
+                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             } else if (meta.getItemName().equals(ChatColor.GOLD + ChatColor.BOLD.toString() + "Crates")) {
                 CosmeticInventory.page = "crates";
                 CosmeticInventory.openInventory(player);
+                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             } else if(meta.getItemName().equals(ChatColor.AQUA + ChatColor.BOLD.toString() + "Shop")){
                 CosmeticInventory.page = "shop";
                 CosmeticInventory.openInventory(player);
+                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             }
 
             if(item.getType() == Material.CHEST){
@@ -85,23 +88,28 @@ public class CosmeticInventoryListeners implements Listener {
                 if(meta.getItemName().equals(ChatColor.YELLOW + "Next Page")){
                     CosmeticInventory.inventoryPage++;
                     CosmeticInventory.openInventory(player);
+                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 } else if(meta.getItemName().equals(ChatColor.YELLOW + "Previous Page")){
                     CosmeticInventory.inventoryPage--;
                     CosmeticInventory.openInventory(player);
+                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 } else if(item.getType() == Material.LEATHER_HORSE_ARMOR){
                     Map<String, Object> cosmetic = CosmeticManager.getFromDisplayName(ChatColor.stripColor(meta.getItemName()));
                     if(cosmetic == null) return;
                     Database.equipCosmetic(player, cosmetic.get("name").toString());
                     CosmeticManager.equipHat(player);
                     CosmeticInventory.openInventory(player);
+                    player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1, 1);
                 }
             } else if(CosmeticInventory.page.equals("crates")){
                 if(meta.getItemName().equals(ChatColor.YELLOW + "Next Page")){
                     CosmeticInventory.cratePage++;
                     CosmeticInventory.openInventory(player);
+                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 } else if(meta.getItemName().equals(ChatColor.YELLOW + "Previous Page")){
                     CosmeticInventory.cratePage--;
                     CosmeticInventory.openInventory(player);
+                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 }
             }
         } else if (event.getView().getTitle().equals("Crate")){
@@ -111,6 +119,7 @@ public class CosmeticInventoryListeners implements Listener {
             if(event.getCurrentItem() == null) return;
             if(event.getCurrentItem().getType() == Material.ARROW){
                 CosmeticInventory.openInventory(player);
+                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             }
         }
     }

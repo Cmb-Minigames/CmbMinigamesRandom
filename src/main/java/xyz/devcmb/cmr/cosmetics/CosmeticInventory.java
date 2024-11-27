@@ -74,6 +74,13 @@ public class CosmeticInventory {
                 }
 
                 List<String> userCosmetics = Database.getUserCosmetics(player);
+
+                userCosmetics.sort((cosmetic1, cosmetic2) -> {
+                    int rarityOrder1 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic1).get("rarity"));
+                    int rarityOrder2 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic2).get("rarity"));
+                    return Integer.compare(rarityOrder1, rarityOrder2);
+                });
+
                 int itemsPerPage = 14;
                 int startIndex = (inventoryPage - 1) * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, userCosmetics.size());
