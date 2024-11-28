@@ -216,10 +216,6 @@ public class MinigameListeners implements Listener {
             event.getDrops().clear();
         }
 
-        if(minigame.getFlags().contains(MinigameFlag.INSTANT_RESPAWN)){
-            Bukkit.getScheduler().runTask(CmbMinigamesRandom.getPlugin(), () -> player.spigot().respawn());
-        }
-
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){
             killer.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 10, 1);
