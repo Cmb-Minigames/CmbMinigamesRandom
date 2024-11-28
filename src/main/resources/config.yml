@@ -228,3 +228,6 @@ database:
   username: ""
   password: ""
   database: ""
+
+settings:
+  devMode: false

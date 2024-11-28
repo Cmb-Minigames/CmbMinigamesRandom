@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public final class CmbMinigamesRandom extends JavaPlugin {
     private static CmbMinigamesRandom plugin;
     public static Logger LOGGER;
-    public static final boolean DeveloperMode = false;
+    public static boolean DeveloperMode = false;
     private static BukkitAudiences adventure;
 
     public static @NonNull BukkitAudiences adventure() {
@@ -39,6 +39,8 @@ public final class CmbMinigamesRandom extends JavaPlugin {
 
         saveDefaultConfig();
         LOGGER.info("Cmb Minigames has awoken. Initializing minigames...");
+
+        DeveloperMode = getPlugin().getConfig().getBoolean("settings.devMode");
 
         adventure = BukkitAudiences.create(this);
         Database.connect();
