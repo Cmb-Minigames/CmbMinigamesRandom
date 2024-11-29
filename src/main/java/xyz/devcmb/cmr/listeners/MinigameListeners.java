@@ -188,10 +188,8 @@ public class MinigameListeners implements Listener {
         if(GameManager.gameEnding) return;
         if(event.getTo() == null) return;
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
-        if(Utilities.respawningPlayers.contains(event.getPlayer())) {
-            event.setCancelled(true);
-            return;
-        }
+        if(Utilities.respawningPlayers.contains(event.getPlayer())) return;
+
         Minigame minigame = GameManager.currentMinigame;
         if (GameManager.playersFrozen) {
             if (event.getFrom().getX() != event.getTo().getX() ||
