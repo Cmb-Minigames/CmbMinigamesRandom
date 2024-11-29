@@ -242,7 +242,7 @@ public class Utilities {
         Bukkit.getPluginManager().callEvent(deathEvent);
         
         player.setAllowFlight(true);
-        player.setHealth(20);
+        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
         player.setFoodLevel(20);
         player.setFlying(true);
         player.setInvulnerable(true);
@@ -257,6 +257,7 @@ public class Utilities {
                     player.setFlying(false);
                     player.setAllowFlight(false);
                     player.setInvulnerable(false);
+                    Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
                     player.setHealth(20);
                     player.setFoodLevel(20);
                     setVisible(player);

@@ -71,7 +71,7 @@ public class GameManager {
         teamColors.put(event.getPlayer(), ChatColor.WHITE);
         if(ingame || pregame) {
             currentMinigame.playerJoin(event);
-        } else if(!paused && intermissionTimeDepreciation == null && (CmbMinigamesRandom.DeveloperMode ? !Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){
+        } else if(intermissionTimeDepreciation == null && (CmbMinigamesRandom.DeveloperMode ? !Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){
             prepare();
         }
     }

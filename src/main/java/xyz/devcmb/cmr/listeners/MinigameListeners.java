@@ -98,6 +98,11 @@ public class MinigameListeners implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        if(Utilities.respawningPlayers.contains(event.getPlayer())) {
+            event.setCancelled(true);
+            return;
+        }
+
         Minigame minigame = GameManager.currentMinigame;
         if(minigame.getFlags().contains(MinigameFlag.CANNOT_BREAK_BLOCKS)){
             event.setCancelled(true);
@@ -119,7 +124,12 @@ public class MinigameListeners implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+        if (event.getDamager() instanceof Player damager && event.getEntity() instanceof Player victim) {
+            if(Utilities.respawningPlayers.contains(damager) || Utilities.respawningPlayers.contains(victim)) {
+                event.setCancelled(true);
+                return;
+            }
+
             if(GameManager.currentMinigame == null || !GameManager.ingame) return;
             Minigame minigame = GameManager.currentMinigame;
             if (minigame.getFlags().contains(MinigameFlag.PVP_DISABLED)) {
@@ -131,15 +141,18 @@ public class MinigameListeners implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent event) {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        if(!(event.getEntity() instanceof Player player)) return;
+        if(Utilities.respawningPlayers.contains(player)) {
+            event.setCancelled(true);
+            return;
+        }
         Minigame minigame = GameManager.currentMinigame;
 
         if(minigame.getFlags().contains(MinigameFlag.USE_CUSTOM_RESPAWN)){
-            if (event.getEntity() instanceof Player player) {
-                double finalHealth = player.getHealth() - event.getFinalDamage();
-                if (finalHealth <= 0) {
-                    event.setCancelled(true);
-                    Utilities.customRespawn(player, event.getDamageSource());
-                }
+            double finalHealth = player.getHealth() - event.getFinalDamage();
+            if (finalHealth <= 0) {
+                event.setCancelled(true);
+                Utilities.customRespawn(player, event.getDamageSource());
             }
         }
     }
@@ -147,6 +160,10 @@ public class MinigameListeners implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onBlockPlace(BlockPlaceEvent event){
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        if(Utilities.respawningPlayers.contains(event.getPlayer())) {
+            event.setCancelled(true);
+            return;
+        }
         Minigame minigame = GameManager.currentMinigame;
         if(minigame.getFlags().contains(MinigameFlag.CANNOT_PLACE_BLOCKS)){
             event.setCancelled(true);
@@ -171,6 +188,10 @@ public class MinigameListeners implements Listener {
         if(GameManager.gameEnding) return;
         if(event.getTo() == null) return;
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
+        if(Utilities.respawningPlayers.contains(event.getPlayer())) {
+            event.setCancelled(true);
+            return;
+        }
         Minigame minigame = GameManager.currentMinigame;
         if (GameManager.playersFrozen) {
             if (event.getFrom().getX() != event.getTo().getX() ||
@@ -305,6 +326,14 @@ public class MinigameListeners implements Listener {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
         Minigame minigame = GameManager.currentMinigame;
         if(minigame.getFlags().contains(MinigameFlag.CANNOT_TRAMPLE_FARMLAND)){
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        if (GameManager.currentMinigame == null || !GameManager.ingame) return;
+        if (Utilities.respawningPlayers.contains(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
