@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
+import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 
 import java.util.*;
 
@@ -174,7 +175,9 @@ public class Utilities {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
             player.setGlowing(false);
             GameManager.teamColors.put(player, ChatColor.WHITE);
-            CosmeticInventory.giveInventoryItem(player);
+
+            CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(player);
+            cosmeticInventory.giveInventoryItem();
 
             PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
             player.addPotionEffect(hungerEffect);

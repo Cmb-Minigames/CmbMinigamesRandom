@@ -16,10 +16,15 @@ import java.util.Map;
 public class CosmeticManager {
     public static Map<String, ItemStack> cosmetics = new HashMap<>();
     public static Map<String, Map<String, Object>> cosmeticData = new HashMap<>();
+    public static Map<Player, CosmeticInventory> playerInventories = new HashMap<>();
 
     public static void registerAllCosmetics(){
         Map<String, Map<String, Object>> cosmeticMap = Database.getAllCosmetics();
         cosmeticMap.forEach(CosmeticManager::createCosmetic);
+    }
+
+    public static void playerJoin(Player player){
+        playerInventories.put(player, new CosmeticInventory(player));
     }
 
     private static void createCosmetic(String name, Map<String, Object> cosmetic){

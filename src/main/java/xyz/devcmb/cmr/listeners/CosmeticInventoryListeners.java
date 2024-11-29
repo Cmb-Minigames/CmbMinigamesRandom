@@ -29,13 +29,15 @@ public class CosmeticInventoryListeners implements Listener {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
         if (meta.getCustomModelData() == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("cosmetic_inventory").intValue()) {
-            CosmeticInventory.openInventory(event.getPlayer());
+            CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(event.getPlayer());
+            cosmeticInventory.openInventory();
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
+        CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(player);
         if (event.getView().getTitle().equals("Cosmetic Inventory")) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
@@ -43,26 +45,26 @@ public class CosmeticInventoryListeners implements Listener {
             ItemMeta meta = item.getItemMeta();
             if (meta == null) return;
             if (meta.getItemName().equals(ChatColor.GREEN + ChatColor.BOLD.toString() + "Inventory")) {
-                CosmeticInventory.page = "inventory";
-                CosmeticInventory.openInventory(player);
+                cosmeticInventory.page = "inventory";
+                cosmeticInventory.openInventory();
                 player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             } else if (meta.getItemName().equals(ChatColor.GOLD + ChatColor.BOLD.toString() + "Crates")) {
-                CosmeticInventory.page = "crates";
-                CosmeticInventory.openInventory(player);
+                cosmeticInventory.page = "crates";
+                cosmeticInventory.openInventory();
                 player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             } else if(meta.getItemName().equals(ChatColor.AQUA + ChatColor.BOLD.toString() + "Shop")){
-                CosmeticInventory.page = "shop";
-                CosmeticInventory.openInventory(player);
+                cosmeticInventory.page = "shop";
+                cosmeticInventory.openInventory();
                 player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             }
 
             if(item.getType() == Material.CHEST){
-                if(CosmeticInventory.page.equals("crates")){
+                if(cosmeticInventory.page.equals("crates")){
                     Map<String, Object> crate = CrateManager.getFromDisplayName(meta.getItemName());
                     if (crate == null) return;
-                    CosmeticInventory.rollCrateInventory(player, crate.get("name").toString());
+                    cosmeticInventory.rollCrateInventory(crate.get("name").toString());
                     Database.removeCrate(player, crate.get("name").toString());
-                } else if(CosmeticInventory.page.equals("shop")){
+                } else if(cosmeticInventory.page.equals("shop")){
                     Map<String, Object> crate = CrateManager.getFromDisplayName(meta.getItemName());
                     if (crate == null) return;
 
@@ -70,8 +72,8 @@ public class CosmeticInventoryListeners implements Listener {
                         if(Database.getUserStars(player) >= (int) crate.get("shop_price")){
                             Database.setUserStars(player, Database.getUserStars(player) - (int) crate.get("shop_price"));
                             Database.giveCrate(player, crate.get("name").toString());
-                            CosmeticInventory.page = "crates";
-                            CosmeticInventory.openInventory(player);
+                            cosmeticInventory.page = "crates";
+                            cosmeticInventory.openInventory();
                             player.sendMessage(ChatColor.GREEN + "You have purchased a " + ChatColor.GOLD + crate.get("display_name") + ChatColor.GREEN + " crate!");
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                         } else {
@@ -79,36 +81,36 @@ public class CosmeticInventoryListeners implements Listener {
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                         }
                     } else if(event.getClick().isRightClick()) {
-                        CosmeticInventory.openPreviewWindow(player, crate.get("name").toString());
+                        cosmeticInventory.openPreviewWindow(crate.get("name").toString());
                     }
                 }
             }
 
-            if(CosmeticInventory.page.equals("inventory")){
+            if(cosmeticInventory.page.equals("inventory")){
                 if(meta.getItemName().equals(ChatColor.YELLOW + "Next Page")){
-                    CosmeticInventory.inventoryPage++;
-                    CosmeticInventory.openInventory(player);
+                    cosmeticInventory.inventoryPage++;
+                    cosmeticInventory.openInventory();
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 } else if(meta.getItemName().equals(ChatColor.YELLOW + "Previous Page")){
-                    CosmeticInventory.inventoryPage--;
-                    CosmeticInventory.openInventory(player);
+                    cosmeticInventory.inventoryPage--;
+                    cosmeticInventory.openInventory();
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 } else if(item.getType() == Material.LEATHER_HORSE_ARMOR){
                     Map<String, Object> cosmetic = CosmeticManager.getFromDisplayName(ChatColor.stripColor(meta.getItemName()));
                     if(cosmetic == null) return;
                     Database.equipCosmetic(player, cosmetic.get("name").toString());
                     CosmeticManager.equipHat(player);
-                    CosmeticInventory.openInventory(player);
+                    cosmeticInventory.openInventory();
                     player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1, 1);
                 }
-            } else if(CosmeticInventory.page.equals("crates")){
+            } else if(cosmeticInventory.page.equals("crates")){
                 if(meta.getItemName().equals(ChatColor.YELLOW + "Next Page")){
-                    CosmeticInventory.cratePage++;
-                    CosmeticInventory.openInventory(player);
+                    cosmeticInventory.cratePage++;
+                    cosmeticInventory.openInventory();
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 } else if(meta.getItemName().equals(ChatColor.YELLOW + "Previous Page")){
-                    CosmeticInventory.cratePage--;
-                    CosmeticInventory.openInventory(player);
+                    cosmeticInventory.cratePage--;
+                    cosmeticInventory.openInventory();
                     player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 }
             }
@@ -118,7 +120,7 @@ public class CosmeticInventoryListeners implements Listener {
             event.setCancelled(true);
             if(event.getCurrentItem() == null) return;
             if(event.getCurrentItem().getType() == Material.ARROW){
-                CosmeticInventory.openInventory(player);
+                cosmeticInventory.openInventory();
                 player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             }
         }

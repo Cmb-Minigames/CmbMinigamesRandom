@@ -17,7 +17,12 @@ import xyz.devcmb.cmr.utils.Database;
 import java.util.*;
 
 public class CosmeticInventory {
-    public static void giveInventoryItem(Player player){
+    private final Player player;
+    public CosmeticInventory(Player plr){
+        player = plr;
+    }
+
+    public void giveInventoryItem(){
         ItemStack inventoryItem = new ItemStack(Material.ECHO_SHARD);
         ItemMeta meta = inventoryItem.getItemMeta();
         if(meta == null) return;
@@ -28,10 +33,10 @@ public class CosmeticInventory {
         player.getInventory().addItem(inventoryItem);
     }
 
-    public static String page = "inventory";
-    public static Integer inventoryPage = 1;
-    public static Integer cratePage = 1;
-    public static void openInventory(Player player){
+    public String page = "inventory";
+    public Integer inventoryPage = 1;
+    public Integer cratePage = 1;
+    public void openInventory(){
         Inventory inventory = Bukkit.createInventory(player, 45, "Cosmetic Inventory");
         switch (page) {
             case "inventory" -> {
@@ -73,9 +78,22 @@ public class CosmeticInventory {
                 List<String> userCosmetics = Database.getUserCosmetics(player);
 
                 userCosmetics.sort(Collections.reverseOrder((cosmetic1, cosmetic2) -> {
-                    int rarityOrder1 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic1).get("rarity"));
-                    int rarityOrder2 = CosmeticManager.getRarityOrder((String) CosmeticManager.cosmeticData.get(cosmetic2).get("rarity"));
-                    return Integer.compare(rarityOrder1, rarityOrder2);
+                    Map<String, Object> cosmeticData1 = CosmeticManager.cosmeticData.get(cosmetic1);
+                    Map<String, Object> cosmeticData2 = CosmeticManager.cosmeticData.get(cosmetic2);
+
+                    if (cosmeticData1 == null || cosmeticData2 == null) {
+                        return 0;
+                    }
+
+                    int rarityOrder1 = CosmeticManager.getRarityOrder((String) cosmeticData1.get("rarity"));
+                    int rarityOrder2 = CosmeticManager.getRarityOrder((String) cosmeticData2.get("rarity"));
+                    int rarityComparison = Integer.compare(rarityOrder1, rarityOrder2);
+
+                    if (rarityComparison != 0) {
+                        return rarityComparison;
+                    }
+
+                    return cosmetic1.compareTo(cosmetic2);
                 }));
 
                 int itemsPerPage = 14;
@@ -225,7 +243,7 @@ public class CosmeticInventory {
 
                 Map<String, Map<String, Object>> allCrates = Database.getAllCrates();
                 int itemsPerPage = 14;
-                int startIndex = (CosmeticInventory.cratePage - 1) * itemsPerPage;
+                int startIndex = (cratePage - 1) * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, allCrates.size());
                 int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
 
@@ -256,7 +274,7 @@ public class CosmeticInventory {
                     if (((Integer) entry.getValue().get("in_shop")) == 1) index++;
                 }
 
-                if (CosmeticInventory.cratePage > 1) {
+                if (cratePage > 1) {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
@@ -280,7 +298,7 @@ public class CosmeticInventory {
         player.openInventory(inventory);
     }
 
-    public static void rollCrateInventory(Player player, String crate){
+    public void rollCrateInventory(String crate){
         Map<String, Object> crateData = CrateManager.crateData.get(crate);
         if(crateData == null) return;
 
@@ -326,7 +344,7 @@ public class CosmeticInventory {
                     player.sendMessage(ChatColor.GOLD + "You have rolled a " + ChatColor.RESET + Objects.requireNonNull(cosmetic.getItemMeta()).getItemName());
                     Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                         page = "inventory";
-                        openInventory(player);
+                        openInventory();
                     }, 40);
                     return;
                 }
@@ -342,7 +360,7 @@ public class CosmeticInventory {
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 3);
     }
 
-    public static void openPreviewWindow(Player player, String crate){
+    public void openPreviewWindow(String crate){
         Map<String, Object> crateData = CrateManager.crateData.get(crate);
         if(crateData == null) return;
 

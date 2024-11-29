@@ -39,9 +39,12 @@ public class PlayerListeners implements Listener {
         GameManager.playerConnect(event);
         player.getInventory().clear();
         player.teleport(spawnPoint);
+        CosmeticManager.playerJoin(player);
         CosmeticManager.equipHat(player);
         player.setRespawnLocation(spawnPoint);
-        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> CosmeticInventory.giveInventoryItem(player), 2);
+
+        CosmeticInventory inventory = CosmeticManager.playerInventories.get(player);
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), inventory::giveInventoryItem, 2);
 
         if(!Database.userExists(player)){
             Database.createUser(player);
