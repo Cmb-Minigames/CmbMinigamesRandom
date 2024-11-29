@@ -37,7 +37,7 @@ public class CosmeticInventory {
     public Integer inventoryPage = 1;
     public Integer cratePage = 1;
     public void openInventory(){
-        Inventory inventory = Bukkit.createInventory(player, 45, "Cosmetic Inventory");
+        Inventory inventory = Bukkit.createInventory(player, 54, "Cosmetic Inventory");
         switch (page) {
             case "inventory" -> {
                 ItemStack selected = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
@@ -66,12 +66,10 @@ public class CosmeticInventory {
                 inventory.setItem(2, shop);
 
                 // Border
-                for (int i = 9; i < 19; i++) {
+                for (int i = 9; i < 18; i++) {
                     inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
                 }
-                inventory.setItem(26, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
-                inventory.setItem(27, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
-                for (int i = 35; i < 45; i++) {
+                for (int i = 45; i < 54; i++) {
                     inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
                 }
 
@@ -96,10 +94,10 @@ public class CosmeticInventory {
                     return cosmetic1.compareTo(cosmetic2);
                 }));
 
-                int itemsPerPage = 14;
+                int itemsPerPage = 27;
                 int startIndex = (inventoryPage - 1) * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, userCosmetics.size());
-                int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
+                int[] slots = {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
                 for (int i = startIndex; i < endIndex && i - startIndex < slots.length; i++) {
                     ItemStack cosmeticItem = CosmeticManager.cosmetics.get(userCosmetics.get(i)).clone();
@@ -123,7 +121,7 @@ public class CosmeticInventory {
                         previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
-                    inventory.setItem(36, previousPage);
+                    inventory.setItem(45, previousPage);
                 }
 
                 if (endIndex < userCosmetics.size()) {
@@ -133,7 +131,7 @@ public class CosmeticInventory {
                         nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
-                    inventory.setItem(44, nextPage);
+                    inventory.setItem(53, nextPage);
                 }
             }
             case "crates" -> {
@@ -163,20 +161,19 @@ public class CosmeticInventory {
 
                 inventory.setItem(2, shop);
 
-                for (int i = 9; i < 19; i++) {
+                for (int i = 9; i < 18; i++) {
                     inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
                 }
-                inventory.setItem(26, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
-                inventory.setItem(27, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
-                for (int i = 35; i < 45; i++) {
+
+                for (int i = 45; i < 54; i++) {
                     inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
                 }
 
                 List<String> userCrates = Database.getUserCrates(player);
-                int itemsPerPage = 14;
+                int itemsPerPage = 27;
                 int startIndex = (cratePage - 1) * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, userCrates.size());
-                int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
+                int[] slots = {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
                 for (int i = startIndex; i < endIndex && i - startIndex < slots.length; i++) {
                     ItemStack crateItem = CrateManager.crates.get(userCrates.get(i));
@@ -192,7 +189,7 @@ public class CosmeticInventory {
                         previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
-                    inventory.setItem(36, previousPage);
+                    inventory.setItem(45, previousPage);
                 }
 
                 if (endIndex < userCrates.size()) {
@@ -202,7 +199,7 @@ public class CosmeticInventory {
                         nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
-                    inventory.setItem(44, nextPage);
+                    inventory.setItem(53, nextPage);
                 }
             }
             case "shop" -> {
@@ -232,20 +229,19 @@ public class CosmeticInventory {
 
                 inventory.setItem(2, selected);
 
-                for (int i = 9; i < 19; i++) {
+                for (int i = 9; i < 18; i++) {
                     inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
                 }
-                inventory.setItem(26, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
-                inventory.setItem(27, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
-                for (int i = 35; i < 45; i++) {
+
+                for (int i = 45; i < 54; i++) {
                     inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
                 }
 
                 Map<String, Map<String, Object>> allCrates = Database.getAllCrates();
-                int itemsPerPage = 14;
+                int itemsPerPage = 27;
                 int startIndex = (cratePage - 1) * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, allCrates.size());
-                int[] slots = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
+                int[] slots = {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
                 int index = 0;
                 for (Map.Entry<String, Map<String, Object>> entry : allCrates.entrySet()) {
@@ -281,7 +277,7 @@ public class CosmeticInventory {
                         previousPageMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
-                    inventory.setItem(36, previousPage);
+                    inventory.setItem(45, previousPage);
                 }
 
                 if (endIndex < allCrates.size()) {
@@ -291,7 +287,7 @@ public class CosmeticInventory {
                         nextPageMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
-                    inventory.setItem(44, nextPage);
+                    inventory.setItem(53, nextPage);
                 }
             }
         }
