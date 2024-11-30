@@ -71,6 +71,15 @@ public class Kits {
             Map.entry(Material.OAK_PLANKS, List.of(64, 8)) // 64 oak planks on inventory slot 8
     );
 
+    public static final Map<?, List<?>> electriceel_kit = Map.ofEntries(
+            Map.entry(Material.STONE_SWORD, List.of(1, 0)), // Stone sword of quantity 1 on inventory slot 0
+            Map.entry(Material.IRON_PICKAXE, List.of(1, 1)), // Iron pickaxe of quantity 1 on inventory slot 1
+            Map.entry(Material.COOKED_BEEF, List.of(8, 2)), // 8 cooked beef on inventory slot 2
+            Map.entry(Material.LEATHER_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE)), // Leather chestplate of quantity 1 on chestplate slot
+            Map.entry(Material.LEATHER_LEGGINGS, List.of(1, KitEnums.LEGGINGS)), // Leather leggings of quantity 1 on leggings slot
+            Map.entry(Material.LEATHER_BOOTS, List.of(1, KitEnums.BOOTS)) // Leather boots of quantity 1 on boots slot
+    );
+
     public static void kitPlayer(Map<?, List<?>> kit, Player player, Material coloredConcrete){
         kit.forEach((key, value) -> {
             if(key == KitEnums.COLORED_CONCRETE) {

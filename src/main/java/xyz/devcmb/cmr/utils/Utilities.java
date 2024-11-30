@@ -295,6 +295,17 @@ public class Utilities {
             return null;
         }
 
+        if(locationData.get("pitch") != null && locationData.get("yaw") != null){
+            return new Location(
+                    world,
+                    ((Number) locationData.get("x")).doubleValue(),
+                    ((Number) locationData.get("y")).doubleValue(),
+                    ((Number) locationData.get("z")).doubleValue(),
+                    ((Number) locationData.get("yaw")).floatValue(),
+                    ((Number) locationData.get("pitch")).floatValue()
+            );
+        }
+
         return new Location(
                 world,
                 ((Number) locationData.get("x")).doubleValue(),
@@ -317,6 +328,22 @@ public class Utilities {
         if (locationData == null) {
             CmbMinigamesRandom.LOGGER.warning(key + "/" + subkey + " is not defined in the map data.");
             return null;
+        }
+
+        if(locationData.get("x") == null || locationData.get("y") == null || locationData.get("z") == null){
+            CmbMinigamesRandom.LOGGER.warning(key + "/" + subkey + " is not properly configured in the map data.");
+            return null;
+        }
+
+        if(locationData.get("pitch") != null && locationData.get("yaw") != null){
+            return new Location(
+                    world,
+                    ((Number) locationData.get("x")).doubleValue(),
+                    ((Number) locationData.get("y")).doubleValue(),
+                    ((Number) locationData.get("z")).doubleValue(),
+                    ((Number) locationData.get("yaw")).floatValue(),
+                    ((Number) locationData.get("pitch")).floatValue()
+            );
         }
 
         return new Location(
