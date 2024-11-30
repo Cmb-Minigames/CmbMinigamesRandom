@@ -138,6 +138,7 @@ public class MinigameListeners implements Listener {
         }
     }
 
+    @SuppressWarnings("all")
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent event) {
         if(GameManager.currentMinigame == null || !GameManager.ingame) return;
@@ -183,6 +184,7 @@ public class MinigameListeners implements Listener {
         }
     }
 
+    @SuppressWarnings("all")
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         if(GameManager.gameEnding) return;
@@ -328,6 +330,7 @@ public class MinigameListeners implements Listener {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
         if (GameManager.currentMinigame == null || !GameManager.ingame) return;

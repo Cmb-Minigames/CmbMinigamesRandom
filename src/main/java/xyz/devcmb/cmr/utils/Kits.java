@@ -71,6 +71,11 @@ public class Kits {
             Map.entry(Material.OAK_PLANKS, List.of(64, 8)) // 64 oak planks on inventory slot 8
     );
 
+    public static final Map<?, List<?>> teleporters_kit = Map.ofEntries(
+        Map.entry(Material.ENDER_PEARL, List.of(16, 0)), // 16 ender pearls on inventory slot 0
+        Map.entry(Material.IRON_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE)) // Iron chestplate of quantity 1 on chestplate slot
+    );
+
     public static void kitPlayer(Map<?, List<?>> kit, Player player, Material coloredConcrete){
         kit.forEach((key, value) -> {
             if(key == KitEnums.COLORED_CONCRETE) {

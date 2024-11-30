@@ -235,6 +235,7 @@ public class Utilities {
 
     public static List<Player> respawningPlayers = new ArrayList<>();
 
+    @SuppressWarnings("all")
     public static void customRespawn(Player player, DamageSource damageSource){
         if(respawningPlayers.contains(player)) return;
         respawningPlayers.add(player);
