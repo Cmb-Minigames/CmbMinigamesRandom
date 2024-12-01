@@ -9,6 +9,9 @@ import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A utility class for kits
+ */
 public class Kits {
     public static final Map<?, List<?>> ctf_kit = Map.ofEntries(
             Map.entry(Material.STONE_SWORD, List.of(1, 0)), // Stone sword of quantity 1 on inventory slot 0
@@ -77,6 +80,12 @@ public class Kits {
         Map.entry(Material.IRON_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE)) // Iron chestplate of quantity 1 on chestplate slot
     );
 
+    /**
+     * Give a player a kit from the lists above
+     * @param kit The kit to give
+     * @param player The player to give the kit to
+     * @param coloredConcrete The colored concrete to give
+     */
     public static void kitPlayer(Map<?, List<?>> kit, Player player, Material coloredConcrete){
         kit.forEach((key, value) -> {
             if(key == KitEnums.COLORED_CONCRETE) {

@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * A class for listeners that are specific to the Cooking Chaos minigame
+ */
 public class CookingChaosListeners implements Listener {
     private final List<Material> whitelist = List.of(
         Material.WHEAT,

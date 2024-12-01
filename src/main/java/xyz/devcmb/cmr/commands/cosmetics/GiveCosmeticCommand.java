@@ -12,6 +12,9 @@ import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Format;
 
+/**
+ * A command for giving a cosmetic to a player
+ */
 public class GiveCosmeticCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

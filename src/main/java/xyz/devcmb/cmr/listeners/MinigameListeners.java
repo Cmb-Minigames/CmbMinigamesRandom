@@ -33,6 +33,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A class for minigame flag handling and listeners that apply to all minigames
+ */
 public class MinigameListeners implements Listener {
     private static final List<Material> teamBlocks = List.of(
         Material.RED_CONCRETE,

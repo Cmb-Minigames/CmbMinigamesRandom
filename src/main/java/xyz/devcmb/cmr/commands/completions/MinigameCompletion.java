@@ -11,6 +11,9 @@ import xyz.devcmb.cmr.minigames.Minigame;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A tab completer for the minigame command
+ */
 public class MinigameCompletion implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

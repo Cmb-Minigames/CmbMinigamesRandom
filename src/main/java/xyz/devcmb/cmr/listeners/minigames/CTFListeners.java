@@ -12,6 +12,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 
+/**
+ * A class for listeners that are specific to the Capture The Flag minigame
+ */
 public class CTFListeners implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event){

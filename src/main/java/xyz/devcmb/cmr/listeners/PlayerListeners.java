@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A class for player listeners
+ */
 public class PlayerListeners implements Listener {
     private final Map<Player, BukkitRunnable> countdowns = new HashMap<>();
     @EventHandler

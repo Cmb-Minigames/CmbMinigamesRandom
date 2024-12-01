@@ -6,7 +6,13 @@ import xyz.devcmb.cmr.listeners.items.FireballListener;
 import xyz.devcmb.cmr.listeners.items.MeteorShowerListener;
 import xyz.devcmb.cmr.listeners.minigames.*;
 
+/**
+ * A class for managing all the listeners in the plugin
+ */
 public class ListenerManager {
+    /**
+     * Registers all the listeners in the plugin
+     */
     public static void initialize(){
         CmbMinigamesRandom plugin = CmbMinigamesRandom.getPlugin();
         PluginManager pluginManager = plugin.getServer().getPluginManager();

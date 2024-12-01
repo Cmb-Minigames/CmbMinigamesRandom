@@ -8,7 +8,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.Database;
 
+/**
+ * An interfaces class for showing stars in the action bar
+ */
 public class Stars {
+    /**
+     * Show the stars in the action bar
+     * @param player The player to show the stars to
+     */
     public static void showStarsActionBar(Player player){
         new BukkitRunnable() {
             @Override

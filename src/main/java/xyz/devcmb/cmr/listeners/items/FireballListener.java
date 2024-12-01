@@ -10,6 +10,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 
+/**
+ * A class for fireball event listeners
+ */
 public class FireballListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {

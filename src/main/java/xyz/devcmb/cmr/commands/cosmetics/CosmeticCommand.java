@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 
+/**
+ * A command for giving a cosmetic item to a player
+ */
 public class CosmeticCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

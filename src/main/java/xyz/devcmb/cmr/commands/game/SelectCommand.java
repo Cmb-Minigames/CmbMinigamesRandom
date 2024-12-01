@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
 
+/**
+ * A command for selecting the next minigame
+ */
 public class SelectCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
