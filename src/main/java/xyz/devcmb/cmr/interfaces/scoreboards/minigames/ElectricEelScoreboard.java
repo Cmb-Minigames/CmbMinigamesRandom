@@ -7,6 +7,7 @@ import org.bukkit.scoreboard.*;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 import xyz.devcmb.cmr.minigames.ElectricEelController;
+import xyz.devcmb.cmr.utils.Utilities;
 
 public class ElectricEelScoreboard implements HandledScoreboard {
     private final ElectricEelController electricEelController;
@@ -24,6 +25,9 @@ public class ElectricEelScoreboard implements HandledScoreboard {
 
         Score blank1 = objective.getScore(" ");
         blank1.setScore(6);
+
+        Score timeLeft = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(electricEelController.timeLeft));
+        timeLeft.setScore(5);
 
         Score kills = objective.getScore("⚔ Kills: " + ChatColor.AQUA + GameManager.kills.get(player));
         kills.setScore(4);

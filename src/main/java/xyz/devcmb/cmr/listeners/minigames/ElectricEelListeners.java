@@ -25,6 +25,7 @@ public class ElectricEelListeners implements Listener {
     private Location redStorageToLocation;
     private Location blueStorageFromLocation;
     private Location blueStorageToLocation;
+    private Location electricEelLocation;
 
     @SuppressWarnings("unchecked")
     private void InitializeLocations() {
@@ -49,6 +50,8 @@ public class ElectricEelListeners implements Listener {
 
         blueStorageFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueStorage", "from");
         blueStorageToLocation = Utilities.getLocationFromConfig(mapData, world, "blueStorage", "to");
+
+        electricEelLocation = Utilities.getLocationFromConfig(mapData, world, "electricEelSpawn");
     }
 
     private static boolean isWithin(Location loc, Location point1, Location point2) {
@@ -108,7 +111,7 @@ public class ElectricEelListeners implements Listener {
             event.getPlayer().getInventory().setItemInOffHand(uranium);
         }
 
-        electricEelController.ResetBeams();
+        electricEelController.ResetBeams(electricEelLocation);
     }
 
     @EventHandler
@@ -126,7 +129,7 @@ public class ElectricEelListeners implements Listener {
             }
         }
 
-        electricEelController.ResetBeams();
+        electricEelController.ResetBeams(electricEelLocation);
     }
 
     @EventHandler

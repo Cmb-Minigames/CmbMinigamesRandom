@@ -12,16 +12,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
-import xyz.devcmb.cmr.utils.Kits;
-import xyz.devcmb.cmr.utils.MapLoader;
-import xyz.devcmb.cmr.utils.Utilities;
-import fr.skytasul.guardianbeam.Laser;
+import xyz.devcmb.cmr.utils.*;
 
 import java.util.*;
 
@@ -31,10 +29,13 @@ public class ElectricEelController implements Minigame {
     public final Scoreboard scoreboard;
     private final Team redTeam;
     private final Team blueTeam;
-    public List<Laser> beams = new ArrayList<>();
+    public List<Beam> beams = new ArrayList<>();
 
     public int redUranium = 0;
     public int blueUranium = 0;
+
+    public int timeLeft = 0;
+    private BukkitRunnable timerTick;
 
     public ElectricEelController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -45,8 +46,8 @@ public class ElectricEelController implements Minigame {
     }
 
     @SuppressWarnings("unchecked")
-    public void ResetBeams() {
-        beams.forEach(Laser::stop);
+    public void ResetBeams(Location eelLocation) {
+        beams.forEach(Beam::Remove);
         beams.clear();
 
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
@@ -79,7 +80,7 @@ public class ElectricEelController implements Minigame {
         assert pollutorBeamLocation != null;
 
         InitalizeBeams(redStorageFromLocation, redStorageToLocation, pollutorBeamLocation, world);
-        InitalizeBeams(blueStorageFromLocation, blueStorageToLocation, pollutorBeamLocation, world);
+        InitalizeBeams(blueStorageFromLocation, blueStorageToLocation, eelLocation, world);
     }
 
     private void InitalizeBeams(Location from, Location to, Location beamLocation, World world) {
@@ -96,11 +97,7 @@ public class ElectricEelController implements Minigame {
                     Block block = world.getBlockAt(x, y, z);
 
                     if (block.getType() == Material.NETHER_QUARTZ_ORE) {
-                        try {
-                            beams.add(new Laser.CrystalLaser(block.getLocation(), beamLocation, -1, 50));
-                        } catch (ReflectiveOperationException e) {
-                            throw new RuntimeException(e);
-                        }
+                        beams.add(new Beam(block.getLocation(), beamLocation));
                     }
                 }
             }
@@ -139,6 +136,7 @@ public class ElectricEelController implements Minigame {
 
         redUranium = 6;
         blueUranium = 6;
+        timeLeft = 60 * 4;
 
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
@@ -174,12 +172,10 @@ public class ElectricEelController implements Minigame {
 
         assert electricEelLocation != null;
         LivingEntity electricEel = (LivingEntity) world.spawnEntity(electricEelLocation, EntityType.SALMON);
-        Objects.requireNonNull(electricEel.getAttribute(Attribute.GENERIC_SCALE)).setBaseValue(4.0);
+        Objects.requireNonNull(electricEel.getAttribute(Attribute.GENERIC_SCALE)).setBaseValue(3.0);
         electricEel.setAI(false);
         electricEel.setInvulnerable(true);
         electricEel.setRemoveWhenFarAway(false);
-
-        ResetBeams();
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Map<?, List<?>> kit = Kits.electriceel_kit;
@@ -193,13 +189,85 @@ public class ElectricEelController implements Minigame {
                 player.setSaturation(0);
                 player.setHealth(20);
             });
+
+            timerTick = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if(timeLeft <= 0){
+                        this.cancel();
+                        endGame();
+                        return;
+                    }
+
+                    timeLeft--;
+                }
+            };
+
+            timerTick.runTaskTimer(CmbMinigamesRandom.getPlugin(), 20, 20);
         }, 20 * 10);
     }
 
     @Override
     public void stop() {
+        RED.clear();
+        BLUE.clear();
+        redTeam.getEntries().forEach(redTeam::removeEntry);
+        blueTeam.getEntries().forEach(blueTeam::removeEntry);
+
         redUranium = 0;
         blueUranium = 0;
+        timeLeft = 0;
+
+        if(timerTick != null) timerTick.cancel();
+
+        Utilities.endGameResuable();
+    }
+
+    public void endGame() {
+        GameManager.gameEnding = true;
+        if (redUranium > blueUranium) {
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else if (blueUranium > redUranium) {
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else {
+            Bukkit.getOnlinePlayers().forEach(plr -> {
+                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                stop();
+            }
+        }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
     }
 
     @Override
@@ -312,7 +380,11 @@ public class ElectricEelController implements Minigame {
 
     @Override
     public Map<StarSource, Number> getStarSources() {
-        return Map.of();
+        return Map.of(
+                StarSource.WIN, 10,
+                StarSource.KILL, 2,
+                StarSource.OBJECTIVE, 5
+        );
     }
 
     @Override
