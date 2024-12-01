@@ -13,7 +13,7 @@ There are currently a small group of added minigames, with more to come in the f
 - [x] Cooking Chaos
   - Race for resources to cook for your animal patreons where pvp is enabled, you can sabotage the other team or play it safe and get your own resources. The team with the most customers fed in 10 minutes wins. 
 - [ ] Teleporters
-  - A minigame where you are given a stack of pearls and have to stay on the platform. At the start of the game, the amount of lives will be selected, which can either be 1, 5, 10, 15, or 20. Over time, items used to push other players off will spawn around the map. Last person standing wins!
+  - A minigame where you are given a stack of pearls and have to stay on the platform. At the start of the game, the amount of lives will be selected, which can either be 1, 5, 10, 15, or 20. Over time, items used to push other players off will be given through events that happen every 60 seconds. Last person standing wins!
 > [!WARNING]\
 > This is a large-scale project maintained by a very small pool of people, so do not expect updates too frequently.
 

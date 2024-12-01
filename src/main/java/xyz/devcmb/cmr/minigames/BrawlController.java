@@ -302,7 +302,7 @@ public class BrawlController implements Minigame {
     public Map<StarSource, Number> getStarSources() {
         return Map.of(
             StarSource.KILL, 5,
-            StarSource.WIN, 15
+            StarSource.WIN, 30
         );
     }
 

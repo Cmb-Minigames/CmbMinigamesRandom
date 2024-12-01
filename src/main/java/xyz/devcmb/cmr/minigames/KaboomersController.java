@@ -306,7 +306,7 @@ public class KaboomersController implements Minigame {
     public Map<StarSource, Number> getStarSources() {
         return Map.of(
             StarSource.KILL, 2,
-            StarSource.WIN, 20
+            StarSource.WIN, 15
         );
     }
 

@@ -159,6 +159,9 @@ public class Utilities {
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
+            player.removePotionEffect(PotionEffectType.HUNGER);
+            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+            player.setFoodLevel(20);
         });
     }
 
@@ -264,6 +267,9 @@ public class Utilities {
                     Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
                     player.setHealth(20);
                     player.setFoodLevel(20);
+                    player.setFireTicks(0);
+                    player.setExp(0);
+                    player.setLevel(0);
                     setVisible(player);
                     player.sendTitle(ChatColor.AQUA + "RESPAWNED", "", 5, 40, 5);
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 2);

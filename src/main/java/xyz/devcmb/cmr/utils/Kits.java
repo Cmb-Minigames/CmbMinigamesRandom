@@ -73,6 +73,7 @@ public class Kits {
 
     public static final Map<?, List<?>> teleporters_kit = Map.ofEntries(
         Map.entry(Material.ENDER_PEARL, List.of(16, 0)), // 16 ender pearls on inventory slot 0
+        Map.entry(Material.COOKED_BEEF, List.of(2, 1)), // 2 cooked beef on inventory slot 1
         Map.entry(Material.IRON_CHESTPLATE, List.of(1, KitEnums.CHESTPLATE)) // Iron chestplate of quantity 1 on chestplate slot
     );
 
