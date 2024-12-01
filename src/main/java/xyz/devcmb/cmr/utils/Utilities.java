@@ -182,6 +182,10 @@ public class Utilities {
             CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(player);
             cosmeticInventory.giveInventoryItem();
 
+            for (PotionEffect effect : player.getActivePotionEffects()) {
+                player.removePotionEffect(effect.getType());
+            }
+
             PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
             player.addPotionEffect(hungerEffect);
         });

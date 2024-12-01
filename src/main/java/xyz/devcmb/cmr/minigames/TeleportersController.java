@@ -237,12 +237,23 @@ public class TeleportersController implements Minigame {
         eventRunnable.cancel();
         eventRunnable = null;
         if(players.size() == 1){
+            GameManager.gameEnding = true;
+
             Player winner = players.getFirst();
             Database.addUserStars(winner, getStarSources().get(StarSource.WIN).intValue());
             winner.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
             winner.playSound(winner.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
             winner.getInventory().clear();
             winner.setGameMode(GameMode.SPECTATOR);
+
+            allPlayers.forEach(player -> {
+                if(player != winner){
+                    player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                    player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    player.getInventory().clear();
+                    player.setGameMode(GameMode.SPECTATOR);
+                }
+            });
 
             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), this::stop, 20 * 8);
         } else if(players.isEmpty()){
