@@ -13,8 +13,10 @@ import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
 
+/**
+ * Manages the state of the loop and the minigames attached to it
+ */
 public class GameManager {
-
     public static List<Minigame> minigames = new ArrayList<>();
     public static Minigame currentMinigame = null;
     public static boolean intermission = true;
@@ -33,6 +35,9 @@ public class GameManager {
     public static Map<Player, ChatColor> teamColors = new HashMap<>();
     private static BukkitRunnable intermissionTimeDepreciation = null;
 
+    /**
+     * Register all the minigames
+     */
     public static void registerAllMinigames(){
         registerMinigame(new CaptureTheFlagController());
         registerMinigame(new KaboomersController());
@@ -41,6 +46,11 @@ public class GameManager {
         registerMinigame(new CookingChaosController());
     }
 
+    /**
+     * Get a minigme by its name
+     * @param name The name of the minigame
+     * @return The minigame controller
+     */
     public static Minigame getMinigameByName(String name){
         for(Minigame minigame : minigames){
             if(minigame.getName().equalsIgnoreCase(name)){
@@ -51,6 +61,11 @@ public class GameManager {
         return null;
     }
 
+    /**
+     * Get a minigame by its id
+     * @param id The id of the minigame
+     * @return The minigame controller
+     */
     public static Minigame getMinigameById(String id){
         for(Minigame minigame : minigames){
             if(minigame.getId().equalsIgnoreCase(id)){
@@ -60,12 +75,20 @@ public class GameManager {
         return null;
     }
 
+    /**
+     * Register a single minigame
+     * @param minigame The controller of the minigame
+     */
     public static void registerMinigame(Minigame minigame){
         minigames.add(minigame);
         minigamePlays.put(minigame, 0);
         CmbMinigamesRandom.LOGGER.info("Registered minigame: " + minigame.getName());
     }
 
+    /**
+     * Invoke events when a player connects to the server
+     * @param event The join event
+     */
     public static void playerConnect(PlayerJoinEvent event){
         kills.put(event.getPlayer(), 0);
         teamColors.put(event.getPlayer(), ChatColor.WHITE);
@@ -76,6 +99,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * Invoke events when a player disconnects from the server
+     * @param player The player that disconnected
+     */
     public static void playerDisconnect(Player player){
         kills.remove(player);
         teamColors.remove(player);
@@ -92,6 +119,9 @@ public class GameManager {
         }
     }
 
+    /**
+     * Prepare the game for the next round
+     */
     public static void prepare(){
         pregame = false;
         ingame = false;
@@ -103,11 +133,13 @@ public class GameManager {
         intermissionCountdownInProgress = false;
         timeLeft = 30;
         kills.replaceAll((player, kills) -> 0);
-        cleanup();
 
         startIntermissionRunnable();
     }
 
+    /**
+     * Determines when to start intermission
+     */
     private static void startIntermissionRunnable() {
         if(intermisionRunnable != null) {
             intermisionRunnable.cancel();
@@ -129,6 +161,10 @@ public class GameManager {
         intermisionRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 
+
+    /**
+     * Start the intermission countdown
+     */
     public static void doIntermission(){
         if(intermissionTimeDepreciation != null) return;
         intermissionTimeDepreciation = new BukkitRunnable() {
@@ -161,6 +197,9 @@ public class GameManager {
         intermissionTimeDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 
+    /**
+     * Do the picker for a random minigame
+     */
     public static void chooseRandom() {
         Minigame minigame = selectedMinigame != null ? selectedMinigame : Utilities.getRandom(minigames);
         selectedMinigame = null;
@@ -207,6 +246,10 @@ public class GameManager {
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 10);
     }
 
+    /**
+     * Cleanup the last minigame
+     * @deprecated Use {@link Utilities#endGameResuable()} in the stop function of your minigame instead.
+     */
     public static void cleanup(){
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> Bukkit.getOnlinePlayers().forEach(player -> {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
