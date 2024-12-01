@@ -8,6 +8,9 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 import xyz.devcmb.cmr.minigames.BrawlController;
 
+/**
+ * A class for the Brawl minigame scoreboard
+ */
 public class BrawlScoreboard implements HandledScoreboard {
     private final BrawlController brawlController;
     public BrawlScoreboard(BrawlController brawlController){

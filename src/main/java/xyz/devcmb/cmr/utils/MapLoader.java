@@ -14,8 +14,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * A utility class for loading and unloading maps
+ */
 public class MapLoader {
     public static String LOADED_MAP = null;
+
+    /**
+     * Clone a map from it's name and teleport all players to it
+     * @param worldName The name of the world to clone
+     */
     public static void loadMap(String worldName) {
         if (worldName == null) {
             CmbMinigamesRandom.LOGGER.warning("World name is null.");
@@ -51,10 +59,12 @@ public class MapLoader {
         if (world == null) return;
         world.setAutoSave(false);
         LOADED_MAP = uniqueWorldName;
-
-//        Bukkit.getOnlinePlayers().forEach(player -> player.teleport(world.getSpawnLocation()));
     }
 
+    /**
+     * Unload the currently loaded map
+     * @param closing If the server is closing, in which case, do not begin a runnable
+     */
     public static void unloadMap(boolean closing) {
         if (LOADED_MAP != null) {
             World world = Bukkit.getWorld(LOADED_MAP);
@@ -83,6 +93,11 @@ public class MapLoader {
         }
     }
 
+    /**
+     * Load a random map for a minigame
+     * @param minigame The minigame to load a map for
+     * @return The map data
+     */
     @SuppressWarnings("unchecked")
     public static Map<String, ?> loadRandomMap(Minigame minigame){
         List<Map<String, ?>> maps = (List<Map<String, ?>>) CmbMinigamesRandom.getPlugin().getConfig().getList("maps." + minigame.getName());
@@ -96,7 +111,10 @@ public class MapLoader {
         loadMap((String)((Map<String, ?>) map.get("map")).get("worldName"));
         return map;
     }
-  
+
+    /**
+     * Delete all minigame worlds
+     */
     public static void cleanup(){
         File rootDirectory = Bukkit.getWorldContainer();
         File[] files = rootDirectory.listFiles((dir, name) -> name.startsWith("minigame-") && new File(dir, name).isDirectory());

@@ -11,9 +11,15 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A utility class for playing music in the server
+ */
 public class MusicBox {
     public static Map<String, Map<String, String>> tracks = new HashMap<>();
 
+    /**
+     * Register all the tracks
+     */
     public static void registerAllTracks(){
         registerTrack(
             "kaboomers",
@@ -22,6 +28,7 @@ public class MusicBox {
             "Nibbl_z"
         );
     }
+
 
     private static void registerTrack(String name, String musicPath, String songName, String author){
         tracks.put(name, Map.of(

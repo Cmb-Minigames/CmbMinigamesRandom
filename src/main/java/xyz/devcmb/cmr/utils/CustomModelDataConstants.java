@@ -4,6 +4,9 @@ import org.bukkit.Material;
 
 import java.util.Map;
 
+/**
+ * A utility class for storing custom model data constants
+ */
 public class CustomModelDataConstants {
     public static final Map<Material, Map<String, Number>> constants = Map.of(
         Material.ECHO_SHARD, Map.of(

@@ -22,6 +22,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * A class for listeners that are specific to the Kaboomers minigame
+ */
 public class KaboomersListeners implements Listener {
     private final HashMap<UUID, Long> cooldowns = new HashMap<>();
 

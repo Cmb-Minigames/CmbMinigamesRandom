@@ -10,6 +10,9 @@ import xyz.devcmb.cmr.cosmetics.CrateManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A tab completer for the crate command
+ */
 public class CrateCommandCompletion implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

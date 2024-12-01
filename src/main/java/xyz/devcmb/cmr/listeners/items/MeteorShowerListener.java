@@ -14,6 +14,9 @@ import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 
 import java.util.Objects;
 
+/**
+ * A class for meteor shower event listeners
+ */
 public class MeteorShowerListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {

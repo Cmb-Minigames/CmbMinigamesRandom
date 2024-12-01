@@ -7,6 +7,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
+/**
+ * A class for the sendable fireball item
+ */
 public class SendableFireball implements CustomItem {
     @Override
     public String getName() {

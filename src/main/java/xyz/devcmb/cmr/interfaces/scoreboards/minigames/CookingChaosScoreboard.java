@@ -9,6 +9,9 @@ import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 import xyz.devcmb.cmr.minigames.CookingChaosController;
 import xyz.devcmb.cmr.utils.Utilities;
 
+/**
+ * A class for the Cooking Chaos minigame scoreboard
+ */
 public class CookingChaosScoreboard implements HandledScoreboard {
     CookingChaosController controller;
 

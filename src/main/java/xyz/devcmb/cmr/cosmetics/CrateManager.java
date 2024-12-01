@@ -13,14 +13,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * A class for managing crates
+ */
 public class CrateManager {
     public static Map<String, ItemStack> crates = new HashMap<>();
     public static Map<String, Map<String, Object>> crateData = new HashMap<>();
+
+    /**
+     * Registers all crates
+     */
     public static void registerAllCrates(){
         Map<String, Map<String, Object>> crateMap = Database.getAllCrates();
         crateMap.forEach(CrateManager::createCrate);
     }
 
+    /**
+     * Registers a crate
+     * @param name The name of the crate
+     * @param crate The crate data
+     */
     private static void createCrate(String name, Map<String, Object> crate){
         if(crate == null){
             CmbMinigamesRandom.LOGGER.warning("Crate " + name + " is null.");
@@ -51,12 +63,23 @@ public class CrateManager {
         crateData.put(name, crate);
     }
 
+    /**
+     * Gives a crate item to a player
+     * @param player The player to give the crate to
+     * @param name The name of the crate
+     */
     public static void giveCrate(Player player, String name){
         ItemStack cosmetic = crates.get(name);
         if(cosmetic == null) player.sendMessage("❓ " + ChatColor.RED + "That crate does not exist.");
         player.getInventory().addItem(cosmetic);
     }
 
+    /**
+     * Rolls a crate for a player
+     * @param player The player to roll the crate for
+     * @param name The name of the crate
+     * @return The cosmetic that was rolled
+     */
     public static String rollCrate(Player player, String name) {
         Map<String, Object> crate = crateData.get(name);
         if (crate == null) {
@@ -75,6 +98,11 @@ public class CrateManager {
         return selectedCosmetic;
     }
 
+    /**
+     * Get a crate from its display name
+     * @param display_name The display name of the crate
+     * @return The crate data
+     */
     public static Map<String, Object> getFromDisplayName(String display_name) {
         for (Map.Entry<String, Map<String, Object>> entry : crateData.entrySet()) {
             if (entry.getValue().get("display_name").equals(display_name)) {
@@ -83,6 +111,12 @@ public class CrateManager {
         }
         return null;
     }
+
+    /**
+     * Rolls a random cosmetic from a crate
+     * @param crate The name of the crate
+     * @return The cosmetic name that was rolled
+     */
     public static String rollRandomCosmeticFromCrate(String crate){
         Map<String, Object> crateData = CrateManager.crateData.get(crate);
         if(crateData == null) return null;
@@ -109,6 +143,11 @@ public class CrateManager {
         return selectedCosmetics.get(new Random().nextInt(selectedCosmetics.size()));
     }
 
+    /**
+     * Rolls a random rarity
+     * @param raritySet The rarity set to roll from
+     * @return The rarity that was rolled
+     */
     public static String rollRandomRarity(Map<String, Number> raritySet) {
         double common = raritySet.get("common").doubleValue();
         double uncommon = raritySet.get("uncommon").doubleValue();
