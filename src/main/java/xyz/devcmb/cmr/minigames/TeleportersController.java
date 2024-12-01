@@ -29,6 +29,7 @@ public class TeleportersController implements Minigame {
     private final List<TeleportersEvent> events = new ArrayList<>();
 
     private Location spawnLocation = null;
+    private Boolean gameStarted = false;
 
     public TeleportersController(){
         events.add(new FunnyStick(this));
@@ -41,6 +42,8 @@ public class TeleportersController implements Minigame {
     @Override
     public void start() {
         Utilities.gameStartReusable();
+        gameStarted = false;
+
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
             CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
@@ -94,6 +97,7 @@ public class TeleportersController implements Minigame {
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             allPlayers.forEach(plr -> Utilities.Countdown(plr, 10));
             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                gameStarted = true;
                 Map<?, List<?>> kit = Kits.teleporters_kit;
                 players.forEach(player -> {
                     Kits.kitPlayer(kit, player, Material.WHITE_CONCRETE);
@@ -148,6 +152,7 @@ public class TeleportersController implements Minigame {
         eventActive = false;
         if(eventRunnable != null) eventRunnable.cancel();
         eventRunnable = null;
+        gameStarted = false;
 
         Utilities.endGameResuable();
     }
@@ -208,6 +213,7 @@ public class TeleportersController implements Minigame {
         event.setRespawnLocation(spawnLocation);
         player.teleport(spawnLocation);
 
+        if(!gameStarted) return;
         if(playerLives.get(player) <= 0 && players.contains(player)){
             players.remove(player);
             if(CmbMinigamesRandom.DeveloperMode){

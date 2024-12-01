@@ -24,6 +24,7 @@ public class ListenerManager {
         pluginManager.registerEvents(new BrawlListeners(), plugin);
         pluginManager.registerEvents(new SnifferCaretakerListeners(), plugin);
         pluginManager.registerEvents(new CookingChaosListeners(), plugin);
+        pluginManager.registerEvents(new TeleportersListeners(), plugin);
 
         // Items
         pluginManager.registerEvents(new MeteorShowerListener(), plugin);
