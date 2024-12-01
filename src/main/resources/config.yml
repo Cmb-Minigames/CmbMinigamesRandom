@@ -237,6 +237,34 @@ maps:
             z: 0
             pitch: 0
             yaw: 0
+        electricEelSpawn:
+            x: 0
+            y: 0
+            z: 0
+            pitch: 0
+            yaw: 0
+        redStorage:
+          from:
+            x: 0
+            y: 0
+            z: 0
+          to:
+            x: 0
+            y: 0
+            z: 0
+        blueStorage:
+            from:
+                x: 0
+                y: 0
+                z: 0
+            to:
+                x: 0
+                y: 0
+                z: 0
+        pollutorBeam:
+          x: 0
+          y: 0
+          z: 0
 
 database:
   host: ""
