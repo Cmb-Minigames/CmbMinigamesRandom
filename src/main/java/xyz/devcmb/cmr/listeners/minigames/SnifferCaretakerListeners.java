@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * A class for listeners that are specific to the Sniffer Caretaker minigame
+ */
 public class SnifferCaretakerListeners implements Listener {
     private final List<Material> breakableBlocks = List.of(
             Material.DIRT,

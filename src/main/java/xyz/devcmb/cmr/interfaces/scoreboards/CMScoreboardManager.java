@@ -16,10 +16,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A class for managing the scoreboards
+ */
 public class CMScoreboardManager {
     public static BukkitRunnable updateScoreboard = null;
     public static Map<String, HandledScoreboard> scoreboards = new HashMap<>();
 
+    /**
+     * Initializes the scoreboard for a player
+     * @param player The player to initialize the scoreboard for
+     */
     public static void initialize(Player player) {
         updateScoreboard = new BukkitRunnable() {
             @Override
@@ -42,6 +49,9 @@ public class CMScoreboardManager {
         updateScoreboard.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 5);
     }
 
+    /**
+     * Registers all scoreboards
+     */
     public static void registerAllScoreboards() {
         CaptureTheFlagController ctfController = (CaptureTheFlagController) GameManager.getMinigameByName("Capture the Flag");
         KaboomersController kaboomersController = (KaboomersController) GameManager.getMinigameByName("Kaboomers");
@@ -58,6 +68,11 @@ public class CMScoreboardManager {
         scoreboards.put("cookingchaos", new CookingChaosScoreboard(cookingChaosController));
     }
 
+    /**
+     * Displays a scoreboard to a player by name
+     * @param player The player to display the scoreboard to
+     * @param scoreboard The name of the scoreboard to display
+     */
     public static void displayScoreboardFromName(Player player, String scoreboard) {
         HandledScoreboard handledScoreboard = scoreboards.get(scoreboard);
         if (handledScoreboard != null) {
@@ -67,11 +82,21 @@ public class CMScoreboardManager {
         }
     }
 
+    /**
+     * Sends a scoreboard to a player along with the default scoreboards
+     * @param player The player to send the scoreboard to
+     * @param board The scoreboard to send
+     */
     public static void sendScoreboardAlongDefaults(Player player, Scoreboard board) {
         // no custom ones atm
         player.setScoreboard(board);
     }
 
+    /**
+     * Merges multiple scoreboards into one
+     * @param boards The scoreboards to merge
+     * @return The merged scoreboard
+     */
     public static Scoreboard mergeScoreboards(Scoreboard... boards) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         assert scoreboardManager != null;

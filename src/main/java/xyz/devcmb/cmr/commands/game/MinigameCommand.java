@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
 
+/**
+ * A command for viewing certain information about a minigame
+ */
 public class MinigameCommand implements CommandExecutor {
     private final BukkitAudiences audiences;
 

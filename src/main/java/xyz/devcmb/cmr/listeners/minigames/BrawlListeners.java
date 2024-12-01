@@ -8,6 +8,9 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.BrawlController;
 
+/**
+ * A class for listeners that are specific to the Brawl minigame
+ */
 public class BrawlListeners implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){

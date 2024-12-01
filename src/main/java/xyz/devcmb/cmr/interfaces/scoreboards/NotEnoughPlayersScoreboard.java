@@ -9,6 +9,9 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 
 import java.util.Objects;
 
+/**
+ * A class for the not enough players scoreboard
+ */
 public class NotEnoughPlayersScoreboard implements HandledScoreboard {
     @Override
     public Scoreboard getScoreboard(Player player) {

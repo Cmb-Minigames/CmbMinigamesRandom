@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
@@ -21,6 +20,9 @@ import xyz.devcmb.cmr.utils.Database;
 
 import java.util.Map;
 
+/**
+ * A class for the cosmetic inventory listeners
+ */
 public class CosmeticInventoryListeners implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {

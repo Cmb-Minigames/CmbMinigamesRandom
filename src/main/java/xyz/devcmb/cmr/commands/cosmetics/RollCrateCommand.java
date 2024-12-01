@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.cosmetics.CrateManager;
 
+/**
+ * A command for rolling a crate for debug purposes
+ */
 public class RollCrateCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

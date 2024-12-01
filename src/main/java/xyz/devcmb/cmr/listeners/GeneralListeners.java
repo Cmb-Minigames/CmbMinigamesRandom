@@ -21,6 +21,9 @@ import xyz.devcmb.cmr.utils.Format;
 import java.lang.reflect.Field;
 import java.util.List;
 
+/**
+ * A class for general listeners that apply all over the server
+ */
 public class GeneralListeners implements Listener {
     private CommandMap commandMap;
     private final List<String> blockedCharacters = List.of(

@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A command for opening a custom inventory for custom interface development
+ */
 public class UICommand implements CommandExecutor {
     private final Map<Player, Map<Integer, Inventory>> playerInventories = new HashMap<>();
     @Override

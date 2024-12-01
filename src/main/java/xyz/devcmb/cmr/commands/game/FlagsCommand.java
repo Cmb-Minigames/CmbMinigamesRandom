@@ -13,6 +13,9 @@ import xyz.devcmb.cmr.minigames.Minigame;
 
 import java.util.stream.Collectors;
 
+/**
+ * A command for listing the flags of a minigame
+ */
 public class FlagsCommand implements CommandExecutor {
     private final BukkitAudiences audiences;
 

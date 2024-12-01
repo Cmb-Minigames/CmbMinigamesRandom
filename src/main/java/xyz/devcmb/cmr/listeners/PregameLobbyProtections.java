@@ -16,6 +16,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+/**
+ * A class for protecting the pregame lobby from griefing
+ */
 public class PregameLobbyProtections implements Listener {
     private boolean isInPregameWorld(Player player) {
         return player.getWorld().getName().equals("pregame");

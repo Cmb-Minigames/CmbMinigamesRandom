@@ -8,6 +8,9 @@ import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 
 import java.util.List;
 
+/**
+ * A class for the meteor shower item
+ */
 public class MeteorShower implements CustomItem {
 
     @Override

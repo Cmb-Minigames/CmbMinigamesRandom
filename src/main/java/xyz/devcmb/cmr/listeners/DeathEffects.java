@@ -15,6 +15,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.List;
 
+/**
+ * A class for death effects
+ */
 public class DeathEffects implements Listener {
     private static final List<String> randomizedDeathMessages = List.of(
             "{player} tripped",
