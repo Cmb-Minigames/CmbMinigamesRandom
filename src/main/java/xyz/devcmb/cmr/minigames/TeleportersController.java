@@ -235,7 +235,7 @@ public class TeleportersController implements Minigame {
 
     @Override
     public void playerDeath(PlayerDeathEvent event) {
-        if(playerLives.get(event.getEntity()) <= 0) return;
+        if(playerLives.get(event.getEntity()) <= 0 || !gameStarted) return;
         playerLives.put(event.getEntity(), playerLives.get(event.getEntity()) - 1);
     }
 
