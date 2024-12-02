@@ -39,7 +39,7 @@ public class Brewery implements TeleportersEvent {
             player.getInventory().addItem(speedPotion);
         });
 
-        teleportersController.eventTimer = 60;
+        teleportersController.eventTimer = 30;
         teleportersController.eventActive = false;
     }
 
