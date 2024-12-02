@@ -16,7 +16,7 @@ public class Revival implements TeleportersEvent {
             teleportersController.playerLives.put(player, lives + 1);
         });
 
-        teleportersController.eventTimer = 60;
+        teleportersController.eventTimer = 30;
         teleportersController.eventActive = false;
     }
 
