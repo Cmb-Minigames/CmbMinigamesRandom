@@ -30,9 +30,9 @@ public class FunnyStick implements TeleportersEvent {
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             teleportersController.players.forEach(player -> player.getInventory().remove(funnyStick));
 
-            teleportersController.eventTimer = 60;
+            teleportersController.eventTimer = 30;
             teleportersController.eventActive = false;
-        }, 30 * 10);
+        }, 30 * 20);
     }
 
     @Override
