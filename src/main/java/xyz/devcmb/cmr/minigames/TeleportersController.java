@@ -23,7 +23,7 @@ public class TeleportersController implements Minigame {
     public List<Player> allPlayers = new ArrayList<>();
     public Integer gameLives = 0;
     public Map<Player, Integer> playerLives = new HashMap<>();
-    public Integer eventTimer = 60;
+    public Integer eventTimer = 30;
     private BukkitRunnable eventRunnable = null;
     public Boolean eventActive = false;
     private final List<TeleportersEvent> events = new ArrayList<>();
@@ -61,7 +61,7 @@ public class TeleportersController implements Minigame {
             return;
         }
 
-        Integer[] lives = {1, 5, 10, 15, 20};
+        Integer[] lives = {1, 5, 10};
         gameLives = lives[new Random().nextInt(lives.length)];
 
         spawnLocation = Utilities.getLocationFromConfig(mapData, world, "spawn");
