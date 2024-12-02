@@ -44,6 +44,7 @@ public class GameManager {
         registerMinigame(new BrawlController());
         registerMinigame(new SnifferCaretakerController());
         registerMinigame(new CookingChaosController());
+        registerMinigame(new TeleportersController());
     }
 
     /**
