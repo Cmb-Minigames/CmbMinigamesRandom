@@ -15,7 +15,7 @@ public class Restock implements TeleportersEvent {
     public void run() {
         teleportersController.players.forEach(player -> player.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 16)));
 
-        teleportersController.eventTimer = 60;
+        teleportersController.eventTimer = 30;
         teleportersController.eventActive = false;
     }
 
