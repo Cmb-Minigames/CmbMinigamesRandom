@@ -186,6 +186,7 @@ public class TeleportersController implements Minigame {
                 winner.playSound(winner.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 winner.getInventory().clear();
                 winner.setGameMode(GameMode.SPECTATOR);
+                return 8;
             } else if(players.isEmpty()){
                 return 0;
             }
@@ -276,7 +277,7 @@ public class TeleportersController implements Minigame {
     }
 
     @Override
-    public Map<StarSource, Number> getStarSources() {
+    public Map<StarSource, Integer> getStarSources() {
         return Map.of(
             StarSource.WIN, 30,
             StarSource.KILL, 2

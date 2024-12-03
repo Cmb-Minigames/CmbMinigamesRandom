@@ -73,7 +73,10 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
-        GameManager.playerDisconnect(event.getPlayer());
-        countdowns.get(event.getPlayer()).cancel();
+        Player player = event.getPlayer();
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+
+        GameManager.playerDisconnect(player);
+        countdowns.get(player).cancel();
     }
 }
