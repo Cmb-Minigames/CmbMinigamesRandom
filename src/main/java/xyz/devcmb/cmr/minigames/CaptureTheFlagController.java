@@ -31,9 +31,6 @@ import java.util.*;
 public class CaptureTheFlagController implements Minigame {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();
-    public final Scoreboard scoreboard;
-    private final Team redTeam;
-    private final Team blueTeam;
     private boolean blueTaken = false;
     private boolean redTaken = false;
     public ItemDisplay redFlagEntity = null;
@@ -46,15 +43,6 @@ public class CaptureTheFlagController implements Minigame {
     private final List<ItemStack> items = new ArrayList<>();
 
     public CaptureTheFlagController() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
-        scoreboard = manager.getNewScoreboard();
-        redTeam = scoreboard.registerNewTeam("Red");
-        blueTeam = scoreboard.registerNewTeam("Blue");
-
-        redTeam.setColor(ChatColor.RED);
-        blueTeam.setColor(ChatColor.BLUE);
-
         ItemStack harmingArrow = new ItemStack(Material.TIPPED_ARROW);
         PotionMeta harmingArrowItemMeta = (PotionMeta) harmingArrow.getItemMeta();
         if (harmingArrowItemMeta == null) return;
@@ -106,17 +94,13 @@ public class CaptureTheFlagController implements Minigame {
 
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
 
         for (int i = 0; i < allPlayers.size(); i++) {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
-                redTeam.addEntry(allPlayers.get(i).getName());
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
-                blueTeam.addEntry(allPlayers.get(i).getName());
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
@@ -269,8 +253,6 @@ public class CaptureTheFlagController implements Minigame {
     public void stop() {
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
         timePassedRunnable.cancel();
         timePassed = 0;
         redFlagEntity.remove();
@@ -599,10 +581,7 @@ public class CaptureTheFlagController implements Minigame {
     public void updateScoreboard(Player player) {
         CMScoreboardManager.sendScoreboardAlongDefaults(
                 player,
-                CMScoreboardManager.mergeScoreboards(
-                        CMScoreboardManager.scoreboards.get("ctf").getScoreboard(player),
-                        scoreboard
-                )
+                CMScoreboardManager.scoreboards.get("ctf").getScoreboard(player)
         );
     }
 

@@ -23,25 +23,9 @@ public class KaboomersController implements Minigame {
 
     public List<Block> redBlocks = new ArrayList<>();
     public List<Block> blueBlocks = new ArrayList<>();
-
-    private final Scoreboard scoreboard;
-    private final Team redTeam;
-    private final Team blueTeam;
-
     private BukkitRunnable timeDepreciation = null;
 
     public int timeLeft = 0;
-
-    public KaboomersController(){
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
-        scoreboard = manager.getNewScoreboard();
-        redTeam = scoreboard.registerNewTeam("Red");
-        blueTeam = scoreboard.registerNewTeam("Blue");
-
-        redTeam.setColor(ChatColor.RED);
-        blueTeam.setColor(ChatColor.BLUE);
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -52,19 +36,13 @@ public class KaboomersController implements Minigame {
 
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
 
         for (int i = 0; i < allPlayers.size(); i++) {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
-                redTeam.addEntry(allPlayers.get(i).getName());
-                allPlayers.get(i).setScoreboard(scoreboard);
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
-                blueTeam.addEntry(allPlayers.get(i).getName());
-                allPlayers.get(i).setScoreboard(scoreboard);
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
@@ -295,10 +273,7 @@ public class KaboomersController implements Minigame {
     public void updateScoreboard(Player player) {
         CMScoreboardManager.sendScoreboardAlongDefaults(
                 player,
-                CMScoreboardManager.mergeScoreboards(
-                    CMScoreboardManager.scoreboards.get("kaboomers").getScoreboard(player),
-                    scoreboard
-                )
+                CMScoreboardManager.scoreboards.get("kaboomers").getScoreboard(player)
         );
     }
 

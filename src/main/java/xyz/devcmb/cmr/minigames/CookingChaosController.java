@@ -28,9 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CookingChaosController implements Minigame {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();
-    public final Scoreboard scoreboard;
-    private final Team redTeam;
-    private final Team blueTeam;
     private BukkitRunnable boneMealChestRefill;
     private BukkitRunnable customerRunnable;
     private BukkitRunnable timerRunnable;
@@ -79,14 +76,6 @@ public class CookingChaosController implements Minigame {
 
     public Integer timeLeft = 0;
 
-    public CookingChaosController() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
-        scoreboard = manager.getNewScoreboard();
-        redTeam = scoreboard.registerNewTeam("Red");
-        blueTeam = scoreboard.registerNewTeam("Blue");
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
@@ -96,17 +85,13 @@ public class CookingChaosController implements Minigame {
 
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
 
         for (int i = 0; i < allPlayers.size(); i++) {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
-                redTeam.addEntry(allPlayers.get(i).getName());
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
-                blueTeam.addEntry(allPlayers.get(i).getName());
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
@@ -453,8 +438,6 @@ public class CookingChaosController implements Minigame {
     public void stop() {
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
         if(boneMealChestRefill != null) boneMealChestRefill.cancel();
         boneMealChestRefill = null;
         if(customerRunnable != null) customerRunnable.cancel();
@@ -570,10 +553,7 @@ public class CookingChaosController implements Minigame {
     public void updateScoreboard(Player player) {
         CMScoreboardManager.sendScoreboardAlongDefaults(
                 player,
-                CMScoreboardManager.mergeScoreboards(
-                        CMScoreboardManager.scoreboards.get("cookingchaos").getScoreboard(player),
-                        scoreboard
-                )
+                CMScoreboardManager.scoreboards.get("cookingchaos").getScoreboard(player)
         );
     }
 

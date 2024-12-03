@@ -68,6 +68,7 @@ public class CMScoreboardManager {
         scoreboards.put("sniffercaretaker", new SnifferCaretakerScoreboard(snifferCaretakerController));
         scoreboards.put("cookingchaos", new CookingChaosScoreboard(cookingChaosController));
         scoreboards.put("teleporters", new TeleportersScoreboard(teleportersController));
+        scoreboards.put("TabList", new TabListScoreboard());
     }
 
     /**
@@ -90,8 +91,7 @@ public class CMScoreboardManager {
      * @param board The scoreboard to send
      */
     public static void sendScoreboardAlongDefaults(Player player, Scoreboard board) {
-        // no custom ones atm
-        player.setScoreboard(board);
+        player.setScoreboard(mergeScoreboards(board, scoreboards.get("TabList").getScoreboard(player)));
     }
 
     /**

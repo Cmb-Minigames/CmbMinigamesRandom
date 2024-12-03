@@ -45,15 +45,15 @@ public class Format {
      */
     public static Integer getPriority(Player player){
         if(player.hasPermission("group.owner")) {
-            return 4;
-        } else if(player.hasPermission("group.developer")){
-            return 3;
-        } else if(player.hasPermission("group.moderator")){
-            return 2;
-        } else if(player.hasPermission("group.tester")){
             return 1;
+        } else if(player.hasPermission("group.developer")){
+            return 2;
+        } else if(player.hasPermission("group.moderator")){
+            return 3;
+        } else if(player.hasPermission("group.tester")){
+            return 4;
         }
 
-        return 0;
+        return 5;
     }
 }

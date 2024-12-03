@@ -32,9 +32,6 @@ import java.util.*;
 public class SnifferCaretakerController implements Minigame {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();
-    public final Scoreboard scoreboard;
-    private final Team redTeam;
-    private final Team blueTeam;
 
     public Entity redSniffer;
     public Entity blueSniffer;
@@ -53,9 +50,6 @@ public class SnifferCaretakerController implements Minigame {
     public SnifferCaretakerController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         assert manager != null;
-        scoreboard = manager.getNewScoreboard();
-        redTeam = scoreboard.registerNewTeam("Red");
-        blueTeam = scoreboard.registerNewTeam("Blue");
 
         ItemStack speedPotion = new ItemStack(Material.POTION);
         PotionMeta speedPotionMeta = (PotionMeta) speedPotion.getItemMeta();
@@ -106,17 +100,13 @@ public class SnifferCaretakerController implements Minigame {
 
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
 
         for (int i = 0; i < allPlayers.size(); i++) {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
-                redTeam.addEntry(allPlayers.get(i).getName());
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
-                blueTeam.addEntry(allPlayers.get(i).getName());
                 GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
             }
         }
@@ -310,8 +300,6 @@ public class SnifferCaretakerController implements Minigame {
     public void stop() {
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
 
         redSniffer = null;
         blueSniffer = null;
@@ -468,10 +456,7 @@ public class SnifferCaretakerController implements Minigame {
     public void updateScoreboard(Player player) {
         CMScoreboardManager.sendScoreboardAlongDefaults(
                 player,
-                CMScoreboardManager.mergeScoreboards(
-                        CMScoreboardManager.scoreboards.get("sniffercaretaker").getScoreboard(player),
-                        scoreboard
-                )
+                CMScoreboardManager.scoreboards.get("sniffercaretaker").getScoreboard(player)
         );
     }
 
