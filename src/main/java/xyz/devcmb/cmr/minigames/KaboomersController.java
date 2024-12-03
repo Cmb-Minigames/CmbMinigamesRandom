@@ -4,7 +4,6 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;

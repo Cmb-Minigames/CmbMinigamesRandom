@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
-import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.minigames.StarSource;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
@@ -19,6 +18,7 @@ import java.util.Map;
 abstract public class Teams2MinigameBase {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();
+    public List<Player> allPlayers = new ArrayList<>();
 
     public World world = null;
     protected Map<String, Object> mapData = null;
@@ -28,19 +28,20 @@ abstract public class Teams2MinigameBase {
     @SuppressWarnings("unchecked")
     public void start() {
         Utilities.gameStartReusable();
-        List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
-        Collections.shuffle(allPlayers);
+        List<Player> sortingPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+        Collections.shuffle(sortingPlayers);
+        allPlayers.addAll(Bukkit.getOnlinePlayers());
 
         RED.clear();
         BLUE.clear();
 
-        for (int i = 0; i < allPlayers.size(); i++) {
+        for (int i = 0; i < sortingPlayers.size(); i++) {
             if (i % 2 == 0) {
-                RED.add(allPlayers.get(i));
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
+                RED.add(sortingPlayers.get(i));
+                GameManager.teamColors.put(sortingPlayers.get(i), ChatColor.RED);
             } else {
-                BLUE.add(allPlayers.get(i));
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
+                BLUE.add(sortingPlayers.get(i));
+                GameManager.teamColors.put(sortingPlayers.get(i), ChatColor.BLUE);
             }
         }
 

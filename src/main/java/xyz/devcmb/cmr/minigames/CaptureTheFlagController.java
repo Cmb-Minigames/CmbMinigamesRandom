@@ -8,7 +8,6 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -425,7 +424,6 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         return "none";
     }
 
-    @SuppressWarnings("unchecked")
     public void teleportToTeamBase(Player player){
         CmbMinigamesRandom.LOGGER.info("Player respawn event called from ctf controller");
         String worldName = MapLoader.LOADED_MAP;
