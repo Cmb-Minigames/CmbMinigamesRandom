@@ -3,9 +3,7 @@ package xyz.devcmb.cmr.minigames.bases;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.StarSource;
@@ -21,12 +19,14 @@ import java.util.Objects;
 abstract public class FFAMinigameBase {
     public List<Player> players = new ArrayList<>();
     public List<Player> allPlayers = new ArrayList<>();
-    protected Location spawnLocation;
+    protected Location spawnLocation = null;
+    protected World world = null;
+    protected Map<String, Object> mapData = null;
 
     @SuppressWarnings("unchecked")
     public void start() {
         Utilities.gameStartReusable();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
             CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
             return;
@@ -36,7 +36,7 @@ abstract public class FFAMinigameBase {
         allPlayers.addAll(Bukkit.getOnlinePlayers());
 
         String worldName = MapLoader.LOADED_MAP;
-        World world = Bukkit.getWorld(worldName);
+        world = Bukkit.getWorld(worldName);
 
         if (world == null) {
             CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
@@ -49,15 +49,15 @@ abstract public class FFAMinigameBase {
             player.teleport(spawnLocation);
             player.setSaturation(20);
             player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
-            Utilities.Countdown(player, 10);
         });
     }
-
 
     public void stop() {
         players.clear();
         allPlayers.clear();
         spawnLocation = null;
+        mapData = null;
+        world = null;
 
         Utilities.endGameResuable();
     }
@@ -94,6 +94,26 @@ abstract public class FFAMinigameBase {
         }
 
         return null;
+    }
+
+    protected void endGame(){
+        GameManager.gameEnding = true;
+
+        Player winner = players.getFirst();
+        Database.addUserStars(winner, getStarSources().get(StarSource.WIN));
+
+        allPlayers.forEach(player -> {
+            player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+            player.getInventory().clear();
+            player.setGameMode(GameMode.SPECTATOR);
+
+            player.sendTitle(winner == player ?
+                    ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY" :
+                    ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT",
+            "", 5, 80, 10);
+        });
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), this::stop, 20 * 8);
     }
 
     protected abstract String getName();
