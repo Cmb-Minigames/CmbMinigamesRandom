@@ -18,6 +18,7 @@ import xyz.devcmb.cmr.minigames.ElectricEelController;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
+import java.util.List;
 import java.util.Map;
 
 public class ElectricEelListeners implements Listener {
@@ -26,6 +27,12 @@ public class ElectricEelListeners implements Listener {
     private Location blueStorageFromLocation;
     private Location blueStorageToLocation;
     private Location electricEelLocation;
+
+    private final List<Material> breakableBlocks = List.of(
+            Material.NETHER_QUARTZ_ORE,
+            Material.RED_CONCRETE,
+            Material.BLUE_CONCRETE
+    );
 
     @SuppressWarnings("unchecked")
     private void InitializeLocations() {
@@ -72,6 +79,8 @@ public class ElectricEelListeners implements Listener {
         ElectricEelController electricEelController = (ElectricEelController) GameManager.getMinigameByName("Electric Eel");
         if(electricEelController == null || GameManager.currentMinigame != electricEelController) return;
 
+        if(!breakableBlocks.contains(event.getBlock().getType())) return;
+
         InitializeLocations();
 
         Player player = event.getPlayer();
@@ -79,6 +88,14 @@ public class ElectricEelListeners implements Listener {
         if(player.getInventory().getItemInOffHand().getType() == Material.NETHER_QUARTZ_ORE) {
             player.sendMessage(ChatColor.RED + "You can't carry more than one uranium at a time!");
             event.setCancelled(true);
+            return;
+        }
+
+        String worldName = MapLoader.LOADED_MAP;
+        World world = Bukkit.getWorld(worldName);
+
+        if (world == null) {
+            CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
             return;
         }
 
@@ -109,6 +126,11 @@ public class ElectricEelListeners implements Listener {
 
             uranium.setItemMeta(meta);
             event.getPlayer().getInventory().setItemInOffHand(uranium);
+
+            PotionEffect glowing = new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, false, false);
+            player.addPotionEffect(glowing);
+
+            world.playSound(event.getBlock().getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1, 1);
         }
 
         electricEelController.ResetBeams(electricEelLocation);
@@ -121,12 +143,23 @@ public class ElectricEelListeners implements Listener {
 
         InitializeLocations();
 
+        String worldName = MapLoader.LOADED_MAP;
+        World world = Bukkit.getWorld(worldName);
+
+        if (world == null) {
+            CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
+            return;
+        }
+
         if(event.getBlock().getType() == Material.NETHER_QUARTZ_ORE) {
             if (isWithin(event.getBlock().getLocation(), redStorageFromLocation, redStorageToLocation)) {
                 electricEelController.redUranium++;
             } else if (isWithin(event.getBlock().getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
                 electricEelController.blueUranium++;
             }
+
+            event.getPlayer().removePotionEffect(PotionEffectType.GLOWING);
+            world.playSound(event.getBlock().getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
         }
 
         electricEelController.ResetBeams(electricEelLocation);
@@ -156,6 +189,12 @@ public class ElectricEelListeners implements Listener {
 
                 PotionEffect miningFatigue = new PotionEffect(PotionEffectType.MINING_FATIGUE, Integer.MAX_VALUE, 0, false, false);
                 player.addPotionEffect(miningFatigue);
+            }
+
+            if (!electricEelController.hasStarted) {
+                if (!isWithin(player.getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
+                    event.setCancelled(true);
+                }
             }
         }
     }

@@ -33,7 +33,7 @@ public class ElectricEelController implements Minigame {
 
     public int redUranium = 0;
     public int blueUranium = 0;
-
+    public boolean hasStarted = false;
     public int timeLeft = 0;
     private BukkitRunnable timerTick;
 
@@ -107,6 +107,7 @@ public class ElectricEelController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
+        hasStarted = false;
         Utilities.gameStartReusable();
         List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(allPlayers);
@@ -170,6 +171,14 @@ public class ElectricEelController implements Minigame {
             Utilities.Countdown(player, 10);
         });
 
+        Location redBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "from");
+        Location redBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "to");
+
+        assert redBarrierFromLocation != null;
+        assert redBarrierToLocation != null;
+
+        Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.BARRIER);
+
         assert electricEelLocation != null;
         LivingEntity electricEel = (LivingEntity) world.spawnEntity(electricEelLocation, EntityType.SALMON);
         Objects.requireNonNull(electricEel.getAttribute(Attribute.GENERIC_SCALE)).setBaseValue(3.0);
@@ -177,7 +186,12 @@ public class ElectricEelController implements Minigame {
         electricEel.setInvulnerable(true);
         electricEel.setRemoveWhenFarAway(false);
 
+        ResetBeams(electricEelLocation);
+
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            hasStarted = true;
+            Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
+
             Map<?, List<?>> kit = Kits.electriceel_kit;
             RED.forEach(player -> {
                 Kits.kitPlayer(kit, player, Material.RED_CONCRETE);
@@ -270,9 +284,19 @@ public class ElectricEelController implements Minigame {
         }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void playerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
+        String worldName = MapLoader.LOADED_MAP;
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
 
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
+            player.sendMessage(ChatColor.RED + "A game of Electric Eel is currently active, and you have been added as a spectator.");
+            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
+        }, 10L);
     }
 
     @Override

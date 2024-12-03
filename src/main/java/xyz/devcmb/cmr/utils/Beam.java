@@ -42,11 +42,11 @@ public class Beam {
             public void run(){
                 particleLocation.add(vecOffset);
 
-                if (particleLocation.distance(end) * 2 >= start.distance(end)) {
+                if (particleLocation.distance(end) <= vecOffset.length()) {
                     particleLocation = start.clone();
                 }
 
-                world.spawnParticle(Particle.DUST, particleLocation, 10, new Particle.DustOptions(Color.LIME, 2));
+                world.spawnParticle(Particle.DUST, particleLocation.clone().add(0.5, 0.5, 0.5), 10, new Particle.DustOptions(Color.LIME, 2));
             }
         };
 
