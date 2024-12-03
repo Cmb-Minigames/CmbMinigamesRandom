@@ -7,9 +7,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
@@ -61,9 +58,9 @@ public class KaboomersController implements Minigame {
             return;
         }
 
-        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamSpawn");
+        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redSpawn");
 
-        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamSpawn");
+        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueSpawn");
 
         RED.forEach(player -> {
             assert redSpawnLocation != null;
@@ -187,7 +184,7 @@ public class KaboomersController implements Minigame {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
@@ -249,8 +246,8 @@ public class KaboomersController implements Minigame {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
+        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
         World world = Bukkit.getWorld(worldName);
 
         if(RED.contains(player)){

@@ -17,20 +17,16 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.*;
 
 import java.util.*;
 
-public class CaptureTheFlagController implements Minigame {
-    public List<Player> RED = new ArrayList<>();
-    public List<Player> BLUE = new ArrayList<>();
+public class CaptureTheFlagController extends Teams2MinigameBase implements Minigame {
     private boolean blueTaken = false;
     private boolean redTaken = false;
     public ItemDisplay redFlagEntity = null;
@@ -88,66 +84,21 @@ public class CaptureTheFlagController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        Utilities.gameStartReusable();
-        List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
-        Collections.shuffle(allPlayers);
-
-        RED.clear();
-        BLUE.clear();
-
-        for (int i = 0; i < allPlayers.size(); i++) {
-            if (i % 2 == 0) {
-                RED.add(allPlayers.get(i));
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
-            } else {
-                BLUE.add(allPlayers.get(i));
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
-            }
-        }
-
-
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        if (mapData == null) {
-            CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
-            return;
-        }
-
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
+        super.start();
 
         List<Map<String, Number>> itemSpawnLocations = (List<Map<String, Number>>) mapData.get("itemSpawnLocations");
-
-        if (redSpawn == null || blueSpawn == null) {
-            CmbMinigamesRandom.LOGGER.warning("Spawn points are not defined.");
+        if(itemSpawnLocations == null) {
+            CmbMinigamesRandom.LOGGER.warning("Item spawn locations are not defined.");
             return;
         }
-
-        String worldName = MapLoader.LOADED_MAP;
-        World world = Bukkit.getWorld(worldName);
-
-        if (world == null) {
-            CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
-            return;
-        }
-
-        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamSpawn");
-        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamSpawn");
-
-        assert redSpawnLocation != null;
-        redSpawnLocation.setYaw(((Number) redSpawn.get("yaw")).floatValue());
-        redSpawnLocation.setPitch(((Number) redSpawn.get("pitch")).floatValue());
-
-        assert blueSpawnLocation != null;
-        blueSpawnLocation.setYaw(((Number) blueSpawn.get("yaw")).floatValue());
-        blueSpawnLocation.setPitch(((Number) blueSpawn.get("pitch")).floatValue());
 
         RED.forEach(player -> {
-            player.teleport(Utilities.findValidLocation(redSpawnLocation));
+            player.teleport(Utilities.findValidLocation(redSpawn));
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
         });
 
         BLUE.forEach(player -> {
-            player.teleport(Utilities.findValidLocation(blueSpawnLocation));
+            player.teleport(Utilities.findValidLocation(blueSpawn));
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
         });
 
@@ -184,10 +135,8 @@ public class CaptureTheFlagController implements Minigame {
                         };
                         timePassedRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
 
-                        Map<String, ?> redFlag = ((Map<String,?>)((Map<String,?>)mapData.get("flags")).get("redFlag"));
-                        Map<String, ?> blueFlag = ((Map<String,?>)((Map<String,?>)mapData.get("flags")).get("blueFlag"));
-                        spawnRedFlag(worldName, redFlag);
-                        spawnBlueFlag(worldName, blueFlag);
+                        spawnRedFlag();
+                        spawnBlueFlag();
 
                         itemSpawnRunnable = new BukkitRunnable() {
                             @Override
@@ -219,11 +168,15 @@ public class CaptureTheFlagController implements Minigame {
         }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 2);
     }
 
-    private void spawnRedFlag(String worldName, Map<String, ?> redFlag){
-        redFlagEntity = (ItemDisplay) Objects.requireNonNull(Bukkit.getWorld(worldName)).spawnEntity(new Location(Bukkit.getWorld(worldName), ((Number)redFlag.get("x")).doubleValue(), ((Number)redFlag.get("y")).doubleValue(), ((Number)redFlag.get("z")).doubleValue()), EntityType.ITEM_DISPLAY);
-        ItemStack redFlagItem = new ItemStack(Material.ECHO_SHARD);
-        redFlagEntity.setItemStack(new ItemStack(Material.ECHO_SHARD));
+    private void spawnRedFlag(){
+        Location redFlagLocation = Utilities.getLocationFromConfig(mapData, world, "flags.redFlag");
+        if(redFlagLocation == null) {
+            CmbMinigamesRandom.LOGGER.warning("Red flag location is not defined.");
+            return;
+        }
 
+        redFlagEntity = (ItemDisplay) Objects.requireNonNull(world).spawnEntity(redFlagLocation, EntityType.ITEM_DISPLAY);
+        ItemStack redFlagItem = new ItemStack(Material.ECHO_SHARD);
 
         ItemMeta meta1 = redFlagItem.getItemMeta();
         if(meta1 == null) return;
@@ -234,11 +187,15 @@ public class CaptureTheFlagController implements Minigame {
         redFlagEntity.setItemStack(redFlagItem);
     }
 
-    private void spawnBlueFlag(String worldName, Map<String, ?> blueFlag){
-        blueFlagEntity = (ItemDisplay) Objects.requireNonNull(Bukkit.getWorld(worldName)).spawnEntity(new Location(Bukkit.getWorld(worldName), ((Number)blueFlag.get("x")).doubleValue(), ((Number)blueFlag.get("y")).doubleValue(), ((Number)blueFlag.get("z")).doubleValue()), EntityType.ITEM_DISPLAY);
+    private void spawnBlueFlag(){
+        Location blueFlagLocation = Utilities.getLocationFromConfig(mapData, world, "flags.blueFlag");
+        if(blueFlagLocation == null) {
+            CmbMinigamesRandom.LOGGER.warning("Blue flag location is not defined.");
+            return;
+        }
 
+        blueFlagEntity = (ItemDisplay) Objects.requireNonNull(world).spawnEntity(blueFlagLocation, EntityType.ITEM_DISPLAY);
         ItemStack blueFlagItem = new ItemStack(Material.ECHO_SHARD);
-        blueFlagEntity.setItemStack(new ItemStack(Material.ECHO_SHARD));
 
         ItemMeta meta2 = blueFlagItem.getItemMeta();
         if(meta2 == null) return;
@@ -251,8 +208,6 @@ public class CaptureTheFlagController implements Minigame {
 
     @Override
     public void stop() {
-        RED.clear();
-        BLUE.clear();
         timePassedRunnable.cancel();
         timePassed = 0;
         redFlagEntity.remove();
@@ -261,57 +216,9 @@ public class CaptureTheFlagController implements Minigame {
         blueScore = 0;
         redTaken = false;
         blueTaken = false;
+
         if(itemSpawnRunnable != null) itemSpawnRunnable.cancel();
-        Utilities.endGameResuable();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void playerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-
-        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
-            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
-            player.sendMessage(ChatColor.RED + "A game of Capture the Flag is currently active, and you have been added as a spectator.");
-            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
-        }, 10L);
-    }
-
-    @Override
-    public Number playerLeave(Player player) {
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-        RED.remove(player);
-        BLUE.remove(player);
-
-        if(CmbMinigamesRandom.DeveloperMode){
-            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
-        } else {
-            if(RED.isEmpty()){
-                BLUE.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
-                });
-                return 7;
-            } else if(BLUE.isEmpty()){
-                RED.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
-                });
-
-                return 7;
-            }
-        }
-
-        return null;
+        super.stop();
     }
 
     @SuppressWarnings("unchecked")
@@ -354,13 +261,19 @@ public class CaptureTheFlagController implements Minigame {
                     player.setGlowing(false);
                     blueScore++;
                     redTaken = false;
-                    Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE).intValue());
+                    Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE));
                     if(blueScore >= 3){
                         endGame("blue");
                     } else {
-                        BLUE.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
-                        RED.forEach(plr -> plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5));
-                        spawnRedFlag(worldName, redFlag);
+                        BLUE.forEach(plr -> {
+                            plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5);
+                            plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
+                        });
+                        RED.forEach(plr -> {
+                            plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5);
+                            plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
+                        });
+                        spawnRedFlag();
                     }
                 }
                 teleportToTeamBase(player);
@@ -396,13 +309,19 @@ public class CaptureTheFlagController implements Minigame {
                     player.setGlowing(false);
                     redScore++;
                     blueTaken = false;
-                    Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE).intValue());
+                    Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE));
                     if(redScore >= 3) {
                         endGame("red");
                     } else {
-                        BLUE.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
-                        RED.forEach(plr -> plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5));
-                        spawnBlueFlag(worldName, blueFlag);
+                        BLUE.forEach(plr -> {
+                            plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5);
+                            plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
+                        });
+                        RED.forEach(plr -> {
+                            plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5);
+                            plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
+                        });
+                        spawnBlueFlag();
                     }
                 }
                 teleportToTeamBase(player);
@@ -417,7 +336,7 @@ public class CaptureTheFlagController implements Minigame {
         if(winner.equals("red")){
             RED.forEach(plr -> {
                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-               Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+               Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                plr.getInventory().clear();
                plr.setGameMode(GameMode.SPECTATOR);
@@ -437,7 +356,7 @@ public class CaptureTheFlagController implements Minigame {
             });
             BLUE.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
@@ -509,10 +428,7 @@ public class CaptureTheFlagController implements Minigame {
     @SuppressWarnings("unchecked")
     public void teleportToTeamBase(Player player){
         CmbMinigamesRandom.LOGGER.info("Player respawn event called from ctf controller");
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
         World world = Bukkit.getWorld(worldName);
 
         if (world == null) {
@@ -520,30 +436,10 @@ public class CaptureTheFlagController implements Minigame {
             return;
         }
 
-        Location redSpawnLocation = new Location(
-                world,
-                ((Number) redSpawn.get("x")).doubleValue(),
-                ((Number) redSpawn.get("y")).doubleValue(),
-                ((Number) redSpawn.get("z")).doubleValue()
-        );
-
-        Location blueSpawnLocation = new Location(
-                world,
-                ((Number) blueSpawn.get("x")).doubleValue(),
-                ((Number) blueSpawn.get("y")).doubleValue(),
-                ((Number) blueSpawn.get("z")).doubleValue()
-        );
-
-        redSpawnLocation.setYaw(((Number) redSpawn.get("yaw")).floatValue());
-        redSpawnLocation.setPitch(((Number) redSpawn.get("pitch")).floatValue());
-
-        blueSpawnLocation.setYaw(((Number) blueSpawn.get("yaw")).floatValue());
-        blueSpawnLocation.setPitch(((Number) blueSpawn.get("pitch")).floatValue());
-
         if (RED.contains(player)) {
-            player.teleport(redSpawnLocation);
+            player.teleport(redSpawn);
         } else if (BLUE.contains(player)) {
-            player.teleport(blueSpawnLocation);
+            player.teleport(blueSpawn);
         }
 
         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
@@ -552,22 +448,18 @@ public class CaptureTheFlagController implements Minigame {
         revokeFlag(player);
     }
 
-    @SuppressWarnings("unchecked")
     private void revokeFlag(Player player){
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.getType() == Material.ECHO_SHARD && offHandItem.getItemMeta() != null) {
             if (offHandItem.getItemMeta().getItemName().equals(ChatColor.RED + "Red Flag")) {
                 player.setGlowing(false);
-                spawnRedFlag(worldName, (Map<String, ?>) ((Map<String, ?>) mapData.get("flags")).get("redFlag"));
+                spawnRedFlag();
                 RED.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
                 BLUE.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
                 redTaken = false;
             } else if (offHandItem.getItemMeta().getItemName().equals(ChatColor.BLUE + "Blue Flag")) {
                 player.setGlowing(false);
-                spawnBlueFlag(worldName, (Map<String, ?>) ((Map<String, ?>) mapData.get("flags")).get("blueFlag"));
+                spawnBlueFlag();
                 RED.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
                 BLUE.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
                 blueTaken = false;

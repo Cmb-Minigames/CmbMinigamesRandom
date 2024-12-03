@@ -365,29 +365,52 @@ public class Utilities {
      * Get a location from a map data configuration
      * @param mapData The map data configuration
      * @param world The world to get the location in
-     * @param key The key to get the location from
+     * @param path The path to get the location from, can be nested like "path.subpath"
      * @return The location from the map data
      */
     @SuppressWarnings("unchecked")
-    public static Location getLocationFromConfig(Map<String, Object> mapData, World world, String key) {
-        Map<String, Object> locationData = (Map<String, Object>) mapData.get(key);
+    public static Location getLocationFromConfig(Map<String, Object> mapData, World world, String path) {
+        String[] keys = path.split("\\.");
+        Map<String, Object> currentMap = mapData;
+
+        for (int i = 0; i < keys.length - 1; i++) {
+            Object value = currentMap.get(keys[i]);
+            if (value instanceof Map) {
+                currentMap = (Map<String, Object>) value;
+            } else {
+                CmbMinigamesRandom.LOGGER.warning(keys[i] + " is not a map in the path " + path);
+                return null;
+            }
+        }
+
+        Map<String, Object> locationData = (Map<String, Object>) currentMap.get(keys[keys.length - 1]);
 
         if (locationData == null) {
-            CmbMinigamesRandom.LOGGER.warning(key + " is not defined in the map data.");
+            CmbMinigamesRandom.LOGGER.warning(path + " is not defined in the map data.");
             return null;
         }
 
-        if(locationData.get("x") == null || locationData.get("y") == null || locationData.get("z") == null){
-            CmbMinigamesRandom.LOGGER.warning(key + " is not properly configured in the map data.");
+        if (locationData.get("x") == null || locationData.get("y") == null || locationData.get("z") == null) {
+            CmbMinigamesRandom.LOGGER.warning(path + " is not properly configured in the map data.");
             return null;
         }
 
-        return new Location(
+        Location loc = new Location(
                 world,
                 ((Number) locationData.get("x")).doubleValue(),
                 ((Number) locationData.get("y")).doubleValue(),
                 ((Number) locationData.get("z")).doubleValue()
         );
+
+        if (locationData.get("yaw") != null) {
+            loc.setYaw(((Number) locationData.get("yaw")).floatValue());
+        }
+
+        if (locationData.get("pitch") != null) {
+            loc.setPitch(((Number) locationData.get("pitch")).floatValue());
+        }
+
+        return loc;
     }
 
     /**
