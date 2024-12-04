@@ -6,7 +6,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -14,12 +13,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
-import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.items.ItemManager;
-import xyz.devcmb.cmr.utils.Database;
+import xyz.devcmb.cmr.minigames.bases.FFAMinigameBase;
 import xyz.devcmb.cmr.utils.Kits;
-import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.ArrayList;
@@ -27,10 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class BrawlController implements Minigame {
-    public List<Player> players = new ArrayList<>();
-    public List<Player> allPlayers = new ArrayList<>();
-    private Location spawnLocation = null;
+public class BrawlController extends FFAMinigameBase implements Minigame {
     private final List<ItemStack> smallChestItems = new ArrayList<>();
     private final List<ItemStack> largeChestItems = new ArrayList<>();
 
@@ -100,35 +94,12 @@ public class BrawlController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        Utilities.gameStartReusable();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        if (mapData == null) {
-            CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
-            return;
-        }
-
-        players.addAll(Bukkit.getOnlinePlayers());
-        allPlayers.addAll(Bukkit.getOnlinePlayers());
-
-        String worldName = MapLoader.LOADED_MAP;
-        World world = Bukkit.getWorld(worldName);
-
-        if (world == null) {
-            CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
-            return;
-        }
-
-        spawnLocation = Utilities.getLocationFromConfig(mapData, world, "spawn");
+        super.start();
 
         players.forEach(player -> {
-            player.teleport(spawnLocation);
-            player.setSaturation(20);
-            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
             Utilities.Countdown(player, 10);
         });
 
-        // REMEMBER
-        // use runTaskLater from the getScheduler method of the Bukkit class instead of new BukkitRunnable
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Map<?, List<?>> kit = Kits.brawl_kit;
             players.forEach(player -> {
@@ -185,71 +156,11 @@ public class BrawlController implements Minigame {
 
     @Override
     public void stop() {
-        players.clear();
-        allPlayers.clear();
-        spawnLocation = null;
-
-        Utilities.endGameResuable();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void playerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> spawn = (Map<String, Object>) mapData.get("spawn");
-
-        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
-            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) spawn.get("x")).doubleValue(), ((Number) spawn.get("y")).doubleValue(), ((Number) spawn.get("z")).doubleValue()));
-            player.sendMessage(ChatColor.RED + "A game of Brawl is currently active, and you have been added as a spectator.");
-            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
-        }, 10L);
-    }
-
-    @Override
-    public Number playerLeave(Player player) {
-        players.remove(player);
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-
-        if(CmbMinigamesRandom.DeveloperMode){
-            return (players.isEmpty()) ? 0 : null;
-        } else {
-            if(players.size() == 1){
-                Player winner = players.getFirst();
-                Database.addUserStars(winner, getStarSources().get(StarSource.WIN).intValue());
-                winner.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                winner.playSound(winner.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                winner.getInventory().clear();
-                winner.setGameMode(GameMode.SPECTATOR);
-            } else if(players.isEmpty()){
-                return 0;
-            }
-        }
-
-        return null;
-    }
-
-    private void endGame(){
-        GameManager.gameEnding = true;
-
-        Player winner = players.getFirst();
-        Database.addUserStars(winner, getStarSources().get(StarSource.WIN).intValue());
-        winner.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-        winner.playSound(winner.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-        winner.getInventory().clear();
-        winner.setGameMode(GameMode.SPECTATOR);
-
         allPlayers.forEach(player -> {
-            if(player != winner){
-                player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
-                player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                player.getInventory().clear();
-                player.setGameMode(GameMode.SPECTATOR);
-            }
+            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+            player.setHealth(20);
         });
-
-        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), this::stop, 20 * 8);
+        super.stop();
     }
 
     @Override
@@ -275,8 +186,7 @@ public class BrawlController implements Minigame {
         players.remove(event.getEntity());
         if(CmbMinigamesRandom.DeveloperMode){
             if(players.isEmpty()){
-                players.add(event.getEntity());
-                // this will end the game with the only player as the winner
+                players.add(event.getEntity()); // this will end the game with the only player as the winner
             }
         }
 
@@ -299,7 +209,7 @@ public class BrawlController implements Minigame {
     }
 
     @Override
-    public Map<StarSource, Number> getStarSources() {
+    public Map<StarSource, Integer> getStarSources() {
         return Map.of(
             StarSource.KILL, 5,
             StarSource.WIN, 30

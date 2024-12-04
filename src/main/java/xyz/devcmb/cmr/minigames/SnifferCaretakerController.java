@@ -8,31 +8,24 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
-import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
 
-public class SnifferCaretakerController implements Minigame {
-    public List<Player> RED = new ArrayList<>();
-    public List<Player> BLUE = new ArrayList<>();
-
+public class SnifferCaretakerController extends Teams2MinigameBase implements Minigame {
     public Entity redSniffer;
     public Entity blueSniffer;
 
@@ -48,9 +41,6 @@ public class SnifferCaretakerController implements Minigame {
     private final List<ItemStack> items = new ArrayList<>();
 
     public SnifferCaretakerController() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
-
         ItemStack speedPotion = new ItemStack(Material.POTION);
         PotionMeta speedPotionMeta = (PotionMeta) speedPotion.getItemMeta();
         if (speedPotionMeta == null) return;
@@ -94,43 +84,13 @@ public class SnifferCaretakerController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        Utilities.gameStartReusable();
-        List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
-        Collections.shuffle(allPlayers);
+        super.start();
 
-        RED.clear();
-        BLUE.clear();
+        Location redBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamBarrier.from");
+        Location redBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamBarrier.to");
 
-        for (int i = 0; i < allPlayers.size(); i++) {
-            if (i % 2 == 0) {
-                RED.add(allPlayers.get(i));
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
-            } else {
-                BLUE.add(allPlayers.get(i));
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
-            }
-        }
-
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        if (mapData == null) {
-            CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
-            return;
-        }
-
-        String worldName = MapLoader.LOADED_MAP;
-        World world = Bukkit.getWorld(worldName);
-
-        if (world == null) {
-            CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
-            return;
-        }
-
-
-        Location redBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamBarrier", "from");
-        Location redBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamBarrier", "to");
-
-        Location blueBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamBarrier", "from");
-        Location blueBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamBarrier", "to");
+        Location blueBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamBarrier.from");
+        Location blueBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamBarrier.to");
 
         assert redBarrierFromLocation != null;
         Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.BARRIER);
@@ -152,9 +112,6 @@ public class SnifferCaretakerController implements Minigame {
         blueSnifferHappiness = 300;
         happinessDecreaseAmount = 1;
 
-        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redTeamSpawn");
-        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueTeamSpawn");
-
         Location spawnAreaFromLocation = Utilities.getLocationFromConfig(mapData, world, "eventSpawnLocations", "from");
         Location spawnAreaToLocation = Utilities.getLocationFromConfig(mapData, world, "eventSpawnLocations", "to");
 
@@ -173,15 +130,15 @@ public class SnifferCaretakerController implements Minigame {
         blueBaseToLocation = Utilities.getLocationFromConfig(mapData, world, "blueBasePreventPlace", "to");
 
         RED.forEach(player -> {
-            assert redSpawnLocation != null;
-            player.teleport(Utilities.findValidLocation(redSpawnLocation));
+            assert redSpawn != null;
+            player.teleport(Utilities.findValidLocation(redSpawn));
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
         });
 
         BLUE.forEach(player -> {
-            assert blueSpawnLocation != null;
-            player.teleport(Utilities.findValidLocation(blueSpawnLocation));
+            assert blueSpawn != null;
+            player.teleport(Utilities.findValidLocation(blueSpawn));
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
         });
@@ -292,14 +249,11 @@ public class SnifferCaretakerController implements Minigame {
             sheepSpawn.runTaskTimer(CmbMinigamesRandom.getPlugin(), 20 * 3, 20 * 3);
 
         }, 20 * 10);
-
-
     }
 
     @Override
     public void stop() {
-        RED.clear();
-        BLUE.clear();
+        super.stop();
 
         redSniffer = null;
         blueSniffer = null;
@@ -315,8 +269,6 @@ public class SnifferCaretakerController implements Minigame {
 
         redSnifferHappiness = 0;
         blueSnifferHappiness = 0;
-
-        Utilities.endGameResuable();
     }
 
     private void endGame() {
@@ -332,7 +284,7 @@ public class SnifferCaretakerController implements Minigame {
         } else if(blueSnifferHappiness == 0){
             RED.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
@@ -352,7 +304,7 @@ public class SnifferCaretakerController implements Minigame {
             });
             BLUE.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
@@ -366,55 +318,6 @@ public class SnifferCaretakerController implements Minigame {
             }
         }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
     }
-    @SuppressWarnings("unchecked")
-    @Override
-    public void playerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-
-        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
-            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
-            player.sendMessage(ChatColor.RED + "A game of Sniffer Caretaker is currently active, and you have been added as a spectator.");
-            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
-        }, 10L);
-    }
-
-    @Override
-    public Number playerLeave(Player player) {
-        RED.remove(player);
-        BLUE.remove(player);
-
-        if(CmbMinigamesRandom.DeveloperMode){
-            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
-        } else {
-            if(RED.isEmpty()){
-                GameManager.gameEnding = true;
-                BLUE.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
-                });
-                return 7;
-            } else if(BLUE.isEmpty()){
-                GameManager.gameEnding = true;
-                RED.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
-                });
-
-                return 7;
-            }
-        }
-
-        return null;
-    }
 
     @Override
     public List<MinigameFlag> getFlags() {
@@ -426,31 +329,23 @@ public class SnifferCaretakerController implements Minigame {
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
-        World world = Bukkit.getWorld(worldName);
 
         if(RED.contains(player)){
             Kits.kitPlayer(Kits.sniffercaretaker_kit, player, Material.RED_CONCRETE);
-            event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
-            player.teleport(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+            event.setRespawnLocation(redSpawn);
+            player.teleport(redSpawn);
         } else if(BLUE.contains(player)){
             Kits.kitPlayer(Kits.sniffercaretaker_kit, player, Material.BLUE_CONCRETE);
-            event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
-            player.teleport(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+            event.setRespawnLocation(blueSpawn);
+            player.teleport(blueSpawn);
         }
     }
 
     @Override
-    public void playerDeath(PlayerDeathEvent event) {
-
-    }
+    public void playerDeath(PlayerDeathEvent event) {}
 
     @Override
     public void updateScoreboard(Player player) {
@@ -479,7 +374,7 @@ public class SnifferCaretakerController implements Minigame {
     }
 
     @Override
-    public Map<StarSource, Number> getStarSources() {
+    public Map<StarSource, Integer> getStarSources() {
         return Map.of(
                 StarSource.KILL, 2,
                 StarSource.WIN, 20,
