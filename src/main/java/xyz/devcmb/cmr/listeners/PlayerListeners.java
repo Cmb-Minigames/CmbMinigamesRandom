@@ -67,12 +67,15 @@ public class PlayerListeners implements Listener {
                 TabList.updateTabListName(player);
             }
         });
+
         countdowns.get(player).runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+
         GameManager.playerDisconnect(player);
         countdowns.get(player).cancel();
         ActionBar.unregisterPlayer(player);
