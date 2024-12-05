@@ -32,6 +32,11 @@ public class CMScoreboardManager {
             @Override
             public void run() {
                 if (GameManager.intermission) {
+                    if(GameManager.paused){
+                        displayScoreboardFromName(player, "GamePaused");
+                        return;
+                    }
+
                     if ((CmbMinigamesRandom.DeveloperMode ? (Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() < 2))) {
                         displayScoreboardFromName(player, "NotEnoughPlayers");
                     } else {
