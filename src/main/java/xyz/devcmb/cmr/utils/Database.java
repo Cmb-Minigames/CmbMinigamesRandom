@@ -3,6 +3,7 @@ package xyz.devcmb.cmr.utils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.interfaces.ActionBar;
 
 import java.nio.ByteBuffer;
 import java.sql.*;
@@ -107,6 +108,8 @@ public class Database {
             statement.setInt(1, stars);
             statement.setBytes(2, uuidToBytes(player.getUniqueId()));
             statement.executeUpdate();
+
+            ActionBar.userStars.put(player, stars);
         } catch (SQLException e) {
             CmbMinigamesRandom.LOGGER.severe("Failed to update user stars by UUID: " + e.getMessage());
         }
@@ -400,6 +403,8 @@ public class Database {
             statement.setInt(1, stars);
             statement.setBytes(2, uuidToBytes(player.getUniqueId()));
             statement.executeUpdate();
+
+            ActionBar.userStars.put(player, ActionBar.userStars.get(player) + stars);
         } catch (SQLException e) {
             CmbMinigamesRandom.LOGGER.severe("Failed to add user stars by UUID: " + e.getMessage());
         }
