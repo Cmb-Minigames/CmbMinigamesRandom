@@ -27,6 +27,7 @@ public class ListenerManager {
         pluginManager.registerEvents(new MinigameListeners(), plugin);
         pluginManager.registerEvents(new CTFListeners(), plugin);
         pluginManager.registerEvents(new KaboomersListeners(), plugin);
+        pluginManager.registerEvents(new ElectricEelListeners(), plugin);
         pluginManager.registerEvents(new BrawlListeners(), plugin);
         pluginManager.registerEvents(new SnifferCaretakerListeners(), plugin);
         pluginManager.registerEvents(new CookingChaosListeners(), plugin);
