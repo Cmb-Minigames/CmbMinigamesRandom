@@ -57,6 +57,10 @@ commands:
     description: Set the stars of a player
     usage: /<command> <player> <stars>
     permission: cmbminigames.admin
+  actionbar:
+    description: Toggle the actionbar
+    usage: /<command>
+    permission: cmbminigames.debug
 permissions:
   cmbminigames.pause:
     description: Pause the loop

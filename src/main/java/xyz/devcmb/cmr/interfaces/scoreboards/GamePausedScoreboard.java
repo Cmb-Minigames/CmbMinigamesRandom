@@ -9,6 +9,9 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 
 import java.util.Objects;
 
+/**
+ * A class for the game paused scoreboard
+ */
 public class GamePausedScoreboard implements HandledScoreboard {
     @Override
     public Scoreboard getScoreboard(Player player) {

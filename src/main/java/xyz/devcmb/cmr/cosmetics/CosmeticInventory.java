@@ -16,12 +16,18 @@ import xyz.devcmb.cmr.utils.Database;
 
 import java.util.*;
 
+/**
+ * A class for managing the cosmetic inventory
+ */
 public class CosmeticInventory {
     private final Player player;
     public CosmeticInventory(Player plr){
         player = plr;
     }
 
+    /**
+     * Gives the player the inventory item
+     */
     public void giveInventoryItem(){
         ItemStack inventoryItem = new ItemStack(Material.ECHO_SHARD);
         ItemMeta meta = inventoryItem.getItemMeta();
@@ -36,6 +42,10 @@ public class CosmeticInventory {
     public String page = "inventory";
     public Integer inventoryPage = 1;
     public Integer cratePage = 1;
+
+    /**
+     * Opens the cosmetic inventory for the player
+     */
     public void openInventory(){
         Inventory inventory = Bukkit.createInventory(player, 54, "Cosmetic Inventory");
         switch (page) {
@@ -294,6 +304,10 @@ public class CosmeticInventory {
         player.openInventory(inventory);
     }
 
+    /**
+     * Rolls a crate using {@link CrateManager#rollCrate} and opens its inventory
+     * @param crate The crate to roll
+     */
     public void rollCrateInventory(String crate){
         Map<String, Object> crateData = CrateManager.crateData.get(crate);
         if(crateData == null) return;
@@ -356,6 +370,10 @@ public class CosmeticInventory {
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 3);
     }
 
+    /**
+     * Opens the preview window for a crate
+     * @param crate The crate to preview
+     */
     public void openPreviewWindow(String crate){
         Map<String, Object> crateData = CrateManager.crateData.get(crate);
         if(crateData == null) return;

@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.cosmetics.CrateManager;
 
+/**
+ * A command for re-fetching all cosmetics and crates from the database
+ */
 public class ReloadCosmeticsCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

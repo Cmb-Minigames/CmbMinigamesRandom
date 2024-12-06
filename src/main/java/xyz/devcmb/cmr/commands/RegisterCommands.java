@@ -10,7 +10,13 @@ import xyz.devcmb.cmr.commands.game.*;
 
 import java.util.Objects;
 
+/**
+ * A class for registering commands and tab completions
+ */
 public class RegisterCommands {
+    /**
+     * Registers all commands and tab completions
+     */
     public static void register(){
         registerSingleCommand("pauseloop", new StopLoopCommand());
         registerSingleCommand("end", new EndMinigameCommand());
@@ -25,6 +31,7 @@ public class RegisterCommands {
         registerSingleCommand("cosmetic", new GiveCosmeticCommand());
         registerSingleCommand("crate", new GiveCrateCommand());
         registerSingleCommand("setstars", new SetStarsCommand());
+        registerSingleCommand("actionbar", new ToggleActionBarCommand());
 
         // Completions
         registerSingleTabCompletion("minigame", new MinigameCompletion());
@@ -39,11 +46,21 @@ public class RegisterCommands {
 
     }
 
+    /**
+     * Registers a single command
+     * @param command The command name
+     * @param executor The command executor class
+     */
     public static void registerSingleCommand(String command, CommandExecutor executor){
         CmbMinigamesRandom plugin = CmbMinigamesRandom.getPlugin();
         Objects.requireNonNull(plugin.getCommand(command)).setExecutor(executor);
     }
 
+    /**
+     * Registers a single tab completion
+     * @param command The command name
+     * @param completer The tab completer class
+     */
     public static void registerSingleTabCompletion(String command, TabCompleter completer){
         CmbMinigamesRandom plugin = CmbMinigamesRandom.getPlugin();
         Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(completer);

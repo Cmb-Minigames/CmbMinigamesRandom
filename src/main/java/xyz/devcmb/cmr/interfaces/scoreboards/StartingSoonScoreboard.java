@@ -10,6 +10,9 @@ import xyz.devcmb.cmr.GameManager;
 
 import java.util.Objects;
 
+/**
+ * A class for the starting soon scoreboard
+ */
 public class StartingSoonScoreboard implements HandledScoreboard {
     @Override
     public Scoreboard getScoreboard(Player player) {

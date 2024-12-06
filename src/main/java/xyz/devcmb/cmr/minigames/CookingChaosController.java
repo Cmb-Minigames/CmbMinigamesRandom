@@ -5,32 +5,23 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
-import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CookingChaosController implements Minigame {
-    public List<Player> RED = new ArrayList<>();
-    public List<Player> BLUE = new ArrayList<>();
-    public final Scoreboard scoreboard;
-    private final Team redTeam;
-    private final Team blueTeam;
+public class CookingChaosController extends Teams2MinigameBase implements Minigame {
     private BukkitRunnable boneMealChestRefill;
     private BukkitRunnable customerRunnable;
     private BukkitRunnable timerRunnable;
@@ -79,64 +70,10 @@ public class CookingChaosController implements Minigame {
 
     public Integer timeLeft = 0;
 
-    public CookingChaosController() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
-        scoreboard = manager.getNewScoreboard();
-        redTeam = scoreboard.registerNewTeam("Red");
-        blueTeam = scoreboard.registerNewTeam("Blue");
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        Utilities.gameStartReusable();
-        List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
-        Collections.shuffle(allPlayers);
-
-        RED.clear();
-        BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
-
-        for (int i = 0; i < allPlayers.size(); i++) {
-            if (i % 2 == 0) {
-                RED.add(allPlayers.get(i));
-                redTeam.addEntry(allPlayers.get(i).getName());
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
-            } else {
-                BLUE.add(allPlayers.get(i));
-                blueTeam.addEntry(allPlayers.get(i).getName());
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
-            }
-        }
-
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        if (mapData == null) {
-            CmbMinigamesRandom.LOGGER.warning("MapData is not defined.");
-            return;
-        }
-
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
-
-        if (redSpawn == null || blueSpawn == null) {
-            CmbMinigamesRandom.LOGGER.warning("Spawn points are not defined.");
-            return;
-        }
-
-        String worldName = MapLoader.LOADED_MAP;
-        World world = Bukkit.getWorld(worldName);
-
-        if (world == null) {
-            CmbMinigamesRandom.LOGGER.warning("World " + worldName + " is not loaded.");
-            return;
-        }
-
-        Location redSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "redSpawn");
-        Location blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueSpawn");
-
-
+        super.start();
         Location redBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "from");
         Location redBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "to");
 
@@ -149,16 +86,16 @@ public class CookingChaosController implements Minigame {
         Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.BARRIER);
 
         RED.forEach(player -> {
-            assert redSpawnLocation != null;
-            player.teleport(redSpawnLocation);
+            assert redSpawn != null;
+            player.teleport(redSpawn);
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
         });
 
         BLUE.forEach(player -> {
-            assert blueSpawnLocation != null;
-            player.teleport(blueSpawnLocation);
+            assert blueSpawn != null;
+            player.teleport(blueSpawn);
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
             Utilities.Countdown(player, 10);
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
@@ -409,7 +346,7 @@ public class CookingChaosController implements Minigame {
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);
-                Database.addUserStars(player, getStarSources().get(StarSource.WIN).intValue());
+                Database.addUserStars(player, getStarSources().get(StarSource.WIN));
             } else if(blueScore > redScore){
                 player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
@@ -432,7 +369,7 @@ public class CookingChaosController implements Minigame {
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);
-                Database.addUserStars(player, getStarSources().get(StarSource.WIN).intValue());
+                Database.addUserStars(player, getStarSources().get(StarSource.WIN));
             } else if(redScore > blueScore){
                 player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
@@ -451,10 +388,7 @@ public class CookingChaosController implements Minigame {
 
     @Override
     public void stop() {
-        RED.clear();
-        BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
+        super.stop();
         if(boneMealChestRefill != null) boneMealChestRefill.cancel();
         boneMealChestRefill = null;
         if(customerRunnable != null) customerRunnable.cancel();
@@ -471,61 +405,13 @@ public class CookingChaosController implements Minigame {
         blueCustomers.clear();
 
         RED.forEach(player -> player.removePotionEffect(PotionEffectType.SPEED));
-
         BLUE.forEach(player -> player.removePotionEffect(PotionEffectType.SPEED));
-
-        Utilities.endGameResuable();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void playerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
-
-        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
-            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
-            player.sendMessage(ChatColor.RED + "A game of cooking chaos is currently active, and you have been added as a spectator.");
-            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
-        }, 10L);
     }
 
     @Override
     public Number playerLeave(Player player) {
         player.removePotionEffect(PotionEffectType.SPEED);
-        RED.remove(player);
-        BLUE.remove(player);
-
-        if(CmbMinigamesRandom.DeveloperMode){
-            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
-        } else {
-            if(RED.isEmpty()){
-                GameManager.gameEnding = true;
-                BLUE.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
-                });
-                return 7;
-            } else if(BLUE.isEmpty()){
-                GameManager.gameEnding = true;
-                RED.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
-                });
-
-                return 7;
-            }
-        }
-
-        return null;
+        return super.playerLeave(player);
     }
 
     @Override
@@ -538,24 +424,18 @@ public class CookingChaosController implements Minigame {
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
-        World world = Bukkit.getWorld(worldName);
 
         if(RED.contains(player)){
             Kits.kitPlayer(Kits.cookingchaos_kit, player, Material.RED_CONCRETE);
-            event.setRespawnLocation(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
-            player.teleport(new Location(world, ((Number)redSpawn.get("x")).doubleValue(), ((Number)redSpawn.get("y")).doubleValue(), ((Number)redSpawn.get("z")).doubleValue()));
+            event.setRespawnLocation(redSpawn);
+            player.teleport(redSpawn);
         } else if(BLUE.contains(player)){
             Kits.kitPlayer(Kits.cookingchaos_kit, player, Material.BLUE_CONCRETE);
-            event.setRespawnLocation(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
-            player.teleport(new Location(world, ((Number)blueSpawn.get("x")).doubleValue(), ((Number)blueSpawn.get("y")).doubleValue(), ((Number)blueSpawn.get("z")).doubleValue()));
+            event.setRespawnLocation(blueSpawn);
+            player.teleport(blueSpawn);
         }
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false)), 20 * 2);
@@ -570,15 +450,12 @@ public class CookingChaosController implements Minigame {
     public void updateScoreboard(Player player) {
         CMScoreboardManager.sendScoreboardAlongDefaults(
                 player,
-                CMScoreboardManager.mergeScoreboards(
-                        CMScoreboardManager.scoreboards.get("cookingchaos").getScoreboard(player),
-                        scoreboard
-                )
+                CMScoreboardManager.scoreboards.get("cookingchaos").getScoreboard(player)
         );
     }
 
     @Override
-    public Map<StarSource, Number> getStarSources() {
+    public Map<StarSource, Integer> getStarSources() {
         return Map.of(
             StarSource.KILL, 2,
             StarSource.WIN, 20

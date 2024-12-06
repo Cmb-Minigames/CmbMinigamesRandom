@@ -3,14 +3,21 @@ package xyz.devcmb.cmr.utils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.interfaces.ActionBar;
 
 import java.nio.ByteBuffer;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * A utility class for interacting with the MySQL database
+ */
 public class Database {
     private static Connection connection;
 
+    /**
+     * Connect to the MySQL database
+     */
     public static void connect() {
         FileConfiguration config = CmbMinigamesRandom.getPlugin().getConfig();
         String host = config.getString("database.host");
@@ -29,6 +36,11 @@ public class Database {
         }
     }
 
+    /**
+     * Check if a user exists in the database
+     * @param player The player to check
+     * @return Whether the user exists
+     */
     public static boolean userExists(Player player) {
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM Users WHERE uuid = ?");
@@ -41,6 +53,11 @@ public class Database {
         }
     }
 
+    /**
+     * Get a user from the database
+     * @param player The player to get
+     * @return The user
+     */
     public static ResultSet getUser(Player player){
         try {
             if(!userExists(player)){
@@ -55,6 +72,11 @@ public class Database {
         }
     }
 
+    /**
+     * Get the stars of a user
+     * @param player The player to get the stars of
+     * @return The stars of the user
+     */
     public static int getUserStars(Player player) {
         try {
             if (!userExists(player)) {
@@ -72,6 +94,11 @@ public class Database {
         return 0;
     }
 
+    /**
+     * Set the stars of a user
+     * @param player The player to set the stars of
+     * @param stars The stars to set
+     */
     public static void setUserStars(Player player, int stars) {
         try {
             if (!userExists(player)) {
@@ -81,11 +108,18 @@ public class Database {
             statement.setInt(1, stars);
             statement.setBytes(2, uuidToBytes(player.getUniqueId()));
             statement.executeUpdate();
+
+            ActionBar.userStars.put(player, stars);
         } catch (SQLException e) {
             CmbMinigamesRandom.LOGGER.severe("Failed to update user stars by UUID: " + e.getMessage());
         }
     }
 
+    /**
+     * Get the cosmetics of a user
+     * @param player The player to get the cosmetics of
+     * @return The cosmetics of the user
+     */
     public static List<String> getUserCosmetics(Player player){
         try {
             if (!userExists(player)) {
@@ -109,6 +143,10 @@ public class Database {
         return List.of();
     }
 
+    /**
+     * Get all cosmetics
+     * @return All cosmetics
+     */
     public static Map<String, Map<String, Object>> getAllCosmetics(){
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Cosmetics");
@@ -138,6 +176,11 @@ public class Database {
         return new HashMap<>();
     }
 
+    /**
+     * Give a cosmetic to a user
+     * @param player The player to give the cosmetic to
+     * @param name The name of the cosmetic
+     */
     public static void giveCosmetic(Player player, String name){
         try {
             if (!userExists(player)) {
@@ -152,6 +195,11 @@ public class Database {
         }
     }
 
+
+    /**
+     * Get all crates
+     * @return All crates
+     */
     public static Map<String, Map<String, Object>> getAllCrates(){
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Crates");
@@ -181,6 +229,11 @@ public class Database {
         return new HashMap<>();
     }
 
+    /**
+     * Get the crates a user has
+     * @param player The player to get the crates of
+     * @return The player's crates
+     */
     public static List<String> getUserCrates(Player player){
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Users WHERE uuid = ?");
@@ -199,6 +252,11 @@ public class Database {
         return List.of();
     }
 
+    /**
+     * Give a crate to a user
+     * @param player The player to give the crate to
+     * @param name The name of the crate
+     */
     public static void giveCrate(Player player, String name){
         try {
             if (!userExists(player)) {
@@ -213,6 +271,11 @@ public class Database {
         }
     }
 
+    /**
+     * Remove a crate from a user
+     * @param player The player to remove the crate from
+     * @param name The name of the crate
+     */
     public static void removeCrate(Player player, String name){
         try {
             if (!userExists(player)) {
@@ -237,6 +300,12 @@ public class Database {
         }
     }
 
+    /**
+     * Check if a cosmetic is equipped by a user
+     * @param player The player to check
+     * @param cosmeticName The name of the cosmetic to check
+     * @return Whether the cosmetic is equipped
+     */
     public static boolean isCosmeticEquipped(Player player, String cosmeticName) {
         try {
             PreparedStatement statement = connection.prepareStatement(
@@ -253,6 +322,11 @@ public class Database {
         return false;
     }
 
+    /**
+     * Get the equipped cosmetic of a user
+     * @param player The player to check
+     * @return The cosmetic they have equipped
+     */
     public static String getEquipped(Player player){
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT equipped FROM Users WHERE uuid = ?");
@@ -267,6 +341,11 @@ public class Database {
         return null;
     }
 
+    /**
+     * Equip a cosmetic for a user
+     * @param player The player to equip the cosmetic for
+     * @param cosmetic The name of the cosmetic to equip
+     */
     public static void equipCosmetic(Player player, String cosmetic){
         try {
             if (!userExists(player)) {
@@ -281,6 +360,11 @@ public class Database {
         }
     }
 
+    /**
+     * Get a rarity sets
+     * @param id The id of the rarity set
+     * @return The rarity set
+     */
     public static Map<String, Number> getRaritySet(Integer id){
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM RaritySets WHERE id = ?");
@@ -305,6 +389,11 @@ public class Database {
         return null;
     }
 
+    /**
+     * Give a user stars
+     * @param player The player to give the stars to
+     * @param stars The amount of stars to give
+     */
     public static void addUserStars(Player player, int stars){
         try {
             if (!userExists(player)) {
@@ -314,11 +403,18 @@ public class Database {
             statement.setInt(1, stars);
             statement.setBytes(2, uuidToBytes(player.getUniqueId()));
             statement.executeUpdate();
+
+            ActionBar.userStars.put(player, ActionBar.userStars.get(player) + stars);
         } catch (SQLException e) {
             CmbMinigamesRandom.LOGGER.severe("Failed to add user stars by UUID: " + e.getMessage());
         }
     }
 
+    /**
+     * Register a new user
+     * @param player The player to create the uer for
+     * @return The created user
+     */
     public static ResultSet createUser(Player player){
         try {
             if(userExists(player)){
@@ -338,6 +434,9 @@ public class Database {
         return null;
     }
 
+    /**
+     * Disconnect from the MySQL database
+     */
     public static void disconnect() {
         if (connection != null) {
             try {
@@ -349,6 +448,11 @@ public class Database {
         }
     }
 
+    /**
+     * Convert a UUID to a byte array
+     * @param uuid The UUID to convert
+     * @return The byte array
+     */
     private static byte[] uuidToBytes(UUID uuid) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
         byteBuffer.putLong(uuid.getMostSignificantBits());

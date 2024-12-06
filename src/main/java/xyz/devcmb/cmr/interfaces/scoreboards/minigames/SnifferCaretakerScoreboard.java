@@ -6,10 +6,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
-import xyz.devcmb.cmr.minigames.KaboomersController;
 import xyz.devcmb.cmr.minigames.SnifferCaretakerController;
-import xyz.devcmb.cmr.utils.Utilities;
 
+/**
+ * A class for the Sniffer Caretaker minigame scoreboard
+ */
 public class SnifferCaretakerScoreboard implements HandledScoreboard {
     private final SnifferCaretakerController snifferCaretakerController;
     public SnifferCaretakerScoreboard(SnifferCaretakerController kc){

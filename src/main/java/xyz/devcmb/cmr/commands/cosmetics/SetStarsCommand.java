@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Format;
 
+/**
+ * A command for setting the stars of a player
+ */
 public class SetStarsCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

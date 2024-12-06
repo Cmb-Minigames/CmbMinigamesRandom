@@ -8,6 +8,9 @@ import xyz.devcmb.cmr.minigames.CaptureTheFlagController;
 import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 import xyz.devcmb.cmr.utils.Utilities;
 
+/**
+ * A class for the Capture the Flag minigame scoreboard
+ */
 public class CTFScoreboard implements HandledScoreboard {
     private final CaptureTheFlagController ctfController;
 
