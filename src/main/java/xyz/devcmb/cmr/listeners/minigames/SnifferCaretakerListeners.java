@@ -100,19 +100,6 @@ public class SnifferCaretakerListeners implements Listener {
         blueSnifferZoneToLocation = Utilities.getLocationFromConfig(mapData, world, "blueSnifferZone", "to");
     }
 
-    private static boolean isWithin(Location loc, Location point1, Location point2) {
-        double minX = Math.min(point1.getX(), point2.getX());
-        double minY = Math.min(point1.getY(), point2.getY());
-        double minZ = Math.min(point1.getZ(), point2.getZ());
-        double maxX = Math.max(point1.getX(), point2.getX());
-        double maxY = Math.max(point1.getY(), point2.getY());
-        double maxZ = Math.max(point1.getZ(), point2.getZ());
-
-        return loc.getX() >= minX && loc.getX() <= maxX &&
-                loc.getY() >= minY && loc.getY() <= maxY &&
-                loc.getZ() >= minZ && loc.getZ() <= maxZ;
-    }
-
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         SnifferCaretakerController controller = (SnifferCaretakerController) GameManager.getMinigameByName("Sniffer Caretaker");
@@ -120,7 +107,7 @@ public class SnifferCaretakerListeners implements Listener {
 
         InitializeLocations();
 
-        if (isWithin(event.getBlock().getLocation(), redBaseFromLocation, redBaseToLocation) || isWithin(event.getBlock().getLocation(), blueBaseFromLocation, blueBaseToLocation)) {
+        if (Utilities.isWithin(event.getBlock().getLocation(), redBaseFromLocation, redBaseToLocation) || Utilities.isWithin(event.getBlock().getLocation(), blueBaseFromLocation, blueBaseToLocation)) {
             event.setCancelled(true);
         }
 
@@ -134,7 +121,7 @@ public class SnifferCaretakerListeners implements Listener {
 
         InitializeLocations();
 
-        if (isWithin(event.getBlock().getLocation(), redBaseFromLocation, redBaseToLocation) || isWithin(event.getBlock().getLocation(), blueBaseFromLocation, blueBaseToLocation)) {
+        if (Utilities.isWithin(event.getBlock().getLocation(), redBaseFromLocation, redBaseToLocation) || Utilities.isWithin(event.getBlock().getLocation(), blueBaseFromLocation, blueBaseToLocation)) {
             event.setCancelled(true);
         }
     }
@@ -182,8 +169,8 @@ public class SnifferCaretakerListeners implements Listener {
         if (controller.RED.contains(player) && itemDrop.getLocation().distance(controller.redSniffer.getLocation()) > 7.0) return;
         if (controller.BLUE.contains(player) && itemDrop.getLocation().distance(controller.blueSniffer.getLocation()) > 7.0) return;
 
-        if (controller.RED.contains(player) && !isWithin(player.getLocation(), redSnifferZoneFromLocation, redSnifferZoneToLocation)) return;
-        if (controller.BLUE.contains(player) && !isWithin(player.getLocation(), blueSnifferZoneFromLocation, blueSnifferZoneToLocation)) return;
+        if (controller.RED.contains(player) && !Utilities.isWithin(player.getLocation(), redSnifferZoneFromLocation, redSnifferZoneToLocation)) return;
+        if (controller.BLUE.contains(player) && !Utilities.isWithin(player.getLocation(), blueSnifferZoneFromLocation, blueSnifferZoneToLocation)) return;
 
         if (snifferRequestedItems.containsKey(material)) {
             int happinessIncrease = snifferRequestedItems.get(material) * itemDrop.getItemStack().getAmount();

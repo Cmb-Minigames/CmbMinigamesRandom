@@ -63,6 +63,7 @@ public class CMScoreboardManager {
         BrawlController brawlController = (BrawlController) GameManager.getMinigameByName("Brawl");
         SnifferCaretakerController snifferCaretakerController = (SnifferCaretakerController) GameManager.getMinigameByName("Sniffer Caretaker");
         CookingChaosController cookingChaosController = (CookingChaosController) GameManager.getMinigameByName("Cooking Chaos");
+        ElectricEelController electricEelController = (ElectricEelController) GameManager.getMinigameByName("Electric Eel");
         TeleportersController teleportersController = (TeleportersController) GameManager.getMinigameByName("Teleporters");
         scoreboards.put("NotEnoughPlayers", new NotEnoughPlayersScoreboard());
         scoreboards.put("StartingSoon", new StartingSoonScoreboard());
@@ -72,6 +73,7 @@ public class CMScoreboardManager {
         scoreboards.put("brawl", new BrawlScoreboard(brawlController));
         scoreboards.put("sniffercaretaker", new SnifferCaretakerScoreboard(snifferCaretakerController));
         scoreboards.put("cookingchaos", new CookingChaosScoreboard(cookingChaosController));
+        scoreboards.put("electriceel", new ElectricEelScoreboard(electricEelController));
         scoreboards.put("teleporters", new TeleportersScoreboard(teleportersController));
         scoreboards.put("TabList", new TabListScoreboard());
     }

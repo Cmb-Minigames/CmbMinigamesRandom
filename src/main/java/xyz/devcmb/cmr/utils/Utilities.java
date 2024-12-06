@@ -437,11 +437,40 @@ public class Utilities {
             return null;
         }
 
+        if(locationData.get("x") == null || locationData.get("y") == null || locationData.get("z") == null){
+            CmbMinigamesRandom.LOGGER.warning(key + "/" + subkey + " is not properly configured in the map data.");
+            return null;
+        }
+
+        if(locationData.get("pitch") != null && locationData.get("yaw") != null){
+            return new Location(
+                    world,
+                    ((Number) locationData.get("x")).doubleValue(),
+                    ((Number) locationData.get("y")).doubleValue(),
+                    ((Number) locationData.get("z")).doubleValue(),
+                    ((Number) locationData.get("yaw")).floatValue(),
+                    ((Number) locationData.get("pitch")).floatValue()
+            );
+        }
+
         return new Location(
                 world,
                 ((Number) locationData.get("x")).doubleValue(),
                 ((Number) locationData.get("y")).doubleValue(),
                 ((Number) locationData.get("z")).doubleValue()
         );
+    }
+
+    public static boolean isWithin(Location loc, Location point1, Location point2) {
+        double minX = Math.min(point1.getX(), point2.getX());
+        double minY = Math.min(point1.getY(), point2.getY());
+        double minZ = Math.min(point1.getZ(), point2.getZ());
+        double maxX = Math.max(point1.getX(), point2.getX());
+        double maxY = Math.max(point1.getY(), point2.getY());
+        double maxZ = Math.max(point1.getZ(), point2.getZ());
+
+        return loc.getX() >= minX && loc.getX() <= maxX &&
+                loc.getY() >= minY && loc.getY() <= maxY &&
+                loc.getZ() >= minZ && loc.getZ() <= maxZ;
     }
 }
