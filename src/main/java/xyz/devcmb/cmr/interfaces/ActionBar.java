@@ -28,7 +28,7 @@ public class ActionBar {
             return;
         }
 
-        TextComponent stars = new TextComponent(" ".repeat(38) + "\uE000 " + userStars.get(player));
+        TextComponent stars = new TextComponent(" ".repeat(30 + userStars.get(player).toString().length()) + "\uE000 " + userStars.get(player));
         stars.setFont("cmbminigames:actionbar");
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, stars);
     }
