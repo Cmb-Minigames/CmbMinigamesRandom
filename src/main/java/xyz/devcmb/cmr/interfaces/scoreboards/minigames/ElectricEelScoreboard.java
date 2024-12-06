@@ -11,9 +11,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 
 public class ElectricEelScoreboard implements HandledScoreboard {
     private final ElectricEelController electricEelController;
-    public ElectricEelScoreboard(ElectricEelController kc){
-        electricEelController = kc;
-    }
+    public ElectricEelScoreboard(ElectricEelController eec){
+        electricEelController = eec;
+    } // The Eel (Eek!)
     @Override
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();

@@ -481,6 +481,6 @@ public class ElectricEelController implements Minigame {
 
     @Override
     public String getDescription() {
-        return "";
+        return "Steal uranium from the other team to either power your King Electric Eel or your nuclear reactor. The team with the most uranium at the end wins!";
     }
 }

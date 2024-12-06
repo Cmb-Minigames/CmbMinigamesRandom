@@ -353,4 +353,17 @@ public class Utilities {
                 ((Number) locationData.get("z")).doubleValue()
         );
     }
+
+    public static boolean isWithin(Location loc, Location point1, Location point2) {
+        double minX = Math.min(point1.getX(), point2.getX());
+        double minY = Math.min(point1.getY(), point2.getY());
+        double minZ = Math.min(point1.getZ(), point2.getZ());
+        double maxX = Math.max(point1.getX(), point2.getX());
+        double maxY = Math.max(point1.getY(), point2.getY());
+        double maxZ = Math.max(point1.getZ(), point2.getZ());
+
+        return loc.getX() >= minX && loc.getX() <= maxX &&
+                loc.getY() >= minY && loc.getY() <= maxY &&
+                loc.getZ() >= minZ && loc.getZ() <= maxZ;
+    }
 }

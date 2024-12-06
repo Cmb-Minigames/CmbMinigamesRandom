@@ -72,19 +72,6 @@ public class ElectricEelListeners implements Listener {
         blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueSpawn");
     }
 
-    private static boolean isWithin(Location loc, Location point1, Location point2) {
-        double minX = Math.min(point1.getX(), point2.getX());
-        double minY = Math.min(point1.getY(), point2.getY());
-        double minZ = Math.min(point1.getZ(), point2.getZ());
-        double maxX = Math.max(point1.getX(), point2.getX());
-        double maxY = Math.max(point1.getY(), point2.getY());
-        double maxZ = Math.max(point1.getZ(), point2.getZ());
-
-        return loc.getX() >= minX && loc.getX() <= maxX &&
-                loc.getY() >= minY && loc.getY() <= maxY &&
-                loc.getZ() >= minZ && loc.getZ() <= maxZ;
-    }
-
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         ElectricEelController electricEelController = (ElectricEelController) GameManager.getMinigameByName("Electric Eel");
@@ -99,7 +86,7 @@ public class ElectricEelListeners implements Listener {
 
         Player player = event.getPlayer();
 
-        if(player.getInventory().getItemInOffHand().getType() == Material.NETHER_QUARTZ_ORE) {
+        if(player.getInventory().getItemInOffHand().getType() == Material.NETHER_QUARTZ_ORE && event.getBlock().getType() == Material.NETHER_QUARTZ_ORE) {
             player.sendMessage(ChatColor.RED + "You can't carry more than one uranium at a time!");
             event.setCancelled(true);
             return;
@@ -122,14 +109,14 @@ public class ElectricEelListeners implements Listener {
 
             NamespacedKey key = new NamespacedKey(CmbMinigamesRandom.getPlugin(), "team");
 
-            if (isWithin(event.getBlock().getLocation(), redStorageFromLocation, redStorageToLocation)) {
+            if (Utilities.isWithin(event.getBlock().getLocation(), redStorageFromLocation, redStorageToLocation)) {
                 if (electricEelController.RED.contains(player)) {
                     event.setCancelled(true);
                     return;
                 }
                 electricEelController.redUranium--;
                 meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "RED");
-            } else if (isWithin(event.getBlock().getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
+            } else if (Utilities.isWithin(event.getBlock().getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
                 if (electricEelController.BLUE.contains(player)) {
                     event.setCancelled(true);
                     return;
@@ -141,13 +128,12 @@ public class ElectricEelListeners implements Listener {
             uranium.setItemMeta(meta);
             event.getPlayer().getInventory().setItemInOffHand(uranium);
 
-            PotionEffect glowing = new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, false, false);
-            player.addPotionEffect(glowing);
+            player.setGlowing(true);
 
             world.playSound(event.getBlock().getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1, 1);
-        }
 
-        electricEelController.ResetBeams(electricEelLocation);
+            electricEelController.ResetBeams(electricEelLocation);
+        }
     }
 
     @EventHandler
@@ -166,17 +152,17 @@ public class ElectricEelListeners implements Listener {
         }
 
         if(event.getBlock().getType() == Material.NETHER_QUARTZ_ORE) {
-            if (isWithin(event.getBlock().getLocation(), redStorageFromLocation, redStorageToLocation)) {
+            if (Utilities.isWithin(event.getBlock().getLocation(), redStorageFromLocation, redStorageToLocation)) {
                 electricEelController.redUranium++;
-            } else if (isWithin(event.getBlock().getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
+            } else if (Utilities.isWithin(event.getBlock().getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
                 electricEelController.blueUranium++;
             }
 
-            event.getPlayer().removePotionEffect(PotionEffectType.GLOWING);
+            event.getPlayer().setGlowing(false);
             world.playSound(event.getBlock().getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 1);
-        }
 
-        electricEelController.ResetBeams(electricEelLocation);
+            electricEelController.ResetBeams(electricEelLocation);
+        }
     }
 
     @EventHandler
@@ -206,7 +192,7 @@ public class ElectricEelListeners implements Listener {
             }
 
             if (!electricEelController.hasStarted) {
-                if (!isWithin(player.getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
+                if (!Utilities.isWithin(player.getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
                     event.getPlayer().teleport(blueSpawnLocation);
                 }
             }
