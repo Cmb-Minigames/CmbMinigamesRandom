@@ -223,6 +223,20 @@ public class ElectricEelController implements Minigame {
 
     @Override
     public void stop() {
+        for (Player player : RED) {
+            for (PotionEffect effect : player.getActivePotionEffects()) {
+                player.removePotionEffect(effect.getType());
+            }
+        }
+
+        for (Player player : BLUE) {
+            for (PotionEffect effect : player.getActivePotionEffects()) {
+                player.removePotionEffect(effect.getType());
+            }
+        }
+
+        beams.forEach(Beam::Remove); // Sorry for causing 10000 warnings in the console!!! :P
+        beams.clear();
         RED.clear();
         BLUE.clear();
         redTeam.getEntries().forEach(redTeam::removeEntry);
@@ -301,6 +315,36 @@ public class ElectricEelController implements Minigame {
 
     @Override
     public Number playerLeave(Player player) {
+        RED.remove(player);
+        BLUE.remove(player);
+
+        if(CmbMinigamesRandom.DeveloperMode){
+            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
+        } else {
+            if(RED.isEmpty()){
+                GameManager.gameEnding = true;
+                BLUE.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                });
+                return 7;
+            } else if(BLUE.isEmpty()){
+                GameManager.gameEnding = true;
+                RED.forEach(plr -> {
+                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                    plr.getInventory().clear();
+                    plr.setGameMode(GameMode.SPECTATOR);
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                });
+
+                return 7;
+            }
+        }
+
         return null;
     }
 
@@ -405,7 +449,7 @@ public class ElectricEelController implements Minigame {
     @Override
     public Map<StarSource, Number> getStarSources() {
         return Map.of(
-                StarSource.WIN, 10,
+                StarSource.WIN, 15,
                 StarSource.KILL, 2,
                 StarSource.OBJECTIVE, 5
         );

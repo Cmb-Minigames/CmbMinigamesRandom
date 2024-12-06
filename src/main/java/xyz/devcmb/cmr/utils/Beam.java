@@ -1,23 +1,14 @@
 package xyz.devcmb.cmr.utils;
 
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 
-import java.util.Objects;
-import java.util.Random;
 
 public class Beam {
-    public Location start;
-    public Location end;
-    public ChatColor color;
+    private final Location start;
+    private final Location end;
 
     private BukkitRunnable updateTime;
     private Location particleLocation;
@@ -29,20 +20,23 @@ public class Beam {
     }
 
     private void Start() {
-        World world = start.getWorld();
+        World world = this.start.getWorld();
 
         assert world != null;
 
-        particleLocation = start.clone();
+        particleLocation = this.start.clone();
 
-        Vector dir = end.toVector().subtract(start.toVector()).normalize();
+        Vector dir = this.end.toVector().subtract(this.start.toVector()).normalize();
         Vector vecOffset = dir.clone().multiply(0.5);
 
-        updateTime = new BukkitRunnable(){
+        Location theEnd = this.end;
+
+        this.updateTime = new BukkitRunnable(){
+            @Override
             public void run(){
                 particleLocation.add(vecOffset);
 
-                if (particleLocation.distance(end) <= vecOffset.length()) {
+                if (particleLocation.distance(theEnd) <= vecOffset.length()) {
                     particleLocation = start.clone();
                 }
 
@@ -50,11 +44,11 @@ public class Beam {
             }
         };
 
-        updateTime.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 1);
+        this.updateTime.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 1);
     }
 
     public void Remove() {
-        updateTime.cancel();
-        updateTime = null;
+        this.updateTime.cancel();
+        this.updateTime = null;
     }
 }

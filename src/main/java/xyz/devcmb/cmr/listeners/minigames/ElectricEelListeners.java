@@ -27,6 +27,7 @@ public class ElectricEelListeners implements Listener {
     private Location blueStorageFromLocation;
     private Location blueStorageToLocation;
     private Location electricEelLocation;
+    private Location blueSpawnLocation;
 
     private final List<Material> breakableBlocks = List.of(
             Material.NETHER_QUARTZ_ORE,
@@ -59,6 +60,7 @@ public class ElectricEelListeners implements Listener {
         blueStorageToLocation = Utilities.getLocationFromConfig(mapData, world, "blueStorage", "to");
 
         electricEelLocation = Utilities.getLocationFromConfig(mapData, world, "electricEelSpawn");
+        blueSpawnLocation = Utilities.getLocationFromConfig(mapData, world, "blueSpawn");
     }
 
     private static boolean isWithin(Location loc, Location point1, Location point2) {
@@ -79,7 +81,10 @@ public class ElectricEelListeners implements Listener {
         ElectricEelController electricEelController = (ElectricEelController) GameManager.getMinigameByName("Electric Eel");
         if(electricEelController == null || GameManager.currentMinigame != electricEelController) return;
 
-        if(!breakableBlocks.contains(event.getBlock().getType())) return;
+        if(!breakableBlocks.contains(event.getBlock().getType())) {
+            event.setCancelled(true);
+            return;
+        };
 
         InitializeLocations();
 
@@ -193,7 +198,7 @@ public class ElectricEelListeners implements Listener {
 
             if (!electricEelController.hasStarted) {
                 if (!isWithin(player.getLocation(), blueStorageFromLocation, blueStorageToLocation)) {
-                    event.setCancelled(true);
+                    event.getPlayer().teleport(blueSpawnLocation);
                 }
             }
         }
