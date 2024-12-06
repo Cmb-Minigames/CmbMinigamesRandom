@@ -22,18 +22,27 @@ import java.util.List;
 import java.util.Map;
 
 public class ElectricEelListeners implements Listener {
-    private Location redStorageFromLocation;
-    private Location redStorageToLocation;
-    private Location blueStorageFromLocation;
-    private Location blueStorageToLocation;
-    private Location electricEelLocation;
-    private Location blueSpawnLocation;
+    private static Location redStorageFromLocation;
+    private static Location redStorageToLocation;
+    private static Location blueStorageFromLocation;
+    private static Location blueStorageToLocation;
+    private static Location electricEelLocation;
+    private static Location blueSpawnLocation;
 
     private final List<Material> breakableBlocks = List.of(
             Material.NETHER_QUARTZ_ORE,
             Material.RED_CONCRETE,
             Material.BLUE_CONCRETE
     );
+
+    public static void NullLocations() {
+        redStorageFromLocation = null;
+        redStorageToLocation = null;
+        blueStorageFromLocation = null;
+        blueStorageToLocation = null;
+        electricEelLocation = null;
+        blueSpawnLocation = null;
+    }
 
     @SuppressWarnings("unchecked")
     private void InitializeLocations() {

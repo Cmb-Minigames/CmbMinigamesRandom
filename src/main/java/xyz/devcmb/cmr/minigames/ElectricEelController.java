@@ -20,6 +20,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.*;
+import xyz.devcmb.cmr.listeners.minigames.ElectricEelListeners;
 
 import java.util.*;
 
@@ -107,6 +108,7 @@ public class ElectricEelController implements Minigame {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
+        ElectricEelListeners.NullLocations();
         hasStarted = false;
         Utilities.gameStartReusable();
         List<Player> allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
