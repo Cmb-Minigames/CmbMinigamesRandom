@@ -18,7 +18,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
-import xyz.devcmb.cmr.interfaces.Stars;
+import xyz.devcmb.cmr.interfaces.ActionBar;
 import xyz.devcmb.cmr.interfaces.TabList;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A class for player listeners
+ */
 public class PlayerListeners implements Listener {
     private final Map<Player, BukkitRunnable> countdowns = new HashMap<>();
     @EventHandler
@@ -34,7 +37,7 @@ public class PlayerListeners implements Listener {
         Location spawnPoint = new Location(Bukkit.getWorld("pregame"), -26.5, -42.5, -18.5);
         Player player = event.getPlayer();
         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-        Stars.showStarsActionBar(player);
+        ActionBar.registerPlayer(player);
         CMScoreboardManager.initialize(player);
         GameManager.playerConnect(event);
         player.getInventory().clear();
@@ -70,7 +73,11 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
-        GameManager.playerDisconnect(event.getPlayer());
-        countdowns.get(event.getPlayer()).cancel();
+        Player player = event.getPlayer();
+        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+
+        GameManager.playerDisconnect(player);
+        countdowns.get(player).cancel();
+        ActionBar.unregisterPlayer(player);
     }
 }

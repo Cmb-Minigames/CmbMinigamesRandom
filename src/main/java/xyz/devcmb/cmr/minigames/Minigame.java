@@ -56,7 +56,7 @@ public interface Minigame {
      * Called to get a map of all the star sources and how many stars they give, used internally for objective and win, and handled externally for kills
      * @return A map of all the star sources and how many stars they give
      */
-    Map<StarSource, Number> getStarSources();
+    Map<StarSource, Integer> getStarSources();
     /**
      * A condition if the block place event, when used with the unlimited block place event, should not give the block back
      * @param event The BlockPlaceEvent from the event listener in MinigameListeners

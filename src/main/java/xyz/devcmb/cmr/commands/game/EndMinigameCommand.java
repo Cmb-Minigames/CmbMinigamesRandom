@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.GameManager;
 
+/**
+ * A command for ending the current minigame
+ */
 public class EndMinigameCommand implements CommandExecutor {
 
     @Override

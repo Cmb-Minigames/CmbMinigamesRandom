@@ -14,12 +14,15 @@ import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 
 import java.util.Objects;
 
+/**
+ * A class for meteor shower event listeners
+ */
 public class MeteorShowerListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack item = event.getItem();
-            if (item != null) {
+            if (item != null && item.getType() == Material.ECHO_SHARD) {
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null && meta.hasCustomModelData() && meta.getCustomModelData() == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("star_shower").intValue()) {
                     Location playerLocation = event.getPlayer().getLocation();

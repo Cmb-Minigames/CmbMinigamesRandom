@@ -5,10 +5,16 @@ import org.bukkit.entity.Player;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.utils.Format;
 
+/**
+ * An interfaces class for updating the tab list name of a player
+ */
 public class TabList {
+    /**
+     * Update the tab list name of a player
+     * @param player The player to update the tab list name of
+     */
     public static void updateTabListName(Player player){
         String prefix = Format.getPrefix(player);
-        Integer priority = Format.getPriority(player);
         ChatColor teamColor = GameManager.teamColors.get(player);
         if(prefix == null){
             prefix = "";
@@ -18,6 +24,6 @@ public class TabList {
             teamColor = ChatColor.WHITE;
         }
 
-        player.setPlayerListName(ChatColor.values()[priority].toString() + ChatColor.RESET + prefix + teamColor + player.getName());
+        player.setPlayerListName(prefix + teamColor + player.getName());
     }
 }

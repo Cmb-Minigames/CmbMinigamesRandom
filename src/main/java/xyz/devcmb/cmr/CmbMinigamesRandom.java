@@ -15,12 +15,21 @@ import xyz.devcmb.cmr.utils.MusicBox;
 
 import java.util.logging.Logger;
 
+/**
+ * The main class for the CmbMinigamesRandom plugin.
+ * <br>
+ * This class serves as the entry point for the plugin.
+ */
 public final class CmbMinigamesRandom extends JavaPlugin {
     private static CmbMinigamesRandom plugin;
     public static Logger LOGGER;
     public static boolean DeveloperMode = false;
     private static BukkitAudiences adventure;
 
+    /**
+     * Get the Adventure instance
+     * @return The Adventure instance
+     */
     public static @NonNull BukkitAudiences adventure() {
         if(adventure == null) {
             throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
@@ -28,6 +37,10 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         return adventure;
     }
 
+    /**
+     * Get the plugin instance
+     * @return The plugin instance
+     */
     public static CmbMinigamesRandom getPlugin() {
         return plugin;
     }

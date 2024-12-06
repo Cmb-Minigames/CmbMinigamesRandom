@@ -12,6 +12,9 @@ import xyz.devcmb.cmr.cosmetics.CrateManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Format;
 
+/**
+ * A command for giving a crate to a player
+ */
 public class GiveCrateCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

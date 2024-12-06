@@ -9,6 +9,9 @@ import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 import xyz.devcmb.cmr.minigames.KaboomersController;
 import xyz.devcmb.cmr.utils.Utilities;
 
+/**
+ * A class for the Kaboomers minigame scoreboard
+ */
 public class KaboomersScoreboard implements HandledScoreboard {
     private final KaboomersController kaboomersController;
     public KaboomersScoreboard(KaboomersController kc){

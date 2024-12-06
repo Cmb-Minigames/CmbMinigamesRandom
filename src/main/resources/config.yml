@@ -4,13 +4,13 @@ maps:
         # This is where you fill out all the information about the map for the Capture the Flag minigame.
         worldName: ""
         voidHeight: 0
-        redTeamSpawn:
+        redSpawn:
           x: 0
           y: 0
           z: 0
           pitch: 0
           yaw: 90
-        blueTeamSpawn:
+        blueSpawn:
           x: 0
           y: 0
           z: 0
@@ -52,11 +52,11 @@ maps:
     - map:
         worldName: ""
         voidHeight: 0
-        redTeamSpawn:
+        redSpawn:
           x: 0
           y: 0
           z: 0
-        blueTeamSpawn:
+        blueSpawn:
           x: 0
           y: 0
           z: 0
@@ -83,11 +83,11 @@ maps:
     - map:
         worldName: ""
         voidHeight: 0
-        redTeamSpawn:
+        redSpawn:
           x: 0
           y: 0
           z: 0
-        blueTeamSpawn:
+        blueSpawn:
           x: 0
           y: 0
           z: 0
@@ -274,6 +274,14 @@ maps:
                 x: 0
                 y: 0
                 z: 0
+  Teleporters:
+    - map:
+        worldName: ""
+        voidHeight: 0
+        spawn:
+          x: 0
+          y: 0
+          z: 0
 
 database:
   host: ""

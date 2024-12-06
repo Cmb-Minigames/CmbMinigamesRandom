@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.GameManager;
 
+/**
+ * A command for pausing or unpausing the loop
+ */
 public class StopLoopCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] strings) {
