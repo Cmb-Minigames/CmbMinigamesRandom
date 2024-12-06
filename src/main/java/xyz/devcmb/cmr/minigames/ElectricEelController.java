@@ -449,7 +449,7 @@ public class ElectricEelController implements Minigame {
     }
 
     @Override
-    public Map<StarSource, Number> getStarSources() {
+    public Map<StarSource, Integer> getStarSources() {
         return Map.of(
                 StarSource.WIN, 15,
                 StarSource.KILL, 2,
