@@ -6,6 +6,7 @@ prefix: CmbMinigames
 authors: [ DevCmb ]
 description: The CmbMinigames plugin for random minigames
 website: devcmb.xyz
+depend: ['Multiverse-Core']
 commands:
   pauseloop:
     description: Stop the loop

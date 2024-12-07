@@ -219,7 +219,7 @@ public class Utilities {
         if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
         GameManager.intermisionRunnable = null;
 
-        MapLoader.unloadMap(false);
+        MapLoader.unloadMap();
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.spigot().respawn();
             player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());

@@ -4,6 +4,7 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -259,7 +260,7 @@ public class ElectricEelController implements Minigame {
             RED.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
@@ -273,7 +274,7 @@ public class ElectricEelController implements Minigame {
             BLUE.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
@@ -330,7 +331,7 @@ public class ElectricEelController implements Minigame {
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 });
                 return 7;
             } else if(BLUE.isEmpty()){
@@ -340,7 +341,7 @@ public class ElectricEelController implements Minigame {
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN).intValue());
+                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 });
 
                 return 7;
@@ -465,8 +466,14 @@ public class ElectricEelController implements Minigame {
                 MinigameFlag.DISABLE_BLOCK_DROPS,
                 MinigameFlag.DISABLE_PLAYER_DEATH_DROP,
                 MinigameFlag.DISPLAY_KILLER_IN_DEATH_MESSAGE,
-                MinigameFlag.USE_CUSTOM_RESPAWN
+                MinigameFlag.USE_CUSTOM_RESPAWN,
+                MinigameFlag.UNLIMITED_BLOCKS
         );
+    }
+
+    @Override
+    public Boolean dontReturnBlock(BlockPlaceEvent event) {
+        return event.getBlock().getType() == Material.NETHER_QUARTZ_ORE;
     }
 
     @Override

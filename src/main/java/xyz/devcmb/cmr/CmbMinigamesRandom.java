@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr;
 
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -25,6 +26,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
     public static Logger LOGGER;
     public static boolean DeveloperMode = false;
     private static BukkitAudiences adventure;
+    private static MultiverseCore multiverseCore;
 
     /**
      * Get the Adventure instance
@@ -45,6 +47,10 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         return plugin;
     }
 
+    public static MultiverseCore getMultiverseCore() {
+        return multiverseCore;
+    }
+
     @Override
     public void onEnable() {
         plugin = this;
@@ -54,6 +60,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         LOGGER.info("Cmb Minigames has awoken. Initializing minigames...");
 
         DeveloperMode = getPlugin().getConfig().getBoolean("settings.devMode");
+        multiverseCore = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
         adventure = BukkitAudiences.create(this);
         Database.connect();
@@ -69,7 +76,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        MapLoader.unloadMap(true);
+        MapLoader.unloadMap();
         Database.disconnect();
         MapLoader.cleanup();
     }

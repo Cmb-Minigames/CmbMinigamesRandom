@@ -1,15 +1,15 @@
 package xyz.devcmb.cmr.utils;
 
+import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.minigames.Minigame;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -21,51 +21,42 @@ public class MapLoader {
     public static String LOADED_MAP = null;
 
     /**
-     * Clone a map from it's name and teleport all players to it
-     * @param worldName The name of the world to clone
+     * Clones a map
+     * @param worldName The name of the world to load
      */
     public static void loadMap(String worldName) {
-        if (worldName == null) {
-            CmbMinigamesRandom.LOGGER.warning("World name is null.");
+        MultiverseCore multiverseCore = CmbMinigamesRandom.getMultiverseCore();
+        if(multiverseCore == null){
+            CmbMinigamesRandom.LOGGER.warning("Multiverse-Core not found.");
             return;
         }
 
-        File minigameWorld = new File(Bukkit.getWorldContainer(), worldName);
-        if (!minigameWorld.exists()) {
-            CmbMinigamesRandom.LOGGER.warning("World not found: " + worldName);
-            return;
+        if(LOADED_MAP != null){
+            unloadMap();
         }
 
+        MVWorldManager worldManager = multiverseCore.getMVWorldManager();
         String uniqueWorldName = "minigame-" + UUID.randomUUID();
-        File uniqueWorldFolder = new File(Bukkit.getWorldContainer(), uniqueWorldName);
 
-        try {
-            FileUtils.copyDirectory(minigameWorld, uniqueWorldFolder);
-            File uidFile = new File(uniqueWorldFolder, "uid.dat");
-            if (uidFile.exists()) {
-                Files.delete(uidFile.toPath());
-            }
-        } catch (IOException e) {
-            CmbMinigamesRandom.LOGGER.warning("Failed to clone world: " + e.getMessage());
+        boolean success = worldManager.cloneWorld(worldName, uniqueWorldName);
+        if(!success){
+            CmbMinigamesRandom.LOGGER.warning("Failed to clone world: " + worldName);
             return;
         }
 
-        if (LOADED_MAP != null) {
-            Bukkit.unloadWorld(LOADED_MAP, false);
-        }
-
-        WorldCreator wc = new WorldCreator(uniqueWorldName);
-        World world = CmbMinigamesRandom.getPlugin().getServer().createWorld(wc);
-        if (world == null) return;
-        world.setAutoSave(false);
         LOADED_MAP = uniqueWorldName;
     }
 
     /**
      * Unload the currently loaded map
-     * @param closing If the server is closing, in which case, do not begin a runnable
      */
-    public static void unloadMap(boolean closing) {
+    public static void unloadMap() {
+        MultiverseCore multiverseCore = CmbMinigamesRandom.getMultiverseCore();
+        if(multiverseCore == null){
+            CmbMinigamesRandom.LOGGER.warning("Multiverse-Core not found.");
+            return;
+        }
+
         if (LOADED_MAP != null) {
             World world = Bukkit.getWorld(LOADED_MAP);
             if (world == null){
@@ -73,21 +64,8 @@ public class MapLoader {
                 return;
             }
 
-            world.setAutoSave(false);
-            Bukkit.unloadWorld(LOADED_MAP, false);
-
-            String oldWorldName = LOADED_MAP;
-            LOADED_MAP = null;
-
-            if(closing) return;
-            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
-                File worldFolder = new File(Bukkit.getWorldContainer(), oldWorldName);
-                try {
-                    FileUtils.deleteDirectory(worldFolder);
-                } catch (IOException e) {
-                    CmbMinigamesRandom.LOGGER.warning("Failed to delete world folder: " + e.getMessage());
-                }
-            }, 40 * 20);
+            MVWorldManager worldManager = multiverseCore.getMVWorldManager();
+            worldManager.deleteWorld(LOADED_MAP);
         } else {
             CmbMinigamesRandom.LOGGER.warning("No map loaded to unload.");
         }
