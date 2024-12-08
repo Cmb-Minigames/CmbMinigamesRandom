@@ -47,6 +47,10 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         return plugin;
     }
 
+    /**
+     * Get the MultiverseCore instance
+     * @return The MultiverseCore instance
+     */
     public static MultiverseCore getMultiverseCore() {
         return multiverseCore;
     }

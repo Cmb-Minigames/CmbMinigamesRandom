@@ -9,6 +9,9 @@ import xyz.devcmb.cmr.interfaces.scoreboards.HandledScoreboard;
 import xyz.devcmb.cmr.minigames.ElectricEelController;
 import xyz.devcmb.cmr.utils.Utilities;
 
+/**
+ * A class for the Electric Eel minigame scoreboard
+ */
 public class ElectricEelScoreboard implements HandledScoreboard {
     private final ElectricEelController electricEelController;
     public ElectricEelScoreboard(ElectricEelController eec){

@@ -306,12 +306,12 @@ public class Utilities {
 
     public static List<Player> respawningPlayers = new ArrayList<>();
 
-    @SuppressWarnings("all")
     /**
      * A custom respawn method for players to prevent the music from stopping upon death
      * @param player The player to respawn
      * @param damageSource The damage source that killed the player
      */
+    @SuppressWarnings("all")
     public static void customRespawn(Player player, DamageSource damageSource){
         if(respawningPlayers.contains(player)) return;
         respawningPlayers.add(player);
@@ -461,6 +461,13 @@ public class Utilities {
         );
     }
 
+    /**
+     * Check if a location is within a range of two other locations
+     * @param loc The location to check
+     * @param point1 The first point
+     * @param point2 The second point
+     * @return If the location is within the range
+     */
     public static boolean isWithin(Location loc, Location point1, Location point2) {
         double minX = Math.min(point1.getX(), point2.getX());
         double minY = Math.min(point1.getY(), point2.getY());

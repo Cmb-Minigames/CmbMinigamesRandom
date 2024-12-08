@@ -6,6 +6,9 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 import xyz.devcmb.cmr.minigames.TeleportersController;
 
+/**
+ * The Brewery event
+ */
 public class Brewery implements TeleportersEvent {
     public TeleportersController teleportersController;
     private final ItemStack jumpPotion;

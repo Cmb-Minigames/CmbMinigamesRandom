@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A base class for team-based minigames
+ */
 abstract public class Teams2MinigameBase {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();
@@ -25,6 +28,9 @@ abstract public class Teams2MinigameBase {
     public Location redSpawn = null;
     public Location blueSpawn = null;
 
+    /**
+     * Start the minigame
+     */
     @SuppressWarnings("unchecked")
     public void start() {
         Utilities.gameStartReusable();
@@ -64,6 +70,9 @@ abstract public class Teams2MinigameBase {
         blueSpawn = Utilities.getLocationFromConfig(mapData, world, "blueSpawn");
     }
 
+    /**
+     * Stop the minigame
+     */
     public void stop() {
         RED.clear();
         BLUE.clear();
@@ -74,6 +83,10 @@ abstract public class Teams2MinigameBase {
         Utilities.endGameResuable();
     }
 
+    /**
+     * Handle player join
+     * @param event The event
+     */
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -83,6 +96,11 @@ abstract public class Teams2MinigameBase {
         }, 10L);
     }
 
+    /**
+     * Handle player leave
+     * @param player The player
+     * @return The number of players left
+     */
     public Number playerLeave(Player player) {
         RED.remove(player);
         BLUE.remove(player);

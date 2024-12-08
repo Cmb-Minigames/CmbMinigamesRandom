@@ -8,6 +8,9 @@ import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.utils.Format;
 
+/**
+ * A class for the tab list scoreboard
+ */
 public class TabListScoreboard implements HandledScoreboard{
     @Override
     public Scoreboard getScoreboard(Player player) {

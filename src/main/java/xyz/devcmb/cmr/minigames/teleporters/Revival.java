@@ -2,6 +2,9 @@ package xyz.devcmb.cmr.minigames.teleporters;
 
 import xyz.devcmb.cmr.minigames.TeleportersController;
 
+/**
+ * The Revival event
+ */
 public class Revival implements TeleportersEvent {
     public TeleportersController teleportersController;
 

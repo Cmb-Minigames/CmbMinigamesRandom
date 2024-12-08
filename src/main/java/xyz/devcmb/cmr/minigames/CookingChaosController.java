@@ -21,6 +21,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * The cooking chaos minigame controller
+ */
 public class CookingChaosController extends Teams2MinigameBase implements Minigame {
     private BukkitRunnable boneMealChestRefill;
     private BukkitRunnable customerRunnable;

@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A base class for Free For All minigames
+ */
 abstract public class FFAMinigameBase {
     public List<Player> players = new ArrayList<>();
     public List<Player> allPlayers = new ArrayList<>();
@@ -23,6 +26,9 @@ abstract public class FFAMinigameBase {
     protected World world = null;
     protected Map<String, Object> mapData = null;
 
+    /**
+     * Start the minigame
+     */
     @SuppressWarnings("unchecked")
     public void start() {
         Utilities.gameStartReusable();
@@ -52,6 +58,9 @@ abstract public class FFAMinigameBase {
         });
     }
 
+    /**
+     * Stop the minigame
+     */
     public void stop() {
         players.clear();
         allPlayers.clear();
@@ -62,7 +71,10 @@ abstract public class FFAMinigameBase {
         Utilities.endGameResuable();
     }
 
-
+    /**
+     * Handle player join
+     * @param event The event
+     */
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -72,7 +84,11 @@ abstract public class FFAMinigameBase {
         }, 10L);
     }
 
-
+    /**
+     * Handle player leave
+     * @param player The player
+     * @return The number of players left
+     */
     public Number playerLeave(Player player) {
         players.remove(player);
 
@@ -96,6 +112,9 @@ abstract public class FFAMinigameBase {
         return null;
     }
 
+    /**
+     * End the game
+     */
     protected void endGame(){
         GameManager.gameEnding = true;
 

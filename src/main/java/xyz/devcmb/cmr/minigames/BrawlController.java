@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The brawl minigame controller
+ */
 public class BrawlController extends FFAMinigameBase implements Minigame {
     private final List<ItemStack> smallChestItems = new ArrayList<>();
     private final List<ItemStack> largeChestItems = new ArrayList<>();

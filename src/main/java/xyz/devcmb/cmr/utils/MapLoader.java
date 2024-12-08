@@ -94,16 +94,22 @@ public class MapLoader {
      * Delete all minigame worlds
      */
     public static void cleanup(){
+        MultiverseCore multiverseCore = CmbMinigamesRandom.getMultiverseCore();
+        if(multiverseCore == null){
+            CmbMinigamesRandom.LOGGER.warning("Multiverse-Core not found.");
+            return;
+        }
+
+        MVWorldManager worldManager = multiverseCore.getMVWorldManager();
+
         File rootDirectory = Bukkit.getWorldContainer();
         File[] files = rootDirectory.listFiles((dir, name) -> name.startsWith("minigame-") && new File(dir, name).isDirectory());
 
         if (files != null) {
             for (File file : files) {
-                try {
-                    FileUtils.deleteDirectory(file);
+                if(worldManager.isMVWorld(file.getName())){
+                    worldManager.deleteWorld(file.getName());
                     CmbMinigamesRandom.LOGGER.info("Deleted minigame world: " + file.getName());
-                } catch (IOException e) {
-                    CmbMinigamesRandom.LOGGER.warning("Failed to delete world: " + file.getName() + " - " + e.getMessage());
                 }
             }
         }

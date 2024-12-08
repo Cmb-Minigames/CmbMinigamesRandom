@@ -8,6 +8,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.interfaces.ActionBar;
 
+/**
+ * A command for toggling the action bar task
+ */
 public class ToggleActionBarCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {

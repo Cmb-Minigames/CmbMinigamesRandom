@@ -12,6 +12,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A class for the Teleporters minigame scoreboard
+ */
 public class TeleportersScoreboard implements HandledScoreboard {
     TeleportersController teleportersController;
 

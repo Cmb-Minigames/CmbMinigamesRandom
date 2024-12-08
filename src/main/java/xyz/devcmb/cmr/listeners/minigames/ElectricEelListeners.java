@@ -21,6 +21,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A class for listeners that are specific to the Electric Eel minigame
+ */
 public class ElectricEelListeners implements Listener {
     private static Location redStorageFromLocation;
     private static Location redStorageToLocation;

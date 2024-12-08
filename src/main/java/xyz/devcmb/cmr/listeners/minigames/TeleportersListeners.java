@@ -8,6 +8,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.TeleportersController;
 
+/**
+ * A class for listeners that are specific to the Teleporters minigame
+ */
 public class TeleportersListeners implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {

@@ -14,6 +14,9 @@ import xyz.devcmb.cmr.utils.*;
 
 import java.util.*;
 
+/**
+ * The Kaboomers minigame controller
+ */
 public class KaboomersController extends Teams2MinigameBase implements Minigame {
     public List<Block> redBlocks = new ArrayList<>();
     public List<Block> blueBlocks = new ArrayList<>();

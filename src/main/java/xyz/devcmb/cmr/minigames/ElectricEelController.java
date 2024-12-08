@@ -25,6 +25,9 @@ import xyz.devcmb.cmr.listeners.minigames.ElectricEelListeners;
 
 import java.util.*;
 
+/**
+ * The Electric Eel minigame controller
+ */
 public class ElectricEelController implements Minigame {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();

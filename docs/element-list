@@ -13,4 +13,6 @@ xyz.devcmb.cmr.listeners
 xyz.devcmb.cmr.listeners.items
 xyz.devcmb.cmr.listeners.minigames
 xyz.devcmb.cmr.minigames
+xyz.devcmb.cmr.minigames.bases
+xyz.devcmb.cmr.minigames.teleporters
 xyz.devcmb.cmr.utils

@@ -15,6 +15,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
 
+/**
+ * The Teleporters minigame controller
+ */
 public class TeleportersController extends FFAMinigameBase implements Minigame {
     public Integer gameLives = 0;
     public Map<Player, Integer> playerLives = new HashMap<>();

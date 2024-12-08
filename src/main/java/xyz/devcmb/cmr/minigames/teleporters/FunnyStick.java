@@ -8,6 +8,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.minigames.TeleportersController;
 
+/**
+ * The Funny Stick event
+ */
 public class FunnyStick implements TeleportersEvent {
     private final ItemStack funnyStick;
     private final TeleportersController teleportersController;

@@ -29,7 +29,13 @@ public class MusicBox {
         );
     }
 
-
+    /**
+     * Register a track
+     * @param name The name of the track
+     * @param musicPath The path to the music
+     * @param songName The name of the song
+     * @param author The author of the song
+     */
     private static void registerTrack(String name, String musicPath, String songName, String author){
         tracks.put(name, Map.of(
             "path", musicPath,
@@ -38,6 +44,10 @@ public class MusicBox {
         ));
     }
 
+    /**
+     * Play a track
+     * @param music The name of the track
+     */
     public static void playTrack(String music) {
         Map<String, String> track = tracks.get(music);
         if(track == null) {

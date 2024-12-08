@@ -25,6 +25,9 @@ import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.*;
 
+/**
+ * The Sniffer Caretaker minigame controller
+ */
 public class SnifferCaretakerController extends Teams2MinigameBase implements Minigame {
     public Entity redSniffer;
     public Entity blueSniffer;

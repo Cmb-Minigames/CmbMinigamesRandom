@@ -25,6 +25,9 @@ import xyz.devcmb.cmr.utils.*;
 
 import java.util.*;
 
+/**
+ * The Capture The Flag minigame controller
+ */
 public class CaptureTheFlagController extends Teams2MinigameBase implements Minigame {
     private boolean blueTaken = false;
     private boolean redTaken = false;

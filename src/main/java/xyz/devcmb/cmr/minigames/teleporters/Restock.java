@@ -4,6 +4,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import xyz.devcmb.cmr.minigames.TeleportersController;
 
+/**
+ * The Restock event
+ */
 public class Restock implements TeleportersEvent {
     public TeleportersController teleportersController;
 
