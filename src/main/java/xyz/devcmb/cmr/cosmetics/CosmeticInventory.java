@@ -321,9 +321,6 @@ public class CosmeticInventory {
             inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
         }
 
-        inventory.setItem(4, new ItemStack(Material.YELLOW_STAINED_GLASS_PANE));
-        inventory.setItem(22, new ItemStack(Material.YELLOW_STAINED_GLASS_PANE));
-
         player.openInventory(inventory);
 
         List<ItemStack> cosmetics = new ArrayList<>();
@@ -336,6 +333,7 @@ public class CosmeticInventory {
         }
         ItemStack cosmetic = CosmeticManager.cosmetics.get(CrateManager.rollCrate(player, crate));
         cosmetics.add(cosmetic);
+
         for (int i = 0; i < 4; i++) {
             String cosmeticName = CrateManager.rollRandomCosmeticFromCrate(crate);
             ItemStack cosmeticItem = CosmeticManager.cosmetics.get(cosmeticName);
@@ -363,8 +361,21 @@ public class CosmeticInventory {
                     inventory.setItem(i, inventory.getItem(i + 1));
                 }
 
-                inventory.setItem(17, cosmetics.get(index));
+                ItemStack currentCosmetic = cosmetics.get(index);
+                if(currentCosmetic == null) {
+                    CmbMinigamesRandom.LOGGER.warning("Cosmetic is null.");
+                    return;
+                }
+
+                inventory.setItem(17, currentCosmetic);
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 10, 1);
+
+
+                ItemStack centerItem = inventory.getItem(13);
+                if(centerItem != null && centerItem.hasItemMeta() && Objects.requireNonNull(centerItem.getItemMeta()).hasItemName()) {
+                    inventory.setItem(4, new ItemStack(chatColorToGlassPane(centerItem.getItemMeta().getItemName())));
+                    inventory.setItem(22, new ItemStack(chatColorToGlassPane(centerItem.getItemMeta().getItemName())));
+                }
                 index++;
             }
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 3);
@@ -416,5 +427,27 @@ public class CosmeticInventory {
         }
 
         player.openInventory(inventory);
+    }
+
+    /**
+     * Get a glass pane material by checking if it has a ChatColor in its name
+     * @param rarity The string of the rarity
+     */
+    private Material chatColorToGlassPane(String rarity) {
+        if (rarity.contains(ChatColor.WHITE.toString())) {
+            return Material.WHITE_STAINED_GLASS_PANE;
+        } else if (rarity.contains(ChatColor.GREEN.toString())) {
+            return Material.GREEN_STAINED_GLASS_PANE;
+        } else if (rarity.contains(ChatColor.BLUE.toString())) {
+            return Material.LIGHT_BLUE_STAINED_GLASS_PANE;
+        } else if (rarity.contains(ChatColor.DARK_PURPLE.toString())) {
+            return Material.PURPLE_STAINED_GLASS_PANE;
+        } else if (rarity.contains(ChatColor.GOLD.toString())) {
+            return Material.ORANGE_STAINED_GLASS_PANE;
+        } else if (rarity.contains(ChatColor.RED.toString())) {
+            return Material.RED_STAINED_GLASS_PANE;
+        } else {
+            return Material.GRAY_STAINED_GLASS_PANE;
+        }
     }
 }
