@@ -11,9 +11,8 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.*;
-import xyz.devcmb.cmr.utils.timers.KaboomersTimer;
-import xyz.devcmb.cmr.utils.timers.Timer;
-import xyz.devcmb.cmr.utils.timers.TimerManager;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
 

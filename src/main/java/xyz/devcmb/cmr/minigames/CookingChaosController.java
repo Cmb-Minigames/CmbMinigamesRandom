@@ -17,8 +17,8 @@ import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
-import xyz.devcmb.cmr.utils.timers.Timer;
-import xyz.devcmb.cmr.utils.timers.TimerManager;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

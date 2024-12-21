@@ -5,8 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-import xyz.devcmb.cmr.GameManager;
-import xyz.devcmb.cmr.utils.timers.TimerManager;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 /**
  * A command for pausing or unpausing the loop

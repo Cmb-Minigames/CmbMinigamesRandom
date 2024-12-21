@@ -18,7 +18,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
-import xyz.devcmb.cmr.utils.timers.TimerManager;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
 

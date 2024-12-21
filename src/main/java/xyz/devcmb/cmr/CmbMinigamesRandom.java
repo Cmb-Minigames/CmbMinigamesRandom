@@ -13,7 +13,7 @@ import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.MusicBox;
-import xyz.devcmb.cmr.utils.timers.TimerManager;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.logging.Logger;
 

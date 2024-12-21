@@ -10,8 +10,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.minigames.*;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
-import xyz.devcmb.cmr.utils.timers.Timer;
-import xyz.devcmb.cmr.utils.timers.TimerManager;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
 
@@ -132,6 +132,7 @@ public class GameManager {
         currentMinigame = null;
         intermission = true;
         kills.replaceAll((player, kills) -> 0);
+        TimerManager.clearTimers();
 
         startIntermissionRunnable();
     }

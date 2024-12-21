@@ -1,4 +1,4 @@
-package xyz.devcmb.cmr.utils.timers;
+package xyz.devcmb.cmr.timers;
 
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.CookingChaosController;

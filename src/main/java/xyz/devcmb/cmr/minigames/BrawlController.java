@@ -18,8 +18,8 @@ import xyz.devcmb.cmr.items.ItemManager;
 import xyz.devcmb.cmr.minigames.bases.FFAMinigameBase;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
-import xyz.devcmb.cmr.utils.timers.Timer;
-import xyz.devcmb.cmr.utils.timers.TimerManager;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +161,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
 
     @Override
     public void stop() {
+        timer = null;
         allPlayers.forEach(player -> {
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
             player.setHealth(20);

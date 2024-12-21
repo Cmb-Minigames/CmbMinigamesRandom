@@ -1,4 +1,4 @@
-package xyz.devcmb.cmr.utils.timers;
+package xyz.devcmb.cmr.timers;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;

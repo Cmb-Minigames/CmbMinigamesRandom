@@ -1,4 +1,4 @@
-package xyz.devcmb.cmr.utils.timers;
+package xyz.devcmb.cmr.timers;
 
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 
@@ -20,6 +20,7 @@ public class TimerManager {
         registerTimer("kaboomers", new KaboomersTimer());
         registerTimer("brawl", new BrawlTimer());
         registerTimer("cookingchaos", new CookingChaosTimer());
+        registerTimer("sniffercaretaker", new SnifferCaretakerTimer());
     }
 
     public static Timer runTimer(String name) {
@@ -34,6 +35,10 @@ public class TimerManager {
 
         timer.run();
         return timer;
+    }
+
+    public static void clearTimers(){
+        activeTimers.clear();
     }
 
     public static void endActiveTimers(){
