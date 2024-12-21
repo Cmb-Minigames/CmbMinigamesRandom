@@ -34,7 +34,18 @@ public class PlayerListeners implements Listener {
     private final Map<Player, BukkitRunnable> countdowns = new HashMap<>();
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        Location spawnPoint = new Location(Bukkit.getWorld("pregame"), -26.5, -42.5, -18.5);
+        String worldName = CmbMinigamesRandom.getPlugin().getConfig().getString("lobby.worldName");
+        if(worldName == null || Bukkit.getWorld(worldName) == null){
+            event.getPlayer().sendMessage(ChatColor.RED + "The lobby world is not set up correctly. Please contact an administrator.");
+            return;
+        }
+
+        Location spawnPoint = new Location(Bukkit.getWorld(worldName),
+                CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.x"),
+                CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.y"),
+                CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.z")
+        );
+
         Player player = event.getPlayer();
         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
         ActionBar.registerPlayer(player);
@@ -67,7 +78,6 @@ public class PlayerListeners implements Listener {
                 TabList.updateTabListName(player);
             }
         });
-
         countdowns.get(player).runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
     }
 

@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
@@ -15,13 +16,19 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import xyz.devcmb.cmr.CmbMinigamesRandom;
 
 /**
  * A class for protecting the pregame lobby from griefing
  */
 public class PregameLobbyProtections implements Listener {
     private boolean isInPregameWorld(Player player) {
-        return player.getWorld().getName().equals("pregame");
+        String worldName = CmbMinigamesRandom.getPlugin().getConfig().getString("lobby.worldName");
+        if(worldName == null || Bukkit.getWorld(worldName) == null){
+            return false;
+        }
+
+        return player.getWorld().getName().equals(worldName);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

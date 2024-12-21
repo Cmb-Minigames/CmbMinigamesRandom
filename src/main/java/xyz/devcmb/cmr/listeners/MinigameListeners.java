@@ -218,7 +218,12 @@ public class MinigameListeners implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event){
         if(GameManager.currentMinigame == null || !GameManager.ingame) {
-            event.setRespawnLocation(new Location(Bukkit.getWorld("pregame"), -26.5, -43.5, -18));
+            String worldName = CmbMinigamesRandom.getPlugin().getConfig().getString("lobby.worldName");
+            if(worldName == null || Bukkit.getWorld(worldName) == null){
+                return;
+            }
+
+            event.setRespawnLocation(new Location(Bukkit.getWorld(worldName), -26.5, -43.5, -18));
             return;
         }
 
@@ -243,8 +248,8 @@ public class MinigameListeners implements Listener {
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){
             killer.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 10, 1);
-            killer.sendTitle("⚔ " + Format.formatPlayerName(player), "+" + minigame.getStarSources().get(StarSource.KILL).intValue() + " 🌟", 0, 40, 10);
-            Database.addUserStars(killer, minigame.getStarSources().get(StarSource.KILL).intValue());
+            killer.sendTitle("⚔ " + Format.formatPlayerName(player), "+" + minigame.getStarSources().get(StarSource.KILL) + " 🌟", 0, 40, 10);
+            Database.addUserStars(killer, minigame.getStarSources().get(StarSource.KILL));
             GameManager.kills.put(killer, GameManager.kills.get(killer).intValue() + 1);
         }
     }

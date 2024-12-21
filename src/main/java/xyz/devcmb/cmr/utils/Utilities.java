@@ -222,7 +222,18 @@ public class Utilities {
         MapLoader.unloadMap();
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.spigot().respawn();
-            player.teleport(Objects.requireNonNull(Bukkit.getWorld("pregame")).getSpawnLocation());
+
+            String worldName = CmbMinigamesRandom.getPlugin().getConfig().getString("lobby.worldName");
+            if(worldName == null || Bukkit.getWorld(worldName) == null){
+                return;
+            }
+
+            player.teleport(new Location(Bukkit.getWorld(worldName),
+                    CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.x"),
+                    CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.y"),
+                    CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.z")
+            ));
+
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
             Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
