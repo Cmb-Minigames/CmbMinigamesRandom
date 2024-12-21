@@ -19,6 +19,7 @@ public class TimerManager {
         registerTimer("ctf", new CTFTimer());
         registerTimer("kaboomers", new KaboomersTimer());
         registerTimer("brawl", new BrawlTimer());
+        registerTimer("cookingchaos", new CookingChaosTimer());
     }
 
     public static Timer runTimer(String name) {
