@@ -8,8 +8,8 @@ description: The CmbMinigames plugin for random minigames
 website: devcmb.xyz
 depend: ['Multiverse-Core']
 commands:
-  pauseloop:
-    description: Stop the loop
+  pause:
+    description: Pause the current minigame or intermission
     usage: /<command>
     permission: cmbminigames.pause
   end:

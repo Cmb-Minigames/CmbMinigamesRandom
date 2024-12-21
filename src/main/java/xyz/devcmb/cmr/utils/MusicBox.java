@@ -16,8 +16,8 @@ import java.util.Map;
  * A utility class for playing music in the server
  */
 public class MusicBox {
-    public static Map<String, Map<String, Object>> tracks = new HashMap<>();
-    private static Map<Player, BukkitRunnable> runnables = new HashMap<>();
+    public static final Map<String, Map<String, Object>> tracks = new HashMap<>();
+    private static final Map<Player, BukkitRunnable> runnables = new HashMap<>();
 
     /**
      * Register all the tracks

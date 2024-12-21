@@ -18,7 +18,7 @@ public class RegisterCommands {
      * Registers all commands and tab completions
      */
     public static void register(){
-        registerSingleCommand("pauseloop", new StopLoopCommand());
+        registerSingleCommand("pause", new StopLoopCommand());
         registerSingleCommand("end", new EndMinigameCommand());
         registerSingleCommand("minigame", new MinigameCommand(CmbMinigamesRandom.adventure()));
         registerSingleCommand("flags", new FlagsCommand(CmbMinigamesRandom.adventure()));

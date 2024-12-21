@@ -13,6 +13,7 @@ import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.MusicBox;
+import xyz.devcmb.cmr.utils.timers.TimerManager;
 
 import java.util.logging.Logger;
 
@@ -76,6 +77,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         ItemManager.registerAllItems();
         GameManager.registerAllMinigames();
         CMScoreboardManager.registerAllScoreboards();
+        TimerManager.registerAllTimers();
     }
 
     @Override

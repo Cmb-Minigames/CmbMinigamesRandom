@@ -10,6 +10,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.minigames.*;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
+import xyz.devcmb.cmr.utils.timers.Timer;
+import xyz.devcmb.cmr.utils.timers.TimerManager;
 
 import java.util.*;
 
@@ -20,20 +22,17 @@ public class GameManager {
     public static List<Minigame> minigames = new ArrayList<>();
     public static Minigame currentMinigame = null;
     public static boolean intermission = true;
-    public static boolean intermissionCountdownInProgress = false;
-    public static int timeLeft = 30;
     public static boolean pregame = false;
     public static boolean ingame = false;
     public static boolean playersFrozen = false;
     public static Map<String, ?> currentMap = null;
     public static boolean gameEnding = false;
     public static BukkitRunnable intermisionRunnable = null;
-    public static boolean paused = false;
     public static Map<Player, Number> kills = new HashMap<>();
     public static Map<Minigame, Number> minigamePlays = new HashMap<>();
     public static Minigame selectedMinigame = null;
     public static Map<Player, ChatColor> teamColors = new HashMap<>();
-    private static BukkitRunnable intermissionTimeDepreciation = null;
+    public static Timer intermissionTimer = null;
 
     /**
      * Register all the minigames
@@ -96,7 +95,7 @@ public class GameManager {
         teamColors.put(event.getPlayer(), ChatColor.WHITE);
         if(ingame || pregame) {
             currentMinigame.playerJoin(event);
-        } else if(intermissionTimeDepreciation == null && (CmbMinigamesRandom.DeveloperMode ? !Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){
+        } else if(intermissionTimer == null && (CmbMinigamesRandom.DeveloperMode ? !Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){
             prepare();
         }
     }
@@ -128,12 +127,10 @@ public class GameManager {
         pregame = false;
         ingame = false;
         gameEnding = false;
-        intermissionTimeDepreciation = null;
+        intermissionTimer = null;
         playersFrozen = false;
         currentMinigame = null;
         intermission = true;
-        intermissionCountdownInProgress = false;
-        timeLeft = 30;
         kills.replaceAll((player, kills) -> 0);
 
         startIntermissionRunnable();
@@ -151,8 +148,8 @@ public class GameManager {
         intermisionRunnable = new BukkitRunnable() {
             @Override
             public void run() {
-                if(paused) return;
-                if((CmbMinigamesRandom.DeveloperMode ? (!Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() >= 2)) && !intermissionCountdownInProgress){
+                if(TimerManager.paused) return;
+                if((CmbMinigamesRandom.DeveloperMode ? (!Bukkit.getOnlinePlayers().isEmpty()) : (Bukkit.getOnlinePlayers().size() >= 2)) && intermissionTimer == null){
                     doIntermission();
                     this.cancel();
                     intermisionRunnable = null;
@@ -165,38 +162,12 @@ public class GameManager {
 
 
     /**
-     * Start the intermission countdown
+     * Start the intermission timer
+     * See {@link TimerManager#runTimer(String)}
      */
     public static void doIntermission(){
-        if(intermissionTimeDepreciation != null) return;
-        intermissionTimeDepreciation = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if(paused){
-                    this.cancel();
-                    intermission = false;
-                    intermissionTimeDepreciation = null;
-                    startIntermissionRunnable();
-                    return;
-                } else if(!intermission) {
-                    intermission = true;
-                }
-
-                if(timeLeft <= 0 || (CmbMinigamesRandom.DeveloperMode ? Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() < 2)){
-                    this.cancel();
-                    intermissionTimeDepreciation = null;
-                    if(timeLeft == 0){
-                        intermission = false;
-                        pregame = true;
-                        chooseRandom();
-                    }
-                }
-
-                timeLeft -= 1;
-            }
-        };
-
-        intermissionTimeDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
+        if(intermissionTimer != null) return;
+        intermissionTimer = TimerManager.runTimer("intermission");
     }
 
     /**
