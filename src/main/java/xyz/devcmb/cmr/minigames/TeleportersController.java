@@ -10,6 +10,8 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.FFAMinigameBase;
 import xyz.devcmb.cmr.minigames.teleporters.*;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
 
@@ -25,8 +27,9 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
     private BukkitRunnable eventRunnable = null;
     public Boolean eventActive = false;
     private final List<TeleportersEvent> events = new ArrayList<>();
-
     private Boolean gameStarted = false;
+
+    private Timer timer;
 
     public TeleportersController(){
         events.add(new FunnyStick(this));
@@ -83,6 +86,8 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
                     player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
                 });
 
+                timer = TimerManager.runTimer("teleporters");
+
                 eventRunnable = new BukkitRunnable(){
                     @Override
                     public void run() {
@@ -128,6 +133,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
         if(eventRunnable != null) eventRunnable.cancel();
         eventRunnable = null;
         gameStarted = false;
+        timer = null;
 
         super.stop();
     }
@@ -162,6 +168,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
                 }
 
                 if (players.size() == 1) {
+                    timer.end();
                     endGame();
                 } else if (players.isEmpty()) {
                     stop();
@@ -180,13 +187,13 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
         playerLives.put(event.getEntity(), playerLives.get(event.getEntity()) - 1);
     }
 
-    protected void endGame(){
+    public void endGame(){
         eventRunnable.cancel();
         eventRunnable = null;
-        if(players.size() == 1){
-            super.endGame();
-        } else if(players.isEmpty()){
+        if(players.isEmpty()){
             stop();
+        } else {
+            super.endGame();
         }
     }
 

@@ -21,6 +21,7 @@ public class TimerManager {
         registerTimer("brawl", new BrawlTimer());
         registerTimer("cookingchaos", new CookingChaosTimer());
         registerTimer("sniffercaretaker", new SnifferCaretakerTimer());
+        registerTimer("teleporters", new TeleportersTimer());
     }
 
     public static Timer runTimer(String name) {
