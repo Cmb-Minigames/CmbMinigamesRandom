@@ -5,6 +5,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 
@@ -15,7 +16,8 @@ import java.util.Map;
  * A utility class for playing music in the server
  */
 public class MusicBox {
-    public static Map<String, Map<String, String>> tracks = new HashMap<>();
+    public static Map<String, Map<String, Object>> tracks = new HashMap<>();
+    private static Map<Player, BukkitRunnable> runnables = new HashMap<>();
 
     /**
      * Register all the tracks
@@ -25,7 +27,9 @@ public class MusicBox {
             "kaboomers",
             "cmbminigames:kaboomers",
             "Kaboom!",
-            "Nibbl_z"
+            "Nibbl_z",
+            128,
+            false
         );
     }
 
@@ -36,11 +40,13 @@ public class MusicBox {
      * @param songName The name of the song
      * @param author The author of the song
      */
-    private static void registerTrack(String name, String musicPath, String songName, String author){
+    private static void registerTrack(String name, String musicPath, String songName, String author, Integer time, Boolean loop){
         tracks.put(name, Map.of(
             "path", musicPath,
             "song", songName,
-            "author", author
+            "author", author,
+            "time", time,
+            "loop", loop
         ));
     }
 
@@ -49,15 +55,19 @@ public class MusicBox {
      * @param music The name of the track
      */
     public static void playTrack(String music) {
-        Map<String, String> track = tracks.get(music);
+        Map<String, Object> track = tracks.get(music);
         if(track == null) {
             CmbMinigamesRandom.LOGGER.warning("Failed to find a track for " + music);
             return;
         }
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.playSound(player, track.get("path"), SoundCategory.MUSIC, 1, 1);
-//            Utilities.showAdvancement(player, "minecraft:jukebox", "Now Playing", "\"" + track.get("song") + "\" by " + track.get("author"));
+            player.playSound(player, (String) track.get("path"), SoundCategory.MUSIC, 1, 1);
+
+            if((Boolean) track.get("loop")){
+                loopTrack(player, music);
+            }
+
             Audience audience = CmbMinigamesRandom.adventure().player(player);
             final BossBar bossBar = BossBar.bossBar(
                     Component.text("\"" + track.get("song") + "\" by " + track.get("author")),
@@ -85,4 +95,29 @@ public class MusicBox {
         });
     }
 
+    static void loopTrack(Player player, String music) {
+        Map<String, Object> track = tracks.get(music);
+
+        if(runnables.get(player) != null) {
+            runnables.get(player).cancel();
+            runnables.put(player, null);
+        }
+
+        runnables.put(player, new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.playSound(player, (String) track.get("path"), SoundCategory.MUSIC, 1, 1);
+                loopTrack(player, music);
+            }
+        });
+        runnables.get(player).runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, (Integer) track.get("time") * 20);
+    }
+
+    public static void stopTrack(Player player) {
+        if(runnables.containsKey(player)) {
+            runnables.get(player).cancel();
+            player.stopAllSounds();
+            runnables.remove(player);
+        }
+    }
 }
