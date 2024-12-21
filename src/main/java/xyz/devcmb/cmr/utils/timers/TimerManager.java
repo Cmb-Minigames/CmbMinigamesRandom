@@ -19,6 +19,7 @@ public class TimerManager {
 
     public static void registerAllTimers(){
         registerTimer("intermission", new IntermissionTimer());
+        registerTimer("ctf", new CTFTimer());
         registerTimer("kaboomers", new KaboomersTimer());
     }
 

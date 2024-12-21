@@ -21,9 +21,9 @@ public class KaboomersScoreboard implements HandledScoreboard {
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         assert scoreboardManager != null;
-        if(kaboomersController.timer == null) return null;
-
         Scoreboard board = scoreboardManager.getNewScoreboard();
+
+        if(kaboomersController.timer == null) return board;
 
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Kaboomers" + " ".repeat(5));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);

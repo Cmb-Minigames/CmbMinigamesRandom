@@ -75,6 +75,7 @@ public class KaboomersController extends Teams2MinigameBase implements Minigame 
     @Override
     public void stop() {
         super.stop();
+        timer = null;
         redBlocks.clear();
         blueBlocks.clear();
     }
