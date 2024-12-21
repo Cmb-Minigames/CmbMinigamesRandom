@@ -81,6 +81,7 @@ public class KaboomersController extends Teams2MinigameBase implements Minigame 
 
     public void endGame(){
         GameManager.gameEnding = true;
+        timer = null;
         if(redBlocks.size() > blueBlocks.size()){
             RED.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);

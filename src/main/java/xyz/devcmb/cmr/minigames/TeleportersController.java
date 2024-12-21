@@ -29,7 +29,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
     private final List<TeleportersEvent> events = new ArrayList<>();
     private Boolean gameStarted = false;
 
-    private Timer timer;
+    public Timer timer;
 
     public TeleportersController(){
         events.add(new FunnyStick(this));
@@ -188,6 +188,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
     }
 
     public void endGame(){
+        timer = null;
         eventRunnable.cancel();
         eventRunnable = null;
         if(players.isEmpty()){

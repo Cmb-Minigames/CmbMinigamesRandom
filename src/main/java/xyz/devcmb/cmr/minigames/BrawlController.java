@@ -32,7 +32,7 @@ import java.util.Objects;
 public class BrawlController extends FFAMinigameBase implements Minigame {
     private final List<ItemStack> smallChestItems = new ArrayList<>();
     private final List<ItemStack> largeChestItems = new ArrayList<>();
-    private Timer timer;
+    public Timer timer;
 
     public BrawlController(){
         // Small items
@@ -197,6 +197,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
         }
 
         if(players.size() == 1){
+            timer.end();
             endGame();
         } else if(players.size() == 2){
             allPlayers.forEach(player -> {
@@ -208,7 +209,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
 
     @Override
     protected void endGame() {
-        timer.end();
+        timer = null;
         super.endGame();
     }
 

@@ -20,6 +20,8 @@ import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 import xyz.devcmb.cmr.utils.*;
 import xyz.devcmb.cmr.listeners.minigames.ElectricEelListeners;
 
@@ -39,8 +41,7 @@ public class ElectricEelController implements Minigame {
     public int redUranium = 0;
     public int blueUranium = 0;
     public boolean hasStarted = false;
-    public int timeLeft = 0;
-    private BukkitRunnable timerTick;
+    public Timer timer;
 
     public ElectricEelController() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -143,7 +144,6 @@ public class ElectricEelController implements Minigame {
 
         redUranium = 6;
         blueUranium = 6;
-        timeLeft = 60 * 4;
 
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         if (mapData == null) {
@@ -198,6 +198,8 @@ public class ElectricEelController implements Minigame {
             hasStarted = true;
             Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
 
+            timer = TimerManager.runTimer("electriceel");
+
             Map<?, List<?>> kit = Kits.electriceel_kit;
             RED.forEach(player -> {
                 Kits.kitPlayer(kit, player, Material.RED_CONCRETE);
@@ -209,21 +211,6 @@ public class ElectricEelController implements Minigame {
                 player.setSaturation(0);
                 player.setHealth(20);
             });
-
-            timerTick = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if(timeLeft <= 0){
-                        this.cancel();
-                        endGame();
-                        return;
-                    }
-
-                    timeLeft--;
-                }
-            };
-
-            timerTick.runTaskTimer(CmbMinigamesRandom.getPlugin(), 20, 20);
         }, 20 * 10);
     }
 
@@ -250,14 +237,14 @@ public class ElectricEelController implements Minigame {
 
         redUranium = 0;
         blueUranium = 0;
-        timeLeft = 0;
 
-        if(timerTick != null) timerTick.cancel();
+        timer = null;
 
         Utilities.endGameResuable();
     }
 
     public void endGame() {
+        timer = null;
         GameManager.gameEnding = true;
         if (redUranium > blueUranium) {
             RED.forEach(plr -> {

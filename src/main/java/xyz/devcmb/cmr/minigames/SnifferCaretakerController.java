@@ -44,7 +44,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
     public int happinessDecreaseAmount = 1;
 
     private final List<ItemStack> items = new ArrayList<>();
-    private Timer timer;
+    public Timer timer;
 
     public SnifferCaretakerController() {
         ItemStack speedPotion = new ItemStack(Material.POTION);
@@ -177,6 +177,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
                         return;
                     }
                     if ((redSnifferHappiness <= 0 || blueSnifferHappiness <= 0) && (CmbMinigamesRandom.DeveloperMode ? !(RED.isEmpty() && BLUE.isEmpty()) : (!RED.isEmpty() && !BLUE.isEmpty()))) {
+                        timer.end();
                         endGame();
                     }
                 }
@@ -283,6 +284,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
     }
 
     public void endGame() {
+        timer = null;
         GameManager.gameEnding = true;
 
         if (redSnifferHappiness == blueSnifferHappiness) {

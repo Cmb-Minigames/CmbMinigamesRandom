@@ -22,6 +22,7 @@ public class TimerManager {
         registerTimer("cookingchaos", new CookingChaosTimer());
         registerTimer("sniffercaretaker", new SnifferCaretakerTimer());
         registerTimer("teleporters", new TeleportersTimer());
+        registerTimer("electriceel", new ElectricEelTimer());
     }
 
     public static Timer runTimer(String name) {
