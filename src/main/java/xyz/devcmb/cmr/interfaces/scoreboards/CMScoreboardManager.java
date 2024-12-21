@@ -113,6 +113,7 @@ public class CMScoreboardManager {
         Scoreboard merged = scoreboardManager.getNewScoreboard();
 
         for (Scoreboard board : boards) {
+            if(board == null) continue;
             board.getTeams().forEach(team -> {
                 org.bukkit.scoreboard.Team newTeam = merged.registerNewTeam(team.getName());
                 newTeam.setPrefix(team.getPrefix());

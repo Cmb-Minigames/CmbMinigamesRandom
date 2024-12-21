@@ -1,17 +1,14 @@
 package xyz.devcmb.cmr.utils.timers;
 
-import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TimerManager {
     private static final Map<String, Timer> timers = new HashMap<>();
     public static boolean paused = false;
-    public static List<Timer> activeTimers = new ArrayList<>();
+    public static final Set<Timer> activeTimers = ConcurrentHashMap.newKeySet();
 
     public static void registerTimer(String name, Timer timer){
         timers.put(name, timer);
@@ -21,6 +18,7 @@ public class TimerManager {
         registerTimer("intermission", new IntermissionTimer());
         registerTimer("ctf", new CTFTimer());
         registerTimer("kaboomers", new KaboomersTimer());
+        registerTimer("brawl", new BrawlTimer());
     }
 
     public static Timer runTimer(String name) {

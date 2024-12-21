@@ -18,6 +18,8 @@ import xyz.devcmb.cmr.items.ItemManager;
 import xyz.devcmb.cmr.minigames.bases.FFAMinigameBase;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
+import xyz.devcmb.cmr.utils.timers.Timer;
+import xyz.devcmb.cmr.utils.timers.TimerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Objects;
 public class BrawlController extends FFAMinigameBase implements Minigame {
     private final List<ItemStack> smallChestItems = new ArrayList<>();
     private final List<ItemStack> largeChestItems = new ArrayList<>();
+    private Timer timer;
 
     public BrawlController(){
         // Small items
@@ -99,9 +102,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
     public void start() {
         super.start();
 
-        players.forEach(player -> {
-            Utilities.Countdown(player, 10);
-        });
+        players.forEach(player -> Utilities.Countdown(player, 10));
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Map<?, List<?>> kit = Kits.brawl_kit;
@@ -112,6 +113,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
                 player.setHealth(40);
             });
 
+            timer = TimerManager.runTimer("brawl");
 
             // WHAT IS THIS
             // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -201,6 +203,12 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
                 player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "STANDOFF", "", 15, 50, 10);
             });
         }
+    }
+
+    @Override
+    protected void endGame() {
+        timer.end();
+        super.endGame();
     }
 
     @Override

@@ -38,6 +38,7 @@ public abstract class TimerSuper {
             @Override
             public void run(){
                 if(TimerManager.paused) return;
+                if(time == -1) return;
 
                 if(time <= 0){
                     cancel();
@@ -63,6 +64,7 @@ public abstract class TimerSuper {
         if(runnable != null){
             runnable.cancel();
             action.execute(true);
+            TimerManager.activeTimers.remove(this);
             time = initialTime;
         }
     }
