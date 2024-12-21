@@ -11,6 +11,9 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.*;
+import xyz.devcmb.cmr.utils.timers.KaboomersTimer;
+import xyz.devcmb.cmr.utils.timers.Timer;
+import xyz.devcmb.cmr.utils.timers.TimerManager;
 
 import java.util.*;
 
@@ -20,8 +23,7 @@ import java.util.*;
 public class KaboomersController extends Teams2MinigameBase implements Minigame {
     public List<Block> redBlocks = new ArrayList<>();
     public List<Block> blueBlocks = new ArrayList<>();
-    private BukkitRunnable timeDepreciation = null;
-    public int timeLeft = 0;
+    public Timer timer;
 
     @Override
     public void start() {
@@ -63,20 +65,8 @@ public class KaboomersController extends Teams2MinigameBase implements Minigame 
 
                     GameManager.playersFrozen = false;
                     GameManager.ingame = true;
-                    timeLeft = 60 * 2;
 
-                    timeDepreciation = new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if(timeLeft <= 0){
-                                this.cancel();
-                                endGame();
-                                return;
-                            }
-                            timeLeft -= 1;
-                        }
-                    };
-                    timeDepreciation.runTaskTimer(CmbMinigamesRandom.getPlugin(), 20, 20);
+                    timer = TimerManager.runTimer("kaboomers");
                 }, 20 * 10);
             }
         }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 2);
@@ -87,9 +77,6 @@ public class KaboomersController extends Teams2MinigameBase implements Minigame 
         super.stop();
         redBlocks.clear();
         blueBlocks.clear();
-        timeLeft = 0;
-
-        if(timeDepreciation != null) timeDepreciation.cancel();
     }
 
     public void endGame(){

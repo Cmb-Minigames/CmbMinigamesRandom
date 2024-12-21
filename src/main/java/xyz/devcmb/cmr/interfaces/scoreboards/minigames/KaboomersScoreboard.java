@@ -21,6 +21,8 @@ public class KaboomersScoreboard implements HandledScoreboard {
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         assert scoreboardManager != null;
+        if(kaboomersController.timer == null) return null;
+
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Kaboomers" + " ".repeat(5));
@@ -29,7 +31,7 @@ public class KaboomersScoreboard implements HandledScoreboard {
         Score blank1 = objective.getScore(" ");
         blank1.setScore(6);
 
-        Score timeLeft = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(kaboomersController.timeLeft));
+        Score timeLeft = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(kaboomersController.timer.getTime()));
         timeLeft.setScore(5);
 
         Score kills = objective.getScore("⚔ Kills: " + ChatColor.AQUA + GameManager.kills.get(player));

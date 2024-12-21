@@ -506,8 +506,8 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
+        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
         World world = Bukkit.getWorld(worldName);
 
         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);

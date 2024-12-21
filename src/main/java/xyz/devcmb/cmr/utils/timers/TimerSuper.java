@@ -41,8 +41,7 @@ public abstract class TimerSuper {
 
                 if(time <= 0){
                     cancel();
-                    action.execute(false);
-                    time = initialTime;
+                    finishTimer();
                     return;
                 }
 
@@ -52,6 +51,12 @@ public abstract class TimerSuper {
         runnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, clockTickTime);
 
         return runnable;
+    }
+
+    private void finishTimer(){
+        action.execute(false);
+        time = initialTime;
+        TimerManager.activeTimers.remove(this);
     }
 
     public void end(){
