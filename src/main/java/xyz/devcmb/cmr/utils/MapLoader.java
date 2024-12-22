@@ -2,14 +2,12 @@ package xyz.devcmb.cmr.utils;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.minigames.Minigame;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -65,7 +63,11 @@ public class MapLoader {
             }
 
             MVWorldManager worldManager = multiverseCore.getMVWorldManager();
-            worldManager.deleteWorld(LOADED_MAP);
+            if(worldManager.isMVWorld(LOADED_MAP)){
+                worldManager.deleteWorld(LOADED_MAP);
+            } else {
+                CmbMinigamesRandom.LOGGER.warning("World not managed by Multiverse: " + LOADED_MAP);
+            }
         } else {
             CmbMinigamesRandom.LOGGER.warning("No map loaded to unload.");
         }

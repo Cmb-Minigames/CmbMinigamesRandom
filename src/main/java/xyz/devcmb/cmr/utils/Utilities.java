@@ -18,6 +18,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
+import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
@@ -221,39 +222,44 @@ public class Utilities {
         if(GameManager.intermisionRunnable != null) GameManager.intermisionRunnable.cancel();
         GameManager.intermisionRunnable = null;
 
-        MapLoader.unloadMap();
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.spigot().respawn();
+            Fade.fadePlayer(player, 40, 20, 40);
 
-            String worldName = CmbMinigamesRandom.getPlugin().getConfig().getString("lobby.worldName");
-            if(worldName == null || Bukkit.getWorld(worldName) == null){
-                return;
-            }
+            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+                player.spigot().respawn();
+                String worldName = CmbMinigamesRandom.getPlugin().getConfig().getString("lobby.worldName");
+                if(worldName == null || Bukkit.getWorld(worldName) == null){
+                    return;
+                }
 
-            player.teleport(new Location(Bukkit.getWorld(worldName),
-                    CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.x"),
-                    CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.y"),
-                    CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.z")
-            ));
+                player.teleport(new Location(Bukkit.getWorld(worldName),
+                        CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.x"),
+                        CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.y"),
+                        CmbMinigamesRandom.getPlugin().getConfig().getDouble("lobby.spawn.z")
+                ));
 
-            player.setGameMode(GameMode.SURVIVAL);
-            player.getInventory().clear();
-            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-            player.setGlowing(false);
-            GameManager.teamColors.put(player, ChatColor.WHITE);
+                player.setGameMode(GameMode.SURVIVAL);
+                player.getInventory().clear();
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+                player.setGlowing(false);
+                GameManager.teamColors.put(player, ChatColor.WHITE);
 
-            CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(player);
-            cosmeticInventory.giveInventoryItem();
+                CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(player);
+                cosmeticInventory.giveInventoryItem();
 
-            for (PotionEffect effect : player.getActivePotionEffects()) {
-                player.removePotionEffect(effect.getType());
-            }
+                for (PotionEffect effect : player.getActivePotionEffects()) {
+                    player.removePotionEffect(effect.getType());
+                }
 
-            PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
-            player.addPotionEffect(hungerEffect);
+                PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
+                player.addPotionEffect(hungerEffect);
+            }, 60);
         });
 
-        GameManager.prepare();
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            GameManager.prepare();
+            MapLoader.unloadMap();
+        }, 40);
     }
 
     /**
