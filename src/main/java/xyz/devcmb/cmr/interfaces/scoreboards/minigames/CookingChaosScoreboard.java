@@ -25,13 +25,15 @@ public class CookingChaosScoreboard implements HandledScoreboard {
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
+        if(controller.timer == null) return board;
+
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Cooking Chaos" + " ".repeat(5));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank1 = objective.getScore(" ");
         blank1.setScore(6);
 
-        Score timeLeft = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(controller.timeLeft));
+        Score timeLeft = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(controller.timer.getTime()));
         timeLeft.setScore(5);
 
         Score kills = objective.getScore("⚔ Kills: " + ChatColor.AQUA + GameManager.kills.get(player));

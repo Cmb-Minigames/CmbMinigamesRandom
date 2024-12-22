@@ -22,6 +22,8 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.*;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
 
@@ -36,9 +38,8 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
     public int redScore = 0;
     public int blueScore = 0;
     private BukkitRunnable itemSpawnRunnable = null;
-    public int timePassed = 0;
-    private BukkitRunnable timePassedRunnable = null;
     private final List<ItemStack> items = new ArrayList<>();
+    public Timer timer;
 
     public CaptureTheFlagController() {
         ItemStack harmingArrow = new ItemStack(Material.TIPPED_ARROW);
@@ -129,13 +130,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                             Kits.kitPlayer(kit, player, Material.BLUE_CONCRETE);
                         });
 
-                        timePassedRunnable = new BukkitRunnable(){
-                            @Override
-                            public void run() {
-                                timePassed++;
-                            }
-                        };
-                        timePassedRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
+                        timer = TimerManager.runTimer("ctf");
 
                         spawnRedFlag();
                         spawnBlueFlag();
@@ -210,14 +205,13 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
 
     @Override
     public void stop() {
-        timePassedRunnable.cancel();
-        timePassed = 0;
         redFlagEntity.remove();
         blueFlagEntity.remove();
         redScore = 0;
         blueScore = 0;
         redTaken = false;
         blueTaken = false;
+        timer = null;
 
         if(itemSpawnRunnable != null) itemSpawnRunnable.cancel();
         super.stop();
@@ -265,6 +259,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                     redTaken = false;
                     Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE));
                     if(blueScore >= 3){
+                        timer.end();
                         endGame("blue");
                     } else {
                         BLUE.forEach(plr -> {
@@ -313,6 +308,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                     blueTaken = false;
                     Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE));
                     if(redScore >= 3) {
+                        timer.end();
                         endGame("red");
                     } else {
                         BLUE.forEach(plr -> {
@@ -333,8 +329,9 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         }
     }
 
-    private void endGame(String winner){
+    public void endGame(String winner){
         GameManager.gameEnding = true;
+        timer = null;
         if(winner.equals("red")){
             RED.forEach(plr -> {
                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
@@ -359,6 +356,19 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
             BLUE.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+        } else {
+            RED.forEach(plr -> {
+                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                plr.getInventory().clear();
+                plr.setGameMode(GameMode.SPECTATOR);
+            });
+            BLUE.forEach(plr -> {
+                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
@@ -506,8 +516,8 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueTeamSpawn");
+        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redSpawn");
+        Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
         World world = Bukkit.getWorld(worldName);
 
         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);

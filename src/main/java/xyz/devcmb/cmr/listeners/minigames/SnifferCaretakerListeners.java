@@ -162,6 +162,8 @@ public class SnifferCaretakerListeners implements Listener {
         SnifferCaretakerController controller = (SnifferCaretakerController) GameManager.getMinigameByName("Sniffer Caretaker");
         if (controller == null || GameManager.currentMinigame != controller) return;
 
+        InitializeLocations();
+
         Player player = event.getPlayer();
         Item itemDrop = event.getItemDrop();
         Material material = itemDrop.getItemStack().getType();

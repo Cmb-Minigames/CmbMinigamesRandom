@@ -16,6 +16,7 @@ import java.util.Objects;
 public class StartingSoonScoreboard implements HandledScoreboard {
     @Override
     public Scoreboard getScoreboard(Player player) {
+        if(GameManager.intermissionTimer == null) return null;
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard board = Objects.requireNonNull(scoreboardManager).getNewScoreboard();
 
@@ -28,7 +29,7 @@ public class StartingSoonScoreboard implements HandledScoreboard {
         Score players = objective.getScore(ChatColor.WHITE + "\u1F46 Players: " + ChatColor.AQUA + Bukkit.getOnlinePlayers().size());
         players.setScore(3);
 
-        Score startingIn = objective.getScore("ὕ Starting in " + ChatColor.AQUA + GameManager.timeLeft + " seconds");
+        Score startingIn = objective.getScore("ὕ Starting in " + ChatColor.AQUA + GameManager.intermissionTimer.getTime() + " seconds");
         startingIn.setScore(2);
 
         Score blank2 = objective.getScore("  ");

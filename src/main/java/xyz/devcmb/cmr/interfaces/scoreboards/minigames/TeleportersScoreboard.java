@@ -28,6 +28,8 @@ public class TeleportersScoreboard implements HandledScoreboard {
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
+        if(teleportersController.timer == null) return board;
+
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Teleporters" + " ".repeat(5));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 

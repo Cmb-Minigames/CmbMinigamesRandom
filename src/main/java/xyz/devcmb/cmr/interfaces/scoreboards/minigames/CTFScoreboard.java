@@ -24,13 +24,15 @@ public class CTFScoreboard implements HandledScoreboard {
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
+        if(ctfController.timer == null) return board;
+
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Capture the Flag" + " ".repeat(5));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank1 = objective.getScore("   ");
         blank1.setScore(6);
 
-        Score time = objective.getScore("ὕ " + ChatColor.YELLOW + "Time: " + ChatColor.RESET + Utilities.formatTime(ctfController.timePassed));
+        Score time = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(ctfController.timer.getTime()));
         time.setScore(5);
 
         Score blank3 = objective.getScore("  ");

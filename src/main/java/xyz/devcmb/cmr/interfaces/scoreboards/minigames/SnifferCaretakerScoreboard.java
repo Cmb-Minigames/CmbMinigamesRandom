@@ -22,6 +22,8 @@ public class SnifferCaretakerScoreboard implements HandledScoreboard {
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
+        if(snifferCaretakerController.timer == null) return board;
+
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), ChatColor.YELLOW + ChatColor.BOLD.toString() + "Sniffer Caretaker");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 

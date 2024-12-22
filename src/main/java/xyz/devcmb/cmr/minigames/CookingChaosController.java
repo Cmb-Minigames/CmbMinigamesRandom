@@ -17,6 +17,8 @@ import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CookingChaosController extends Teams2MinigameBase implements Minigame {
     private BukkitRunnable boneMealChestRefill;
     private BukkitRunnable customerRunnable;
-    private BukkitRunnable timerRunnable;
 
     private final List<EntityType> customerEntities = List.of(
         EntityType.ZOMBIE,
@@ -71,7 +72,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
     public final List<Map<String, Object>> blueTables = new ArrayList<>();
     public final List<Map<String, Object>> redTables = new ArrayList<>();
 
-    public Integer timeLeft = 0;
+    public Timer timer;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -173,7 +174,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
             Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
             Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.AIR);
 
-            timeLeft = 10 * 60;
+            timer = TimerManager.runTimer("cookingchaos");
 
             RED.forEach(player -> {
                 Map<?, List<?>> kit = Kits.cookingchaos_kit;
@@ -314,31 +315,17 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
             };
             customerRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 40);
 
-            timerRunnable = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if(timeLeft <= 0){
-                        this.cancel();
-                        endGame();
-                        return;
-                    }
-
-                    timeLeft--;
-                }
-            };
-            timerRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
         }, 10 * 20);
     }
 
     public void endGame(){
+        timer = null;
         GameManager.gameEnding = true;
 
         if(boneMealChestRefill != null) boneMealChestRefill.cancel();
         boneMealChestRefill = null;
         if(customerRunnable != null) customerRunnable.cancel();
         customerRunnable = null;
-        if(timerRunnable != null) timerRunnable.cancel();
-        timerRunnable = null;
 
         RED.forEach(player -> {
             player.getInventory().clear();
@@ -391,13 +378,12 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
 
     @Override
     public void stop() {
+        timer = null;
         super.stop();
         if(boneMealChestRefill != null) boneMealChestRefill.cancel();
         boneMealChestRefill = null;
         if(customerRunnable != null) customerRunnable.cancel();
         customerRunnable = null;
-        if(timerRunnable != null) timerRunnable.cancel();
-        timerRunnable = null;
         redScore = 0;
         blueScore = 0;
 

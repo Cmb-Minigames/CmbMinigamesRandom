@@ -18,6 +18,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.cosmetics.CosmeticInventory;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.*;
 
@@ -134,6 +135,7 @@ public class Utilities {
      * @return The formatted time string
      */
     public static String formatTime(int time){
+        if(TimerManager.paused) return ChatColor.YELLOW + "⏸ PAUSED";
         int minutes = time / 60;
         int seconds = time % 60;
         return String.format("%02d:%02d", minutes, seconds);

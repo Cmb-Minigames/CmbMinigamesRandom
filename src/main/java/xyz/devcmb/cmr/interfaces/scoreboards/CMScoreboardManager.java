@@ -11,6 +11,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.minigames.*;
 import xyz.devcmb.cmr.minigames.*;
+import xyz.devcmb.cmr.timers.TimerManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class CMScoreboardManager {
             @Override
             public void run() {
                 if (GameManager.intermission) {
-                    if(GameManager.paused){
+                    if(TimerManager.paused){
                         displayScoreboardFromName(player, "GamePaused");
                         return;
                     }
@@ -44,7 +45,7 @@ public class CMScoreboardManager {
                     }
                 } else if (GameManager.ingame) {
                     GameManager.currentMinigame.updateScoreboard(player);
-                } else if (GameManager.paused) {
+                } else if (TimerManager.paused) {
                     displayScoreboardFromName(player, "GamePaused");
                 } else {
                     sendScoreboardAlongDefaults(player, Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard());
@@ -112,6 +113,7 @@ public class CMScoreboardManager {
         Scoreboard merged = scoreboardManager.getNewScoreboard();
 
         for (Scoreboard board : boards) {
+            if(board == null) continue;
             board.getTeams().forEach(team -> {
                 org.bukkit.scoreboard.Team newTeam = merged.registerNewTeam(team.getName());
                 newTeam.setPrefix(team.getPrefix());

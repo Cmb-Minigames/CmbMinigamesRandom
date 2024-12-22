@@ -22,6 +22,8 @@ public class BrawlScoreboard implements HandledScoreboard {
         assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
+        if(brawlController.timer == null) return board;
+
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Brawl" + " ".repeat(5));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 

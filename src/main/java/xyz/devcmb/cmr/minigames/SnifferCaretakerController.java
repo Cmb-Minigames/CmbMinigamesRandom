@@ -19,6 +19,8 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
+import xyz.devcmb.cmr.timers.Timer;
+import xyz.devcmb.cmr.timers.TimerManager;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -42,6 +44,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
     public int happinessDecreaseAmount = 1;
 
     private final List<ItemStack> items = new ArrayList<>();
+    public Timer timer;
 
     public SnifferCaretakerController() {
         ItemStack speedPotion = new ItemStack(Material.POTION);
@@ -159,6 +162,8 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
                 player.setHealth(20);
             });
 
+            timer = TimerManager.runTimer("sniffercaretaker");
+
             Utilities.fillBlocks(redBarrierFromLocation, redBarrierToLocation, Material.AIR);
             Utilities.fillBlocks(blueBarrierFromLocation, blueBarrierToLocation, Material.AIR);
 
@@ -171,7 +176,10 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
                         this.cancel();
                         return;
                     }
-                    if ((redSnifferHappiness <= 0 || blueSnifferHappiness <= 0) && (CmbMinigamesRandom.DeveloperMode ? !(RED.isEmpty() && BLUE.isEmpty()) : (!RED.isEmpty() && !BLUE.isEmpty()))) endGame();
+                    if ((redSnifferHappiness <= 0 || blueSnifferHappiness <= 0) && (CmbMinigamesRandom.DeveloperMode ? !(RED.isEmpty() && BLUE.isEmpty()) : (!RED.isEmpty() && !BLUE.isEmpty()))) {
+                        timer.end();
+                        endGame();
+                    }
                 }
             };
 
@@ -256,6 +264,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
 
     @Override
     public void stop() {
+        timer = null;
         super.stop();
 
         redSniffer = null;
@@ -274,17 +283,18 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         blueSnifferHappiness = 0;
     }
 
-    private void endGame() {
+    public void endGame() {
+        timer = null;
         GameManager.gameEnding = true;
 
-        if (redSnifferHappiness == 0 && blueSnifferHappiness == 0) {
+        if (redSnifferHappiness == blueSnifferHappiness) {
             Bukkit.getOnlinePlayers().forEach(plr -> {
                 plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
-        } else if(blueSnifferHappiness == 0){
+        } else if(redSnifferHappiness > blueSnifferHappiness){
             RED.forEach(plr -> {
                 plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
@@ -298,7 +308,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
-        } else if(redSnifferHappiness == 0){
+        } else if(blueSnifferHappiness > redSnifferHappiness){
             RED.forEach(plr -> {
                 plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
