@@ -21,8 +21,16 @@ import java.util.*;
  */
 public class CosmeticInventory {
     private final Player player;
+    private static final ItemStack empty = new ItemStack(Material.ECHO_SHARD);
     public CosmeticInventory(Player plr){
         player = plr;
+
+        ItemMeta meta = empty.getItemMeta();
+        if(meta == null) return;
+        meta.setHideTooltip(true);
+        meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("empty_slot").intValue());
+
+        empty.setItemMeta(meta);
     }
 
     /**
@@ -75,12 +83,16 @@ public class CosmeticInventory {
 
                 inventory.setItem(2, shop);
 
+                for(int i = 3; i < 9; i++){
+                    inventory.setItem(i, empty);
+                }
+
                 // Border
                 for (int i = 9; i < 18; i++) {
-                    inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+                    inventory.setItem(i, empty);
                 }
                 for (int i = 45; i < 54; i++) {
-                    inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+                    inventory.setItem(i, empty);
                 }
 
                 List<String> userCosmetics = Database.getUserCosmetics(player);
@@ -128,6 +140,7 @@ public class CosmeticInventory {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
+                        previousPageMeta.setCustomModelData(1);
                         previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
@@ -138,6 +151,7 @@ public class CosmeticInventory {
                     ItemStack nextPage = new ItemStack(Material.ARROW);
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
+                        nextPageMeta.setCustomModelData(1);
                         nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
@@ -171,12 +185,16 @@ public class CosmeticInventory {
 
                 inventory.setItem(2, shop);
 
+                for(int i = 3; i < 9; i++){
+                    inventory.setItem(i, empty);
+                }
+
                 for (int i = 9; i < 18; i++) {
-                    inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+                    inventory.setItem(i, empty);
                 }
 
                 for (int i = 45; i < 54; i++) {
-                    inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+                    inventory.setItem(i, empty);
                 }
 
                 List<String> userCrates = Database.getUserCrates(player);
@@ -196,6 +214,7 @@ public class CosmeticInventory {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
+                        previousPageMeta.setCustomModelData(1);
                         previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
@@ -206,6 +225,7 @@ public class CosmeticInventory {
                     ItemStack nextPage = new ItemStack(Material.ARROW);
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
+                        nextPageMeta.setCustomModelData(1);
                         nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
@@ -239,12 +259,16 @@ public class CosmeticInventory {
 
                 inventory.setItem(2, selected);
 
+                for(int i = 3; i < 9; i++){
+                    inventory.setItem(i, empty);
+                }
+
                 for (int i = 9; i < 18; i++) {
-                    inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+                    inventory.setItem(i, empty);
                 }
 
                 for (int i = 45; i < 54; i++) {
-                    inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+                    inventory.setItem(i, empty);
                 }
 
                 Map<String, Map<String, Object>> allCrates = Database.getAllCrates();
@@ -284,6 +308,7 @@ public class CosmeticInventory {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
+                        previousPageMeta.setCustomModelData(1);
                         previousPageMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
@@ -294,6 +319,7 @@ public class CosmeticInventory {
                     ItemStack nextPage = new ItemStack(Material.ARROW);
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
+                        nextPageMeta.setCustomModelData(1);
                         nextPageMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
@@ -392,19 +418,20 @@ public class CosmeticInventory {
         Inventory inventory = Bukkit.createInventory(player, 45, "Crate Preview");
 
         for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+            inventory.setItem(i, empty);
         }
         for (int i = 36; i < 45; i++) {
-            inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+            inventory.setItem(i, empty);
         }
         for (int i = 9; i < 36; i += 9) {
-            inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
-            inventory.setItem(i + 8, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
+            inventory.setItem(i, empty);
+            inventory.setItem(i + 8, empty);
         }
 
         ItemStack back = new ItemStack(Material.ARROW);
         ItemMeta backMeta = back.getItemMeta();
         if(backMeta == null) return;
+        backMeta.setCustomModelData(1);
         backMeta.setItemName(ChatColor.YELLOW + "Back");
         back.setItemMeta(backMeta);
 
