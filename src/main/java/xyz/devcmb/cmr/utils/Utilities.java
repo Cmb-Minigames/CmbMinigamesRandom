@@ -22,6 +22,7 @@ import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.timers.TimerManager;
 
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -499,5 +500,9 @@ public class Utilities {
         return loc.getX() >= minX && loc.getX() <= maxX &&
                 loc.getY() >= minY && loc.getY() <= maxY &&
                 loc.getZ() >= minZ && loc.getZ() <= maxZ;
+    }
+
+    public static Duration ticksToSeconds(int ticks){
+        return Duration.ofSeconds(ticks / 20);
     }
 }

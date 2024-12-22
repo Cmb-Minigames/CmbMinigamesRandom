@@ -1,5 +1,8 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -53,7 +56,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
         PotionMeta harmingMeta = (PotionMeta) harmingPotion.getItemMeta();
         if(harmingMeta == null) return;
         harmingMeta.setBasePotionType(PotionType.HARMING);
-        harmingMeta.setItemName("Splash Potion of Harming");
+        harmingMeta.displayName(Component.text("Splash Potion of Harming"));
         harmingPotion.setItemMeta(harmingMeta);
 
         smallChestItems.add(harmingPotion);
@@ -62,7 +65,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
         PotionMeta poisonMeta = (PotionMeta) poisonPotion.getItemMeta();
         if(poisonMeta == null) return;
         poisonMeta.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 8 * 20, 1), true);
-        poisonMeta.setItemName("Splash Potion of Poison");
+        poisonMeta.displayName(Component.text("Splash Potion of Poison"));
         poisonPotion.setItemMeta(poisonMeta);
 
         smallChestItems.add(poisonPotion);
@@ -81,7 +84,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
         PotionMeta harmingMeta2 = (PotionMeta) harmingPotion2.getItemMeta();
         if(harmingMeta2 == null) return;
         harmingMeta2.setBasePotionType(PotionType.STRONG_HARMING);
-        harmingMeta2.setItemName("Splash Potion of Harming II");
+        harmingMeta2.displayName(Component.text("Splash Potion of Harming II"));
         harmingPotion2.setItemMeta(harmingMeta2);
 
         largeChestItems.add(harmingPotion2);
@@ -90,7 +93,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
         PotionMeta poisonMeta2 = (PotionMeta) poisonPotion2.getItemMeta();
         if(poisonMeta2 == null) return;
         poisonMeta2.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 5 * 20, 2), true);
-        poisonMeta2.setItemName("Splash Potion of Poison II");
+        poisonMeta2.displayName(Component.text("Splash Potion of Poison II"));
         poisonPotion2.setItemMeta(poisonMeta2);
 
         largeChestItems.add(poisonPotion2);
@@ -203,7 +206,14 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
         } else if(players.size() == 2){
             allPlayers.forEach(player -> {
                 player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 10, 1);
-                player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "STANDOFF", "", 15, 50, 10);
+
+                Title title = Title.title(
+                        Component.text("STANDOFF"),
+                        Component.text(""),
+                        Title.Times.times(Utilities.ticksToSeconds(15), Utilities.ticksToSeconds(50), Utilities.ticksToSeconds(10))
+                );
+
+                player.showTitle(title);
             });
         }
     }
