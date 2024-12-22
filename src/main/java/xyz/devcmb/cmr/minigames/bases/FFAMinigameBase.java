@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.minigames.StarSource;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
@@ -53,6 +54,7 @@ abstract public class FFAMinigameBase {
 
         players.forEach(player -> {
             player.teleport(spawnLocation);
+            Fade.fadePlayer(player, 0, 0, 40);
             player.setSaturation(20);
             player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
         });

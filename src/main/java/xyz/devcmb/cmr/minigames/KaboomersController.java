@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.*;
@@ -30,12 +31,14 @@ public class KaboomersController extends Teams2MinigameBase implements Minigame 
         RED.forEach(player -> {
             assert redSpawn != null;
             player.teleport(Utilities.findValidLocation(redSpawn));
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
         });
 
         BLUE.forEach(player -> {
             assert blueSpawn != null;
             player.teleport(Utilities.findValidLocation(blueSpawn));
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
         });
 

@@ -6,7 +6,10 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.minigames.*;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -197,13 +200,16 @@ public class GameManager {
                         @Override
                         public void run() {
                             currentMap = MapLoader.loadRandomMap(minigame);
+                            Bukkit.getOnlinePlayers().forEach(player -> {
+                               player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 50, 4));
+                               Fade.fadePlayer(player, 50, 20, 30);
+                            });
                             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                                 pregame = false;
                                 ingame = true;
                                 currentMinigame = minigame;
 
                                 minigamePlays.put(minigame, minigamePlays.get(minigame).intValue() + 1);
-
                                 minigame.start();
                                 Bukkit.getOnlinePlayers().forEach(player -> {
                                     player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
@@ -211,7 +217,7 @@ public class GameManager {
                                     player.setSaturation(0);
                                     player.setFoodLevel(20);
                                 });
-                            }, 40);
+                            }, 50);
                         }
                     }.runTaskLater(CmbMinigamesRandom.getPlugin(), 45);
                     this.cancel();

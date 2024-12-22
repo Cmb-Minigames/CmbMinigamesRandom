@@ -102,7 +102,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
     public void start() {
         super.start();
 
-        players.forEach(player -> Utilities.Countdown(player, 10));
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> players.forEach(player -> Utilities.Countdown(player, 10)), 20 * 2);
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Map<?, List<?>> kit = Kits.brawl_kit;
@@ -117,6 +117,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
 
             // WHAT IS THIS
             // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            if(mapData == null) return; // early ending nulls mapData
             List<Map<String, Map<String, Number>>> largeChests = (((Map<String, List<Map<String, Map<String,Number>>>>)mapData.get("chests")).get("large"));
             List<Map<String, Map<String, Number>>> smallChests = (((Map<String, List<Map<String, Map<String, Number>>>>)mapData.get("chests")).get("small"));
 
@@ -156,7 +157,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
                     CmbMinigamesRandom.LOGGER.warning("Block at " + loc + " is not a chest.");
                 }
             });
-        }, 20 * 10);
+        }, 20 * 12);
     }
 
     @Override

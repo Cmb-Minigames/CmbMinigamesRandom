@@ -54,7 +54,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
             playerLives.put(player, gameLives);
         });
 
-        new BukkitRunnable(){
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> new BukkitRunnable(){
             int cyles = 0;
             @Override
             public void run() {
@@ -73,7 +73,8 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
                 });
                 cyles++;
             }
-        }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
+        }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20), 20 * 2);
+
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             allPlayers.forEach(player -> Utilities.Countdown(player, 10));
@@ -120,8 +121,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
                 };
                 eventRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20);
             }, 10 * 20);
-        }, 20 * 8);
-
+        }, 20 * 10);
     }
 
     @Override

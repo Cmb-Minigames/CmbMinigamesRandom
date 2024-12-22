@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.timers.Timer;
@@ -138,16 +139,21 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         RED.forEach(player -> {
             assert redSpawn != null;
             player.teleport(Utilities.findValidLocation(redSpawn));
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
-            Utilities.Countdown(player, 10);
         });
 
         BLUE.forEach(player -> {
             assert blueSpawn != null;
             player.teleport(Utilities.findValidLocation(blueSpawn));
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
-            Utilities.Countdown(player, 10);
         });
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            RED.forEach(player -> Utilities.Countdown(player, 10));
+            BLUE.forEach(player -> Utilities.Countdown(player, 10));
+        }, 20 * 2);
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             Map<?, List<?>> kit = Kits.sniffercaretaker_kit;
@@ -259,7 +265,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
 
             sheepSpawn.runTaskTimer(CmbMinigamesRandom.getPlugin(), 20 * 3, 20 * 3);
 
-        }, 20 * 10);
+        }, 20 * 12);
     }
 
     @Override
@@ -368,22 +374,9 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         );
     }
 
-    private static boolean isWithin(Location loc, Location point1, Location point2) {
-        double minX = Math.min(point1.getX(), point2.getX());
-        double minY = Math.min(point1.getY(), point2.getY());
-        double minZ = Math.min(point1.getZ(), point2.getZ());
-        double maxX = Math.max(point1.getX(), point2.getX());
-        double maxY = Math.max(point1.getY(), point2.getY());
-        double maxZ = Math.max(point1.getZ(), point2.getZ());
-
-        return loc.getX() >= minX && loc.getX() <= maxX &&
-                loc.getY() >= minY && loc.getY() <= maxY &&
-                loc.getZ() >= minZ && loc.getZ() <= maxZ;
-    }
-
     @Override
     public Boolean dontReturnBlock(BlockPlaceEvent event) {
-        return isWithin(event.getBlock().getLocation(), redBaseFromLocation, redBaseToLocation) || isWithin(event.getBlock().getLocation(), blueBaseFromLocation, blueBaseToLocation);
+        return Utilities.isWithin(event.getBlock().getLocation(), redBaseFromLocation, redBaseToLocation) || Utilities.isWithin(event.getBlock().getLocation(), blueBaseFromLocation, blueBaseToLocation);
     }
 
     @Override

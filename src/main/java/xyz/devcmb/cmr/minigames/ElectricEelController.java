@@ -19,6 +19,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.timers.Timer;
 import xyz.devcmb.cmr.timers.TimerManager;
@@ -167,15 +168,20 @@ public class ElectricEelController implements Minigame {
 
         RED.forEach(player -> {
             player.teleport(Utilities.findValidLocation(redSpawnLocation));
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "POLLUTER" + ChatColor.RESET + " team!");
-            Utilities.Countdown(player, 10);
         });
 
         BLUE.forEach(player -> {
             player.teleport(Utilities.findValidLocation(blueSpawnLocation));
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "EEL" + ChatColor.RESET + " team!");
-            Utilities.Countdown(player, 10);
         });
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            RED.forEach(player -> Utilities.Countdown(player, 10));
+            BLUE.forEach(player -> Utilities.Countdown(player, 10));
+        }, 20 * 2);
 
         Location redBarrierFromLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "from");
         Location redBarrierToLocation = Utilities.getLocationFromConfig(mapData, world, "redBarrier", "to");
@@ -211,7 +217,7 @@ public class ElectricEelController implements Minigame {
                 player.setSaturation(0);
                 player.setHealth(20);
             });
-        }, 20 * 10);
+        }, 20 * 12);
     }
 
     @Override

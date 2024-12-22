@@ -12,6 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.utils.Database;
@@ -92,18 +93,23 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
         RED.forEach(player -> {
             assert redSpawn != null;
             player.teleport(redSpawn);
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
-            Utilities.Countdown(player, 10);
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
         });
 
         BLUE.forEach(player -> {
             assert blueSpawn != null;
             player.teleport(blueSpawn);
+            Fade.fadePlayer(player, 0, 0, 40);
             player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
-            Utilities.Countdown(player, 10);
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
         });
+
+        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+            RED.forEach(player -> Utilities.Countdown(player, 10));
+            BLUE.forEach(player -> Utilities.Countdown(player, 10));
+        }, 20 * 2);
 
         List<Map<String, Map<String, Number>>> bonemealChests = (List<Map<String, Map<String, Number>>>) mapData.get("boneMealChests");
 
@@ -314,8 +320,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
                 }
             };
             customerRunnable.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 20 * 40);
-
-        }, 10 * 20);
+        }, 12 * 20);
     }
 
     public void endGame(){

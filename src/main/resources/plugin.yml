@@ -62,6 +62,10 @@ commands:
     description: Toggle the actionbar
     usage: /<command>
     permission: cmbminigames.debug
+  fade:
+    description: Run the fade effect
+    usage: /<command> <up> <stay> <down>
+    permission: cmbminigames.debug
 permissions:
   cmbminigames.pause:
     description: Pause the loop

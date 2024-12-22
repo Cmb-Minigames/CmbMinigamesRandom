@@ -32,6 +32,7 @@ public class RegisterCommands {
         registerSingleCommand("crate", new GiveCrateCommand());
         registerSingleCommand("setstars", new SetStarsCommand());
         registerSingleCommand("actionbar", new ToggleActionBarCommand());
+        registerSingleCommand("fade", new FadeCommand());
 
         // Completions
         registerSingleTabCompletion("minigame", new MinigameCompletion());
