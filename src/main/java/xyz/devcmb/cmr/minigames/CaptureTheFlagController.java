@@ -237,7 +237,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
                 player.setGlowing(true);
                 player.setHealth(10);
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
+                Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(10);
 
                 ItemStack redFlagItem = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = redFlagItem.getItemMeta();
@@ -286,7 +286,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
                 player.setGlowing(true);
                 player.setHealth(10);
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(10);
+                Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(10);
 
                 ItemStack blueFlagIcon = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = blueFlagIcon.getItemMeta();
@@ -456,8 +456,8 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
             player.teleport(blueSpawn);
         }
 
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
-        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getDefaultValue());
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
+        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getDefaultValue());
 
         revokeFlag(player);
     }
@@ -523,7 +523,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         Map<String, Object> blueSpawn = (Map<String, Object>) mapData.get("blueSpawn");
         World world = Bukkit.getWorld(worldName);
 
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
 
         Location redSpawnLocation = new Location(
                 world,

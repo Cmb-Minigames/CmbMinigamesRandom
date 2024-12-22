@@ -47,7 +47,7 @@ public class PlayerListeners implements Listener {
         );
 
         Player player = event.getPlayer();
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
         ActionBar.registerPlayer(player);
         CMScoreboardManager.initialize(player);
         GameManager.playerConnect(event);
@@ -84,7 +84,7 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
 
         GameManager.playerDisconnect(player);
         countdowns.get(player).cancel();

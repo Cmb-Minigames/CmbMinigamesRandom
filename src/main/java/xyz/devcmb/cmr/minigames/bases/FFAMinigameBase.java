@@ -56,7 +56,7 @@ abstract public class FFAMinigameBase {
             player.teleport(spawnLocation);
             Fade.fadePlayer(player, 0, 0, 40);
             player.setSaturation(20);
-            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue());
         });
     }
 

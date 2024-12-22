@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     implementation "net.kyori:adventure-api:4.17.0"
     implementation 'net.kyori:adventure-platform-bukkit:4.1.1'
     implementation 'commons-io:commons-io:2.14.0'

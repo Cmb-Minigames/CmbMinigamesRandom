@@ -50,7 +50,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
         players.forEach(player -> {
             player.teleport(spawnLocation);
             player.setSaturation(20);
-            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue());
             playerLives.put(player, gameLives);
         });
 
@@ -84,7 +84,7 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
                 players.forEach(player -> {
                     Kits.kitPlayer(kit, player, Material.WHITE_CONCRETE);
                     player.setSaturation(0);
-                    player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+                    player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue());
                 });
 
                 timer = TimerManager.runTimer("teleporters");

@@ -1,7 +1,7 @@
 name: CmbMinigamesRandom
 version: '1.0'
 main: xyz.devcmb.cmr.CmbMinigamesRandom
-api-version: '1.21'
+api-version: '1.21.4'
 prefix: CmbMinigames
 authors: [ DevCmb ]
 description: The CmbMinigames plugin for random minigames

@@ -109,7 +109,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
             players.forEach(player -> {
                 Kits.kitPlayer(kit, player, Material.WHITE_CONCRETE);
                 player.setSaturation(0);
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(40);
+                Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(40);
                 player.setHealth(40);
             });
 
@@ -164,7 +164,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
     public void stop() {
         timer = null;
         allPlayers.forEach(player -> {
-            Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+            Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
             player.setHealth(20);
         });
         super.stop();

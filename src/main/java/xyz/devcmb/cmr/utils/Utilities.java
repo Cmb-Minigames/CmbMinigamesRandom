@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.utils;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -210,7 +211,7 @@ public class Utilities {
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
             player.removePotionEffect(PotionEffectType.HUNGER);
-            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue());
             player.setFoodLevel(20);
         });
     }
@@ -240,7 +241,7 @@ public class Utilities {
 
                 player.setGameMode(GameMode.SURVIVAL);
                 player.getInventory().clear();
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+                Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
                 player.setGlowing(false);
                 GameManager.teamColors.put(player, ChatColor.WHITE);
 
@@ -337,11 +338,11 @@ public class Utilities {
 
         List<ItemStack> inventoryContents = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
         inventoryContents.addAll(Arrays.asList(player.getInventory().getArmorContents()));
-        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, damageSource, inventoryContents, 0, null);
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, damageSource, inventoryContents, 0, Component.empty());
         Bukkit.getPluginManager().callEvent(deathEvent);
         
         player.setAllowFlight(true);
-        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue());
         player.setFoodLevel(20);
         player.setFlying(true);
         player.setInvulnerable(true);
@@ -356,7 +357,7 @@ public class Utilities {
                     player.setFlying(false);
                     player.setAllowFlight(false);
                     player.setInvulnerable(false);
-                    Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+                    Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
                     player.setHealth(20);
                     player.setFoodLevel(20);
                     player.setFireTicks(0);

@@ -193,7 +193,7 @@ public class ElectricEelController implements Minigame {
 
         assert electricEelLocation != null;
         LivingEntity electricEel = (LivingEntity) world.spawnEntity(electricEelLocation, EntityType.SALMON);
-        Objects.requireNonNull(electricEel.getAttribute(Attribute.GENERIC_SCALE)).setBaseValue(3.0);
+        Objects.requireNonNull(electricEel.getAttribute(Attribute.SCALE)).setBaseValue(3.0);
         electricEel.setAI(false);
         electricEel.setInvulnerable(true);
         electricEel.setRemoveWhenFarAway(false);
