@@ -69,9 +69,7 @@ public class PlayerListeners implements Listener {
         PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
         player.addPotionEffect(hungerEffect);
 
-        Audience audience = (Audience) player;
-        audience.sendPlayerListHeader(Component.text(" ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames - Random" + " ".repeat(5)));
-
+        player.sendPlayerListHeader(Component.text(" ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames - Random" + " ".repeat(5)));
         countdowns.put(player, new BukkitRunnable(){
             @Override
             public void run() {

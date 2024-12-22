@@ -20,8 +20,8 @@ public class RegisterCommands {
     public static void register(){
         registerSingleCommand("pause", new StopLoopCommand());
         registerSingleCommand("end", new EndMinigameCommand());
-        registerSingleCommand("minigame", new MinigameCommand(CmbMinigamesRandom.adventure()));
-        registerSingleCommand("flags", new FlagsCommand(CmbMinigamesRandom.adventure()));
+        registerSingleCommand("minigame", new MinigameCommand());
+        registerSingleCommand("flags", new FlagsCommand());
         registerSingleCommand("select", new SelectCommand());
         registerSingleCommand("ui", new UICommand());
         registerSingleCommand("cosmeticitem", new CosmeticCommand());
