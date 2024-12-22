@@ -180,7 +180,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
 
         ItemMeta meta1 = redFlagItem.getItemMeta();
         if(meta1 == null) return;
-        meta1.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag").intValue());
+        meta1.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag"));
         meta1.setItemName("Red Flag");
 
         redFlagItem.setItemMeta(meta1);
@@ -199,7 +199,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
 
         ItemMeta meta2 = blueFlagItem.getItemMeta();
         if(meta2 == null) return;
-        meta2.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag").intValue());
+        meta2.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag"));
         meta2.setItemName("Blue Flag");
 
         blueFlagItem.setItemMeta(meta2);
@@ -242,7 +242,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 ItemStack redFlagItem = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = redFlagItem.getItemMeta();
                 if(meta == null) return;
-                meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag").intValue());
+                meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag"));
                 meta.setItemName(ChatColor.RED + "Red Flag");
                 redFlagItem.setItemMeta(meta);
                 player.getInventory().setItemInOffHand(redFlagItem);
@@ -291,7 +291,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 ItemStack blueFlagIcon = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = blueFlagIcon.getItemMeta();
                 if(meta == null) return;
-                meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag").intValue());
+                meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag"));
                 meta.setItemName(ChatColor.BLUE + "Blue Flag");
                 blueFlagIcon.setItemMeta(meta);
                 event.getPlayer().getInventory().setItemInOffHand(blueFlagIcon);
@@ -423,10 +423,10 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (offHandItem.getType() == Material.ECHO_SHARD) {
             ItemMeta meta = offHandItem.getItemMeta();
             if (meta != null && meta.hasCustomModelData()) {
-                int customModelData = meta.getCustomModelData();
-                if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag").intValue()) {
+                NamespacedKey customModelData = meta.getItemModel();
+                if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag")) {
                     return "red";
-                } else if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag").intValue()) {
+                } else if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag")) {
                     return "blue";
                 } else {
                     CmbMinigamesRandom.LOGGER.warning("Invalid custom model data found, got " + customModelData);

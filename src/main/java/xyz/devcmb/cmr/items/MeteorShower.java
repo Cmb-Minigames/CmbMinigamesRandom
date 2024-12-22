@@ -23,7 +23,7 @@ public class MeteorShower implements CustomItem {
         ItemStack item = new ItemStack(Material.ECHO_SHARD);
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return item;
-        meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("star_shower").intValue());
+        meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("star_shower"));
         meta.setItemName(ChatColor.RED + "Meteor Shower");
         meta.setLore(List.of(ChatColor.WHITE + "Summons 5 fireballs 40 blocks above you in a circle pattern"));
         item.setItemMeta(meta);

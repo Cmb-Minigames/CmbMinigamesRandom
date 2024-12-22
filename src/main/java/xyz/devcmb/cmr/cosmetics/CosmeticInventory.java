@@ -1,9 +1,6 @@
 package xyz.devcmb.cmr.cosmetics;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +11,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Database;
 
+import javax.naming.Name;
 import java.util.*;
 
 /**
@@ -28,7 +26,7 @@ public class CosmeticInventory {
         ItemMeta meta = empty.getItemMeta();
         if(meta == null) return;
         meta.setHideTooltip(true);
-        meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("empty_slot").intValue());
+        meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("empty_slot"));
 
         empty.setItemMeta(meta);
     }
@@ -41,7 +39,7 @@ public class CosmeticInventory {
         ItemMeta meta = inventoryItem.getItemMeta();
         if(meta == null) return;
         meta.setItemName("Cosmetic Inventory");
-        meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("cosmetic_inventory").intValue());
+        meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("cosmetic_inventory"));
         inventoryItem.setItemMeta(meta);
 
         player.getInventory().addItem(inventoryItem);
@@ -140,7 +138,7 @@ public class CosmeticInventory {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
-                        previousPageMeta.setCustomModelData(1);
+                        previousPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
                         previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
@@ -151,7 +149,7 @@ public class CosmeticInventory {
                     ItemStack nextPage = new ItemStack(Material.ARROW);
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
-                        nextPageMeta.setCustomModelData(1);
+                        nextPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
                         nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
@@ -214,7 +212,7 @@ public class CosmeticInventory {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
-                        previousPageMeta.setCustomModelData(1);
+                        previousPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
                         previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
@@ -225,7 +223,7 @@ public class CosmeticInventory {
                     ItemStack nextPage = new ItemStack(Material.ARROW);
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
-                        nextPageMeta.setCustomModelData(1);
+                        nextPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
                         nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
@@ -308,7 +306,7 @@ public class CosmeticInventory {
                     ItemStack previousPage = new ItemStack(Material.ARROW);
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
-                        previousPageMeta.setCustomModelData(1);
+                        previousPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
                         previousPageMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
                         previousPage.setItemMeta(previousPageMeta);
                     }
@@ -319,7 +317,7 @@ public class CosmeticInventory {
                     ItemStack nextPage = new ItemStack(Material.ARROW);
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
-                        nextPageMeta.setCustomModelData(1);
+                        nextPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
                         nextPageMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
                         nextPage.setItemMeta(nextPageMeta);
                     }
@@ -431,7 +429,7 @@ public class CosmeticInventory {
         ItemStack back = new ItemStack(Material.ARROW);
         ItemMeta backMeta = back.getItemMeta();
         if(backMeta == null) return;
-        backMeta.setCustomModelData(1);
+        backMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
         backMeta.setItemName(ChatColor.YELLOW + "Back");
         back.setItemMeta(backMeta);
 

@@ -19,6 +19,7 @@ import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Database;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A class for the cosmetic inventory listeners
@@ -27,10 +28,11 @@ public class CosmeticInventoryListeners implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         ItemStack item = event.getItem();
-        if (item == null || item.getType() != Material.ECHO_SHARD) return;
+        if (item == null) return;
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
-        if (meta.getCustomModelData() == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("cosmetic_inventory").intValue()) {
+
+        if (Objects.equals(meta.getItemModel(), CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("cosmetic_inventory"))) {
             CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(event.getPlayer());
             cosmeticInventory.openInventory();
         }

@@ -106,7 +106,7 @@ public class Kits {
                 ItemMeta meta = rocketLauncher.getItemMeta();
                 if(meta == null) return;
                 meta.setItemName("Rocket Launcher");
-                meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("rocket_launcher").intValue());
+                meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("rocket_launcher"));
                 rocketLauncher.setItemMeta(meta);
 
                 player.getInventory().setItem((int) value.get(1), rocketLauncher);

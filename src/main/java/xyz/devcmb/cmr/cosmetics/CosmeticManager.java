@@ -2,6 +2,7 @@ package xyz.devcmb.cmr.cosmetics;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.utils.Database;
 
+import javax.naming.Name;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +48,7 @@ public class CosmeticManager {
         ItemStack item = new ItemStack(Material.LEATHER_HORSE_ARMOR);
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return;
-        int customModelData = (int) cosmetic.get("custom_model_data");
-        meta.setCustomModelData(customModelData);
+        meta.setItemModel(new NamespacedKey("cmbminigames", "cosmetic/" + name));
         String display_name = (String) cosmetic.get("display_name");
         String rarity = (String) cosmetic.get("rarity");
 
