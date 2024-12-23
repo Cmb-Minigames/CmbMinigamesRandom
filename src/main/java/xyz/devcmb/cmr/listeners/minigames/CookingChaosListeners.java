@@ -1,7 +1,7 @@
 package xyz.devcmb.cmr.listeners.minigames;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.CookingChaosController;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.List;
@@ -101,7 +102,7 @@ public class CookingChaosListeners implements Listener {
         if (event.getEntityType() == EntityType.CHICKEN) {
             if (new Random().nextInt(4) == 0) {
                 event.getDrops().add(new ItemStack(Material.EGG));
-                killer.sendMessage(ChatColor.GOLD + "The chicken seems to have dropped something...");
+                killer.sendMessage(Component.text("The chicken seems to have dropped something...").color(Colors.GOLD));
             }
         }
     }
@@ -139,7 +140,7 @@ public class CookingChaosListeners implements Listener {
                     Material order = (Material) customer.get("order");
                     if(player.getInventory().contains(order)){
                         player.getInventory().removeItem(new ItemStack(order, 1));
-                        player.sendMessage(ChatColor.GREEN + "You have successfully served the customer!");
+                        player.sendMessage(Component.text("You have successfully served the customer!").color(Colors.GREEN));
                         Integer tableIndex = (Integer) customer.get("tableIndex");
                         List<Entity> customers = (List<Entity>) controller.redTables.get(tableIndex).get("customers");
 
@@ -156,7 +157,7 @@ public class CookingChaosListeners implements Listener {
 
                         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), entity::remove, 5 * 20);
                     } else {
-                        player.sendMessage(ChatColor.RED + "You do not have the required item to serve the customer!");
+                        player.sendMessage(Component.text("You do not have the required item to serve the customer!").color(Colors.RED));
                     }
 
                     break;
@@ -168,7 +169,7 @@ public class CookingChaosListeners implements Listener {
                     Material order = (Material) customer.get("order");
                     if(player.getInventory().contains(order)){
                         player.getInventory().removeItem(new ItemStack(order, 1));
-                        player.sendMessage(ChatColor.GREEN + "You have successfully served the customer!");
+                        player.sendMessage(Component.text("You have successfully served the customer!").color(Colors.GREEN));
                         Integer tableIndex = (Integer) customer.get("tableIndex");
                         List<Entity> customers = (List<Entity>) controller.blueTables.get(tableIndex).get("customers");
 
@@ -186,7 +187,7 @@ public class CookingChaosListeners implements Listener {
 
                         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), entity::remove, 5 * 20);
                     } else {
-                        player.sendMessage(ChatColor.RED + "You do not have the required item to serve the customer!");
+                        player.sendMessage(Component.text("You do not have the required item to serve the customer!").color(Colors.RED));
                     }
 
                     break;
