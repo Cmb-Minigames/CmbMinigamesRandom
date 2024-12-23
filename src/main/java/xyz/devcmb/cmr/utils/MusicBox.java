@@ -1,6 +1,5 @@
 package xyz.devcmb.cmr.utils;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.interfaces;
 
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import xyz.devcmb.cmr.GameManager;
@@ -15,13 +16,13 @@ public class TabList {
      */
     public static void updateTabListName(Player player){
         String prefix = Format.getPrefix(player);
-        ChatColor teamColor = GameManager.teamColors.get(player);
+        TextColor teamColor = GameManager.teamColors.get(player);
         if(prefix == null){
             prefix = "";
         }
 
         if(teamColor == null){
-            teamColor = ChatColor.WHITE;
+            teamColor = TextColor.color(0xFFFFFF);
         }
 
         player.setPlayerListName(prefix + teamColor + player.getName());

@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.utils;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -244,7 +245,7 @@ public class Utilities {
                 player.getInventory().clear();
                 Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
                 player.setGlowing(false);
-                GameManager.teamColors.put(player, ChatColor.WHITE);
+                GameManager.teamColors.put(player, TextColor.color(0xFFFFFF));
 
                 CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(player);
                 cosmeticInventory.giveInventoryItem();

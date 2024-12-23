@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.interfaces.scoreboards;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -21,7 +22,7 @@ public class TabListScoreboard implements HandledScoreboard{
         Bukkit.getOnlinePlayers().forEach(plr -> {
             Integer priority = Format.getPriority(plr);
             Team team = board.registerNewTeam(priority + plr.getName());
-            team.setColor(GameManager.teamColors.get(plr));
+            team.color((NamedTextColor) GameManager.teamColors.get(plr));
             team.addEntry(plr.getName());
         });
 

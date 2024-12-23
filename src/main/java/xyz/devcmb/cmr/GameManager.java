@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr;
 
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -34,7 +35,7 @@ public class GameManager {
     public static Map<Player, Number> kills = new HashMap<>();
     public static Map<Minigame, Number> minigamePlays = new HashMap<>();
     public static Minigame selectedMinigame = null;
-    public static Map<Player, ChatColor> teamColors = new HashMap<>();
+    public static Map<Player, TextColor> teamColors = new HashMap<>();
     public static Timer intermissionTimer = null;
 
     /**
@@ -95,7 +96,7 @@ public class GameManager {
      */
     public static void playerConnect(PlayerJoinEvent event){
         kills.put(event.getPlayer(), 0);
-        teamColors.put(event.getPlayer(), ChatColor.WHITE);
+        teamColors.put(event.getPlayer(), TextColor.color(0xFFFFFF));
         if(ingame || pregame) {
             currentMinigame.playerJoin(event);
         } else if(intermissionTimer == null && (CmbMinigamesRandom.DeveloperMode ? !Bukkit.getOnlinePlayers().isEmpty() : Bukkit.getOnlinePlayers().size() >= 2)){

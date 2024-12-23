@@ -2,7 +2,6 @@ package xyz.devcmb.cmr;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import xyz.devcmb.cmr.commands.RegisterCommands;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.cosmetics.CrateManager;
