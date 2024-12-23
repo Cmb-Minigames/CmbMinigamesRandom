@@ -1,12 +1,13 @@
 package xyz.devcmb.cmr.commands.cosmetics;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Format;
 
@@ -17,22 +18,29 @@ public class SetStarsCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if(args.length < 2){
-            commandSender.sendMessage("❓ " + ChatColor.RED + "Usage: /setstars <player> <stars>");
+            commandSender.sendMessage(Component.text("❓ ").append(Component.text("Usage: /setstars <player> <stars>").color(Colors.RED)));
             return true;
         }
 
         Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
-            commandSender.sendMessage("❓ " + ChatColor.RED + "Player not found.");
+            commandSender.sendMessage(Component.text("❓ ").append(Component.text("Player not found").color(Colors.RED)));
             return true;
         }
 
         try {
             int stars = Integer.parseInt(args[1]);
             Database.setUserStars(player, stars);
-            commandSender.sendMessage(ChatColor.GREEN + "Set the stars of " + ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GREEN + " to " + ChatColor.WHITE + stars + ChatColor.GREEN + ".");
+
+            Component message = Component.text("Set the stars of ").color(Colors.GREEN)
+                    .append(Component.text(Format.formatPlayerName(player)).color(Colors.WHITE))
+                    .append(Component.text(" to ")).color(Colors.GREEN)
+                    .append(Component.text(String.valueOf(stars)).color(Colors.WHITE))
+                    .append(Component.text(".")).color(Colors.GREEN);
+
+            commandSender.sendMessage(message);
         } catch (NumberFormatException e) {
-            commandSender.sendMessage("❓ " + ChatColor.RED + "The stars value must be a number.");
+            commandSender.sendMessage(Component.text("❓ ").append(Component.text("Stars must be a number.").color(Colors.RED)));
             return true;
         }
 

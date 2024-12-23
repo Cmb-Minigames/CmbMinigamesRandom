@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.interfaces.scoreboards;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -26,7 +27,7 @@ public class NotEnoughPlayersScoreboard implements HandledScoreboard {
                         .append(Component.text("Cmb Minigames").color(Colors.GOLD).decorate(TextDecoration.BOLD))
                         .append(Component.text(" | "))
                         .append(Component.text("v")
-                                .append(Component.text(CmbMinigamesRandom.getPlugin().getDescription().getVersion())).color(Colors.GRAY))
+                                .append(Component.text(CmbMinigamesRandom.getPlugin().getDescription().getVersion())).color(NamedTextColor.GRAY))
                         .append(Component.text(" ".repeat(5))));
 
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -35,7 +36,7 @@ public class NotEnoughPlayersScoreboard implements HandledScoreboard {
         blank.setScore(1);
 
         Score players = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
-                Component.text("\u1F46 Players: ").append(Component.text(Bukkit.getOnlinePlayers().size()).color(Colors.AQUA))
+                Component.text("\u1F46 Players: ").append(Component.text(Bukkit.getOnlinePlayers().size()).color(NamedTextColor.AQUA))
         ));
         players.setScore(3);
 

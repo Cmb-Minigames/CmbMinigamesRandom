@@ -1,23 +1,24 @@
 package xyz.devcmb.cmr.commands.development;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.interfaces.Fade;
+import xyz.devcmb.cmr.utils.Colors;
 
 public class FadeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if(args.length != 3){
-            commandSender.sendMessage("❓ " + ChatColor.RED + "Usage: /fade <up> <stay> <down>");
+            commandSender.sendMessage(Component.text("❓ ").append(Component.text("Usage: /fade <up> <stay> <down>").color(Colors.RED)));
             return false;
         }
 
         if(!(commandSender instanceof Player player)){
-            commandSender.sendMessage("❓ " + ChatColor.RED + "Only players can use this command.");
+            commandSender.sendMessage(Component.text("❓ ").append(Component.text("Only players can use this command").color(Colors.RED)));
             return false;
         }
 
@@ -26,7 +27,7 @@ public class FadeCommand implements CommandExecutor {
             Integer.parseInt(args[1]);
             Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            commandSender.sendMessage("❓ " + ChatColor.RED + "Invalid numbers.");
+            commandSender.sendMessage(Component.text("❓ ").append(Component.text("Invalid numbers").color(Colors.RED)));
             return false;
         }
 

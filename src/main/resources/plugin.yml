@@ -38,10 +38,6 @@ commands:
     description: Give the crate item to a player for testing purposes
     usage: /<command> <player> <crate>
     permission: cmbminigames.debug
-  rollcrate:
-    description: Roll a crate for a player
-    usage: /<command> <player> <crate>
-    permission: cmbminigames.debug
   rc:
     description: Reload all cosmetics
     usage: /<command>

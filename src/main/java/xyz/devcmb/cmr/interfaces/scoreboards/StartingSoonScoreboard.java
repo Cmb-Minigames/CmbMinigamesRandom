@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.interfaces.scoreboards;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,7 +10,6 @@ import org.bukkit.scoreboard.*;
 import org.bukkit.scoreboard.ScoreboardManager;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
-import xyz.devcmb.cmr.utils.Colors;
 
 import java.util.Objects;
 
@@ -26,10 +26,10 @@ public class StartingSoonScoreboard implements HandledScoreboard {
 
         Objective objective = board.registerNewObjective("info", Criteria.create("dummy"),
                 Component.text(" ".repeat(5))
-                        .append(Component.text("Cmb Minigames").color(Colors.GOLD).decorate(TextDecoration.BOLD))
+                        .append(Component.text("Cmb Minigames").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD))
                         .append(Component.text(" | "))
                         .append(Component.text("v")
-                                .append(Component.text(CmbMinigamesRandom.getPlugin().getDescription().getVersion())).color(Colors.GRAY))
+                                .append(Component.text(CmbMinigamesRandom.getPlugin().getDescription().getVersion())).color(NamedTextColor.GRAY))
                         .append(Component.text(" ".repeat(5))));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 

@@ -26,7 +26,6 @@ public class RegisterCommands {
         registerSingleCommand("ui", new UICommand());
         registerSingleCommand("cosmeticitem", new CosmeticCommand());
         registerSingleCommand("crateitem", new CrateCommand());
-        registerSingleCommand("rollcrate", new RollCrateCommand());
         registerSingleCommand("rc", new ReloadCosmeticsCommand());
         registerSingleCommand("cosmetic", new GiveCosmeticCommand());
         registerSingleCommand("crate", new GiveCrateCommand());
@@ -42,7 +41,6 @@ public class RegisterCommands {
         registerSingleTabCompletion("cosmeticitem", new CosmeticCommandCompletion());
         registerSingleTabCompletion("cosmetic", new CosmeticCommandCompletion());
         registerSingleTabCompletion("crateitem", new CrateCommandCompletion());
-        registerSingleTabCompletion("rollcrate", new CrateCommandCompletion());
         registerSingleTabCompletion("crate", new CrateCommandCompletion());
 
     }
