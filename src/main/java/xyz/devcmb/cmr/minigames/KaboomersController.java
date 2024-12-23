@@ -1,5 +1,8 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -32,14 +35,24 @@ public class KaboomersController extends Teams2MinigameBase implements Minigame 
             assert redSpawn != null;
             player.teleport(Utilities.findValidLocation(redSpawn));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
+
+            Component teamText = Component.text("You are on the ")
+                    .append(Component.text("RED").color(Colors.RED).decorate(TextDecoration.BOLD))
+                    .append(Component.text(" team!"));
+
+            player.sendMessage(teamText);
         });
 
         BLUE.forEach(player -> {
             assert blueSpawn != null;
             player.teleport(Utilities.findValidLocation(blueSpawn));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
+
+            Component teamText = Component.text("You are on the ")
+                    .append(Component.text("BLUE").color(Colors.BLUE).decorate(TextDecoration.BOLD))
+                    .append(Component.text(" team!"));
+
+            player.sendMessage(teamText);
         });
 
         GameManager.playersFrozen = true;
@@ -86,37 +99,55 @@ public class KaboomersController extends Teams2MinigameBase implements Minigame 
         GameManager.gameEnding = true;
         timer = null;
 
+        Title victoryTitle = Title.title(
+                Component.text("VICTORY").color(Colors.GOLD).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title defeatTitle = Title.title(
+                Component.text("DEFEAT").color(Colors.RED).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title drawTitle = Title.title(
+                Component.text("DRAW").color(Colors.AQUA).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
         if(redBlocks.size() > blueBlocks.size()){
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.showTitle(victoryTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
         } else if(blueBlocks.size() > redBlocks.size()){
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.showTitle(victoryTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
         } else {
             Bukkit.getOnlinePlayers().forEach(plr -> {
-                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.showTitle(drawTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);

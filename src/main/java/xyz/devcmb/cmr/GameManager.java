@@ -197,10 +197,11 @@ public class GameManager {
                         player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 1, 1);
                         player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + minigame.getName(), "", 0, 50, 15);
                     });
+                    currentMap = MapLoader.loadRandomMap(minigame);
+
                     new BukkitRunnable(){
                         @Override
                         public void run() {
-                            currentMap = MapLoader.loadRandomMap(minigame);
                             Bukkit.getOnlinePlayers().forEach(player -> {
                                player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 50, 4));
                                Fade.fadePlayer(player, 50, 20, 30);

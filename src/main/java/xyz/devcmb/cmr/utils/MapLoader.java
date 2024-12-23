@@ -65,6 +65,7 @@ public class MapLoader {
             MVWorldManager worldManager = multiverseCore.getMVWorldManager();
             if(worldManager.isMVWorld(LOADED_MAP)){
                 worldManager.deleteWorld(LOADED_MAP);
+                LOADED_MAP = null;
             } else {
                 CmbMinigamesRandom.LOGGER.warning("World not managed by Multiverse: " + LOADED_MAP);
             }

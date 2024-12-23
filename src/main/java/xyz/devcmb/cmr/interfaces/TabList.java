@@ -25,6 +25,6 @@ public class TabList {
             teamColor = TextColor.color(0xFFFFFF);
         }
 
-        player.playerListName(Component.text(prefix + player.getName()).color(teamColor));
+        player.playerListName(Component.text(prefix).append(Component.text(player.getName()).color(teamColor)));
     }
 }
