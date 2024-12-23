@@ -1,6 +1,5 @@
 package xyz.devcmb.cmr.interfaces;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
@@ -29,7 +28,6 @@ public class Fade {
                 )
         );
 
-        Audience audiencePlayer = (Audience) player;
-        audiencePlayer.showTitle(title);
+        player.showTitle(title);
     }
 }

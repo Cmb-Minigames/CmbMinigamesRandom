@@ -83,7 +83,7 @@ public class ElectricEelListeners implements Listener {
         if(!breakableBlocks.contains(event.getBlock().getType())) {
             event.setCancelled(true);
             return;
-        };
+        }
 
         InitializeLocations();
 
