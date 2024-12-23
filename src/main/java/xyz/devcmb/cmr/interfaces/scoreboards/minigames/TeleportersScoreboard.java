@@ -43,8 +43,8 @@ public class TeleportersScoreboard implements HandledScoreboard {
         blank1.setScore(playerLives.size() + 4);
 
         Score eventTimer = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
-                Component.text("ὕ Next event: ").append(Component.text(
-                        (!teleportersController.eventActive ? Utilities.formatTime(teleportersController.eventTimer) : "Now!")
+                Component.text("ὕ Next event: ").append(
+                        (!teleportersController.eventActive ? Utilities.formatTime(teleportersController.eventTimer) : Component.text("Now!")
                 ).color(NamedTextColor.AQUA))));
         eventTimer.setScore(playerLives.size() + 3);
 

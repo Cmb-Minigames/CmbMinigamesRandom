@@ -38,7 +38,7 @@ public class ElectricEelScoreboard implements HandledScoreboard {
 
         Score time = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
                 Component.text("ὕ Time Left: ")
-                        .append(Component.text(Utilities.formatTime(electricEelController.timer.getTime())).color(NamedTextColor.AQUA))
+                        .append(Utilities.formatTime(electricEelController.timer.getTime()).color(NamedTextColor.AQUA))
         ));
         time.setScore(5);
 

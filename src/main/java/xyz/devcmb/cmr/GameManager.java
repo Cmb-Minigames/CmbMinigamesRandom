@@ -1,8 +1,10 @@
 package xyz.devcmb.cmr;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -12,6 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.minigames.*;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 import xyz.devcmb.cmr.timers.Timer;
@@ -187,15 +190,27 @@ public class GameManager {
             @Override
             public void run() {
                 if (countdown >= 0) {
+                    Title selectTitle = Title.title(
+                            Component.text(Utilities.getRandom(minigames).getName()),
+                            Component.empty(),
+                            Title.Times.times(Utilities.ticksToMilliseconds(0), Utilities.ticksToMilliseconds(10), Utilities.ticksToMilliseconds(0))
+                    );
+
                     Bukkit.getOnlinePlayers().forEach(player -> {
                         player.playSound(player.getLocation(), Sound.UI_STONECUTTER_SELECT_RECIPE, 1, 1);
-                        player.sendTitle(Utilities.getRandom(minigames).getName(), "", 0, 10, 0);
+                        player.showTitle(selectTitle);
                     });
                     countdown--;
                 } else {
+                    Title finalSelectTitle = Title.title(
+                            Component.text(minigame.getName()).color(Colors.GOLD).decorate(TextDecoration.BOLD),
+                            Component.empty(),
+                            Title.Times.times(Utilities.ticksToMilliseconds(0), Utilities.ticksToMilliseconds(10), Utilities.ticksToMilliseconds(0))
+                    );
+
                     Bukkit.getOnlinePlayers().forEach(player -> {
                         player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 1, 1);
-                        player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + minigame.getName(), "", 0, 50, 15);
+                        player.showTitle(finalSelectTitle);
                     });
                     currentMap = MapLoader.loadRandomMap(minigame);
 

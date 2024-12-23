@@ -3,6 +3,8 @@ package xyz.devcmb.cmr.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -43,28 +45,41 @@ public class Utilities {
             public void run() {
                 if(seconds == 0){
                     this.cancel();
-                    player.sendTitle(ChatColor.GREEN.toString() + ChatColor.BOLD + "GO!", "", 0, 40, 10);
+
+                    Title goTitle = Title.title(
+                        Component.text("GO!").color(Colors.GREEN).decorate(TextDecoration.BOLD),
+                        Component.empty(),
+                        Title.Times.times(ticksToMilliseconds(0), ticksToMilliseconds(40), ticksToMilliseconds(10))
+                    );
+
+                    player.showTitle(goTitle);
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10, 2.5f);
                     return;
                 }
 
-                ChatColor color = ChatColor.WHITE;
+                TextColor color = Colors.WHITE;
 
                 switch(seconds){
                     case 3:
-                        color = ChatColor.GREEN;
+                        color = Colors.GREEN;
                         break;
                     case 2:
-                        color = ChatColor.YELLOW;
+                        color = Colors.YELLOW;
                         break;
                     case 1:
-                        color = ChatColor.RED;
+                        color = Colors.RED;
                         break;
                     default:
                         break;
                 }
 
-                player.sendTitle(color.toString() + ChatColor.BOLD + "> " + seconds + " <", "The game will begin shortly", 0, 20, 0);
+                Title countdownTitle = Title.title(
+                    Component.text("> " + seconds + " <").color(color).decorate(TextDecoration.BOLD),
+                    Component.text("The game will begin shortly"),
+                    Title.Times.times(ticksToMilliseconds(0), ticksToMilliseconds(20), ticksToMilliseconds(0))
+                );
+
+                player.showTitle(countdownTitle);
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10, 1);
                 seconds--;
             }
@@ -139,11 +154,11 @@ public class Utilities {
      * @param time The time in seconds
      * @return The formatted time string
      */
-    public static String formatTime(int time){
-        if(TimerManager.paused) return ChatColor.YELLOW + "⏸ PAUSED";
+    public static Component formatTime(int time){
+        if(TimerManager.paused) return Component.text("⏸ PAUSED").color(Colors.YELLOW);
         int minutes = time / 60;
         int seconds = time % 60;
-        return String.format("%02d:%02d", minutes, seconds);
+        return Component.text(String.format("%02d:%02d", minutes, seconds));
     }
 
     /**

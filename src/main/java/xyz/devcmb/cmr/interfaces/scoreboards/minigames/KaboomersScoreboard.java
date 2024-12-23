@@ -38,7 +38,7 @@ public class KaboomersScoreboard implements HandledScoreboard {
 
         Score timeLeft = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
                 Component.text("ὕ Time Left: ")
-                        .append(Component.text(Utilities.formatTime(kaboomersController.timer.getTime())).color(NamedTextColor.AQUA))
+                        .append(Utilities.formatTime(kaboomersController.timer.getTime()).color(NamedTextColor.AQUA))
         ));
         timeLeft.setScore(5);
 

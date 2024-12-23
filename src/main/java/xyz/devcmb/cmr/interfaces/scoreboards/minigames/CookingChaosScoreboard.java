@@ -40,7 +40,7 @@ public class CookingChaosScoreboard implements HandledScoreboard {
 
         Score timeLeft = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
                 Component.text("ὕ Time Left: ")
-                        .append(Component.text(Utilities.formatTime(controller.timer.getTime())).color(NamedTextColor.AQUA))
+                        .append(Utilities.formatTime(controller.timer.getTime()).color(NamedTextColor.AQUA))
         ));
         timeLeft.setScore(5);
 

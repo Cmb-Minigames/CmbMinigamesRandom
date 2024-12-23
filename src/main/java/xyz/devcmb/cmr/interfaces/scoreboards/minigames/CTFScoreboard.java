@@ -41,7 +41,7 @@ public class CTFScoreboard implements HandledScoreboard {
 
         Score time = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
                 Component.text("ὕ Time Left: ")
-                        .append(Component.text(Utilities.formatTime(ctfController.timer.getTime())).color(NamedTextColor.AQUA))
+                        .append(Utilities.formatTime(ctfController.timer.getTime()).color(NamedTextColor.AQUA))
         ));
         time.setScore(5);
 
