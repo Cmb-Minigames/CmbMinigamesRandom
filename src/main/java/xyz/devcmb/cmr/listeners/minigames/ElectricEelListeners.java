@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.listeners.minigames;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.ElectricEelController;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
@@ -90,7 +92,7 @@ public class ElectricEelListeners implements Listener {
         Player player = event.getPlayer();
 
         if(player.getInventory().getItemInOffHand().getType() == Material.NETHER_QUARTZ_ORE && event.getBlock().getType() == Material.NETHER_QUARTZ_ORE) {
-            player.sendMessage(ChatColor.RED + "You can't carry more than one uranium at a time!");
+            player.sendMessage(Component.text("You can't carry more than one uranium at a time!").color(Colors.RED));
             event.setCancelled(true);
             return;
         }
@@ -104,11 +106,10 @@ public class ElectricEelListeners implements Listener {
         }
 
         if(event.getBlock().getType() == Material.NETHER_QUARTZ_ORE) {
-
             ItemStack uranium = new ItemStack(Material.NETHER_QUARTZ_ORE, 1);
             ItemMeta meta = uranium.getItemMeta();
             assert meta != null;
-            meta.setDisplayName(ChatColor.GREEN + "Uranium");
+            meta.displayName(Component.text("Uranium").color(Colors.GREEN));
 
             NamespacedKey key = new NamespacedKey(CmbMinigamesRandom.getPlugin(), "team");
 
@@ -132,7 +133,6 @@ public class ElectricEelListeners implements Listener {
             event.getPlayer().getInventory().setItemInOffHand(uranium);
 
             player.setGlowing(true);
-
             world.playSound(event.getBlock().getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1, 1);
 
             electricEelController.ResetBeams(electricEelLocation);

@@ -1,7 +1,7 @@
 package xyz.devcmb.cmr.interfaces;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.utils.Format;
@@ -25,6 +25,6 @@ public class TabList {
             teamColor = TextColor.color(0xFFFFFF);
         }
 
-        player.setPlayerListName(prefix + teamColor + player.getName());
+        player.playerListName(Component.text(prefix + player.getName()).color(teamColor));
     }
 }
