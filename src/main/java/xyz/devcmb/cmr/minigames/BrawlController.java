@@ -1,7 +1,6 @@
 package xyz.devcmb.cmr.minigames;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -210,7 +209,7 @@ public class BrawlController extends FFAMinigameBase implements Minigame {
                 Title title = Title.title(
                         Component.text("STANDOFF"),
                         Component.text(""),
-                        Title.Times.times(Utilities.ticksToSeconds(15), Utilities.ticksToSeconds(50), Utilities.ticksToSeconds(10))
+                        Title.Times.times(Utilities.ticksToMilliseconds(15), Utilities.ticksToMilliseconds(50), Utilities.ticksToMilliseconds(10))
                 );
 
                 player.showTitle(title);

@@ -502,7 +502,7 @@ public class Utilities {
                 loc.getZ() >= minZ && loc.getZ() <= maxZ;
     }
 
-    public static Duration ticksToSeconds(int ticks){
-        return Duration.ofSeconds(ticks / 20);
+    public static Duration ticksToMilliseconds(Number ticks) {
+        return Duration.ofMillis(ticks.longValue() * 50);
     }
 }

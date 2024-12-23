@@ -1,5 +1,9 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
@@ -48,7 +52,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (harmingArrowItemMeta == null) return;
 
         harmingArrowItemMeta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_DAMAGE, 1, 1), true);
-        harmingArrowItemMeta.setItemName("Harming Arrow");
+        harmingArrowItemMeta.displayName(Component.text("Harming Arrow"));
         harmingArrow.setItemMeta(harmingArrowItemMeta);
 
         ItemStack speedPotion = new ItemStack(Material.POTION);
@@ -56,7 +60,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (speedPotionMeta == null) return;
 
         speedPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1), true);
-        speedPotionMeta.setItemName("Speed Potion");
+        speedPotionMeta.displayName(Component.text("Speed Potion"));
         speedPotion.setItemMeta(speedPotionMeta);
 
         ItemStack poisonSplashPotion = new ItemStack(Material.SPLASH_POTION);
@@ -64,7 +68,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (poisonSplashPotionMeta == null) return;
 
         poisonSplashPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 8 * 20, 1), true);
-        poisonSplashPotionMeta.setItemName("Splash Potion of Poison");
+        poisonSplashPotionMeta.displayName(Component.text("Splash Potion of Poison"));
         poisonSplashPotion.setItemMeta(poisonSplashPotionMeta);
 
         ItemStack strengthPotion = new ItemStack(Material.POTION);
@@ -72,7 +76,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (strengthPotionMeta == null) return;
 
         strengthPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 10 * 20, 1), true);
-        strengthPotionMeta.setItemName("Potion of Strength");
+        strengthPotionMeta.displayName(Component.text("Potion of Strength"));
         strengthPotion.setItemMeta(strengthPotionMeta);
 
         items.add(harmingArrow);
@@ -99,13 +103,27 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         RED.forEach(player -> {
             player.teleport(Utilities.findValidLocation(redSpawn));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
+
+            Component text = Component.text()
+                    .content("You are on the ")
+                    .append(Component.text("RED").color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD))
+                    .append(Component.text(" team!"))
+                    .build();
+
+            player.sendMessage(text);
         });
 
         BLUE.forEach(player -> {
             player.teleport(Utilities.findValidLocation(blueSpawn));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
+
+            Component text = Component.text()
+                    .content("You are on the ")
+                    .append(Component.text("BLUE").color(TextColor.color(0, 120, 255)).decorate(TextDecoration.BOLD))
+                    .append(Component.text(" team!"))
+                    .build();
+
+            player.sendMessage(text);
         });
 
         GameManager.playersFrozen = true;
@@ -150,7 +168,15 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                                 new BukkitRunnable(){
                                     @Override
                                     public void run() {
-                                        Bukkit.broadcastMessage(ChatColor.GOLD + "An item has spawned at " + itemSpawnPlatform.getBlockX() + ", " + itemSpawnPlatform.getBlockY() + ", " + itemSpawnPlatform.getBlockZ() + "!");
+                                        Component text = Component.text()
+                                                .content("An item has spawned at ")
+                                                .color(TextColor.fromHexString("#FFAD00"))
+                                                .append(Component.text(itemSpawnPlatform.getBlockX() + ", " + itemSpawnPlatform.getBlockY() + ", " + itemSpawnPlatform.getBlockZ()))
+                                                .append(Component.text("!"))
+                                                .build();
+
+                                        Bukkit.broadcast(text);
+
                                         itemSpawnPlatform.getBlock().setType(Material.WHITE_CONCRETE);
                                         Bukkit.getOnlinePlayers().forEach(plr -> plr.playSound(plr.getLocation(), Sound.ENTITY_ITEM_PICKUP, 10, 1));
 
@@ -181,7 +207,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         ItemMeta meta1 = redFlagItem.getItemMeta();
         if(meta1 == null) return;
         meta1.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag"));
-        meta1.setItemName("Red Flag");
+        meta1.displayName(Component.text("Red Flag"));
 
         redFlagItem.setItemMeta(meta1);
         redFlagEntity.setItemStack(redFlagItem);
@@ -200,7 +226,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         ItemMeta meta2 = blueFlagItem.getItemMeta();
         if(meta2 == null) return;
         meta2.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag"));
-        meta2.setItemName("Blue Flag");
+        meta2.displayName(Component.text("Blue Flag"));
 
         blueFlagItem.setItemMeta(meta2);
         blueFlagEntity.setItemStack(blueFlagItem);
@@ -221,7 +247,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
     }
 
     @SuppressWarnings("unchecked")
-    public void handlePlayerMove(PlayerMoveEvent event){
+    public void handlePlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
         String worldName = MapLoader.LOADED_MAP;
@@ -229,104 +255,140 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         Map<String, Object> redFlag = (Map<String, Object>) flags.get("redFlag");
         Map<String, Object> blueFlag = (Map<String, Object>) flags.get("blueFlag");
 
-        if (!player.getWorld().getName().equals(worldName) || event.getTo() == null) return;
+        if (!player.getWorld().getName().equals(worldName)) return;
 
-        if(BLUE.contains(player)){
-            if(player.getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)redFlag.get("x")).doubleValue(), ((Number)redFlag.get("y")).doubleValue(), ((Number)redFlag.get("z")).doubleValue())) < 1 && !redTaken){
+        if (BLUE.contains(player)) {
+            if (player.getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number) redFlag.get("x")).doubleValue(), ((Number) redFlag.get("y")).doubleValue(), ((Number) redFlag.get("z")).doubleValue())) < 1 && !redTaken) {
                 redTaken = true;
-                player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
+
                 player.setGlowing(true);
                 player.setHealth(10);
                 Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(10);
 
                 ItemStack redFlagItem = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = redFlagItem.getItemMeta();
-                if(meta == null) return;
+                if (meta == null) return;
                 meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag"));
-                meta.setItemName(ChatColor.RED + "Red Flag");
+                meta.displayName(Component.text("Red Flag").color(TextColor.color(255, 0, 0)).decoration(TextDecoration.BOLD, true));
                 redFlagItem.setItemMeta(meta);
                 player.getInventory().setItemInOffHand(redFlagItem);
 
                 redFlagEntity.remove();
 
-                RED.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " has captured the flag! Stop them from reaching their base!"));
-                BLUE.forEach(plr -> {
-                    if(plr == player) return;
-                    plr.sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + player.getName() + " has captured the flag! Defend them!");
+                RED.forEach(plr -> {
+                    Component text = Component.text()
+                            .content(player.getName() + " has captured the flag! Stop them from reaching their base!")
+                            .color(TextColor.color(255, 0, 0))
+                            .decoration(TextDecoration.BOLD, true)
+                            .build();
+                    plr.sendMessage(text);
                 });
-            } else if(inBlueClaimZone(event.getTo())){
-                if(getPlayerFlag(player).equals("red")){
+                BLUE.forEach(plr -> {
+                    Component text = Component.text()
+                            .content(player.getName() + " has captured the flag! Defend them!")
+                            .color(TextColor.color(0, 255, 0))
+                            .decoration(TextDecoration.BOLD, true)
+                            .build();
+
+                    plr.sendMessage(text);
+                });
+            } else if (inBlueClaimZone(event.getTo())) {
+                if (getPlayerFlag(player).equals("red")) {
                     player.getInventory().setItemInOffHand(null);
                     player.setGlowing(false);
                     blueScore++;
                     redTaken = false;
                     Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE));
-                    if(blueScore >= 3){
+                    if (blueScore >= 3) {
                         timer.end();
                         endGame("blue");
                     } else {
+                        Title title = Title.title(
+                                Component.text("BLUE SCORE").color(TextColor.color(0, 120, 255)).decorate(TextDecoration.BOLD),
+                                Component.empty(),
+                                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(25), Utilities.ticksToMilliseconds(5))
+                        );
+
                         BLUE.forEach(plr -> {
-                            plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5);
+                            plr.showTitle(title);
                             plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
                         });
                         RED.forEach(plr -> {
-                            plr.sendTitle(ChatColor.BLUE + ChatColor.BOLD.toString() + "BLUE SCORE", "", 5, 25, 5);
+                            plr.showTitle(title);
                             plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
                         });
                         spawnRedFlag();
                     }
                 }
                 teleportToTeamBase(player);
-            } else if(inRedClaimZone(event.getTo())){
+            } else if (inRedClaimZone(event.getTo())) {
                 teleportToTeamBase(player);
             }
-        } else if(RED.contains(event.getPlayer())){
-            if(event.getPlayer().getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number)blueFlag.get("x")).doubleValue(), ((Number)blueFlag.get("y")).doubleValue(), ((Number)blueFlag.get("z")).doubleValue())) < 1 && !blueTaken){
+        } else if (RED.contains(event.getPlayer())) {
+            if (event.getPlayer().getLocation().distanceSquared(new Location(Bukkit.getWorld(worldName), ((Number) blueFlag.get("x")).doubleValue(), ((Number) blueFlag.get("y")).doubleValue(), ((Number) blueFlag.get("z")).doubleValue())) < 1 && !blueTaken) {
                 blueTaken = true;
-                player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "You have captured the flag!");
                 player.setGlowing(true);
                 player.setHealth(10);
                 Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(10);
 
                 ItemStack blueFlagIcon = new ItemStack(Material.ECHO_SHARD);
                 ItemMeta meta = blueFlagIcon.getItemMeta();
-                if(meta == null) return;
+                if (meta == null) return;
                 meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag"));
-                meta.setItemName(ChatColor.BLUE + "Blue Flag");
+                meta.displayName(Component.text("Blue Flag").color(TextColor.color(0, 120, 255)).decoration(TextDecoration.BOLD, true));
                 blueFlagIcon.setItemMeta(meta);
                 event.getPlayer().getInventory().setItemInOffHand(blueFlagIcon);
 
                 blueFlagEntity.remove();
 
-                BLUE.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " has captured the flag! Stop them from reaching their base!"));
-                RED.forEach(plr -> {
-                    if(plr == event.getPlayer()) return;
-                    plr.sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + player.getName() + " has captured the flag! Defend them!");
+                BLUE.forEach(plr -> {
+                    Component text = Component.text()
+                            .content(player.getName() + " has captured the flag! Stop them from reaching their base!")
+                            .color(TextColor.color(255, 0, 0))
+                            .decoration(TextDecoration.BOLD, true)
+                            .build();
+
+                    plr.sendMessage(text);
                 });
-            } else if(inRedClaimZone(event.getTo())){
-                if(getPlayerFlag(player).equals("blue")){
+                RED.forEach(plr -> {
+                    Component text = Component.text()
+                            .content(player.getName() + " has captured the flag! Defend them!")
+                            .color(TextColor.color(0, 255, 0))
+                            .decoration(TextDecoration.BOLD, true)
+                            .build();
+
+                    plr.sendMessage(text);
+                });
+            } else if (inRedClaimZone(event.getTo())) {
+                if (getPlayerFlag(player).equals("blue")) {
                     player.getInventory().setItemInOffHand(null);
                     player.setGlowing(false);
                     redScore++;
                     blueTaken = false;
                     Database.addUserStars(player, getStarSources().get(StarSource.OBJECTIVE));
-                    if(redScore >= 3) {
+                    if (redScore >= 3) {
                         timer.end();
                         endGame("red");
                     } else {
+                        Title title = Title.title(
+                                Component.text("RED SCORE").color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD),
+                                Component.empty(),
+                                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(25), Utilities.ticksToMilliseconds(5))
+                        );
+
                         BLUE.forEach(plr -> {
-                            plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5);
+                            plr.showTitle(title);
                             plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
                         });
                         RED.forEach(plr -> {
-                            plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "RED SCORE", "", 5, 25, 5);
+                            plr.showTitle(title);
                             plr.playSound(plr.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_1, 10, 1);
                         });
                         spawnBlueFlag();
                     }
                 }
                 teleportToTeamBase(player);
-            } else if(inBlueClaimZone(event.getTo())){
+            } else if (inBlueClaimZone(event.getTo())) {
                 teleportToTeamBase(player);
             }
         }
@@ -335,29 +397,48 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
     public void endGame(String winner){
         GameManager.gameEnding = true;
         timer = null;
+
+        Title victoryTitle = Title.title(
+                Component.text("VICTORY").color(TextColor.color(255, 166, 0)).decorate(TextDecoration.BOLD),
+                Component.empty(),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title defeatTitle = Title.title(
+                Component.text("DEFEAT").color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD),
+                Component.empty(),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title drawTitle = Title.title(
+                Component.text("DRAW").color(TextColor.color(0, 255, 255)).decorate(TextDecoration.BOLD),
+                Component.empty(),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
         if(winner.equals("red")){
             RED.forEach(plr -> {
-               plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+               plr.showTitle(victoryTitle);
                Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                plr.getInventory().clear();
                plr.setGameMode(GameMode.SPECTATOR);
             });
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
         } else if(winner.equals("blue")){
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
@@ -365,13 +446,13 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
             });
         } else {
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.showTitle(drawTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.showTitle(drawTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
@@ -422,11 +503,12 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.getType() == Material.ECHO_SHARD) {
             ItemMeta meta = offHandItem.getItemMeta();
-            if (meta != null && meta.hasCustomModelData()) {
+            if (meta != null && meta.hasItemModel()) {
                 NamespacedKey customModelData = meta.getItemModel();
-                if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag")) {
+                assert customModelData != null;
+                if (customModelData.equals(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag"))) {
                     return "red";
-                } else if (customModelData == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag")) {
+                } else if (customModelData.equals(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag"))) {
                     return "blue";
                 } else {
                     CmbMinigamesRandom.LOGGER.warning("Invalid custom model data found, got " + customModelData);
@@ -465,17 +547,20 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
     private void revokeFlag(Player player){
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.getType() == Material.ECHO_SHARD && offHandItem.getItemMeta() != null) {
-            if (offHandItem.getItemMeta().getItemName().equals(ChatColor.RED + "Red Flag")) {
+            Component redReturnText = Component.text("The red flag has been returned!").color(TextColor.color(255, 0, 0)).decoration(TextDecoration.BOLD, true);
+            Component blueReturnText = Component.text("The blue flag has been returned!").color(TextColor.color(0, 120, 255)).decoration(TextDecoration.BOLD, true);
+
+            if (Objects.equals(offHandItem.getItemMeta().displayName(), Component.text("Red Flag").color(TextColor.color(255, 0, 0)).decoration(TextDecoration.BOLD, true))) {
                 player.setGlowing(false);
                 spawnRedFlag();
-                RED.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
-                BLUE.forEach(plr -> plr.sendMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The red flag has been returned!"));
+                RED.forEach(plr -> plr.sendMessage(redReturnText));
+                BLUE.forEach(plr -> plr.sendMessage(redReturnText));
                 redTaken = false;
-            } else if (offHandItem.getItemMeta().getItemName().equals(ChatColor.BLUE + "Blue Flag")) {
+            } else if (Objects.equals(offHandItem.getItemMeta().displayName(), Component.text("Blue Flag").color(TextColor.color(0, 120, 255)).decoration(TextDecoration.BOLD, true))) {
                 player.setGlowing(false);
                 spawnBlueFlag();
-                RED.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
-                BLUE.forEach(plr -> plr.sendMessage(ChatColor.BLUE + ChatColor.BOLD.toString() + "The blue flag has been returned!"));
+                RED.forEach(plr -> plr.sendMessage(blueReturnText));
+                BLUE.forEach(plr -> plr.sendMessage(blueReturnText));
                 blueTaken = false;
             }
 
