@@ -1,5 +1,7 @@
 package xyz.devcmb.cmr.interfaces.scoreboards;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -7,6 +9,7 @@ import org.bukkit.scoreboard.*;
 import org.bukkit.scoreboard.ScoreboardManager;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
+import xyz.devcmb.cmr.utils.Colors;
 
 import java.util.Objects;
 
@@ -14,13 +17,20 @@ import java.util.Objects;
  * A class for the starting soon scoreboard
  */
 public class StartingSoonScoreboard implements HandledScoreboard {
+    @SuppressWarnings("deprecation")
     @Override
     public Scoreboard getScoreboard(Player player) {
         if(GameManager.intermissionTimer == null) return null;
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard board = Objects.requireNonNull(scoreboardManager).getNewScoreboard();
 
-        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames" + ChatColor.WHITE + " | " + ChatColor.GRAY + "v" + CmbMinigamesRandom.getPlugin().getDescription().getVersion() + " ".repeat(5));
+        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"),
+                Component.text(" ".repeat(5))
+                        .append(Component.text("Cmb Minigames").color(Colors.GOLD).decorate(TextDecoration.BOLD))
+                        .append(Component.text(" | "))
+                        .append(Component.text("v")
+                                .append(Component.text(CmbMinigamesRandom.getPlugin().getDescription().getVersion())).color(Colors.GRAY))
+                        .append(Component.text(" ".repeat(5))));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank = objective.getScore(" ");

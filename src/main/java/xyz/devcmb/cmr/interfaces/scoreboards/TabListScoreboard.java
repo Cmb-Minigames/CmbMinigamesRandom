@@ -1,6 +1,5 @@
 package xyz.devcmb.cmr.interfaces.scoreboards;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -16,7 +15,6 @@ public class TabListScoreboard implements HandledScoreboard{
     @Override
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
         Scoreboard board = manager.getNewScoreboard();
 
         Bukkit.getOnlinePlayers().forEach(plr -> {
