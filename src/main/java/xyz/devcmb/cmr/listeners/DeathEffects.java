@@ -1,7 +1,7 @@
 package xyz.devcmb.cmr.listeners;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +10,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.minigames.MinigameFlag;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Format;
 import xyz.devcmb.cmr.utils.Utilities;
 
@@ -66,7 +67,7 @@ public class DeathEffects implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
-        e.setDeathMessage(null);
+        e.deathMessage(null);
         Player player = e.getEntity().getPlayer();
         if(player == null) return;
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 10, 1);
@@ -86,7 +87,16 @@ public class DeathEffects implements Listener {
         Player player = e.getEntity().getPlayer();
         if(player == null) return;
         String deathMessage = Utilities.getRandom(randomizedDeathMessages);
-        Bukkit.broadcastMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY));
+
+
+        Component deathMessageComponent = Component.text("💀 ")
+                .append(Component.text(deathMessage.replace("{player}", Format.formatPlayerName(player)))
+                        .color(Colors.GRAY))
+                .replaceText(builder -> builder.matchLiteral(Format.formatPlayerName(player))
+                        .replacement(Component.text(Format.formatPlayerName(player), Colors.WHITE)));
+
+
+        Bukkit.broadcast(deathMessageComponent);
     }
 
     private static void doKillDeathMessage(PlayerDeathEvent e){
@@ -98,7 +108,17 @@ public class DeathEffects implements Listener {
             doRandomizedDeathMessages(e);
         } else {
             String deathMessage = Utilities.getRandom(randomizedKillMessages);
-            Bukkit.broadcastMessage(ChatColor.GRAY + "💀 " + deathMessage.replace("{player}", ChatColor.WHITE + Format.formatPlayerName(player) + ChatColor.GRAY).replace("{killer}", ChatColor.WHITE + Format.formatPlayerName(killer) + ChatColor.GRAY));
+
+            Component killMessageComponent = Component.text("💀 ")
+                    .append(Component.text(deathMessage.replace("{player}", Format.formatPlayerName(player))
+                            .replace("{killer}", Format.formatPlayerName(killer)))
+                            .color(Colors.GRAY))
+                    .replaceText(builder -> builder.matchLiteral(Format.formatPlayerName(player))
+                            .replacement(Component.text(Format.formatPlayerName(player), Colors.WHITE)))
+                    .replaceText(builder -> builder.matchLiteral(Format.formatPlayerName(killer))
+                            .replacement(Component.text(Format.formatPlayerName(killer), Colors.WHITE)));
+
+            Bukkit.broadcast(killMessageComponent);
         }
     }
 }

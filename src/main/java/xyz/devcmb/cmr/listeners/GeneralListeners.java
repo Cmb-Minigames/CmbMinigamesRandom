@@ -1,7 +1,8 @@
 package xyz.devcmb.cmr.listeners;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Format;
 
 import java.lang.reflect.Field;
@@ -64,37 +66,48 @@ public class GeneralListeners implements Listener {
         Command minecraftCommand = commandMap.getCommand(command);
 
         if (pluginCommand == null && minecraftCommand == null) {
-            event.getPlayer().sendMessage("❓ " + ChatColor.RED + "This command does not exist.");
+            Component message = Component.text("❓ ").append(Component.text("This command does not exist.").color(Colors.RED));
+
+            event.getPlayer().sendMessage(message);
             event.setCancelled(true);
-        } else if(event.getMessage().startsWith("/stop") || event.getMessage().startsWith("/reload")) {
-            event.getPlayer().sendMessage("❓ " + ChatColor.RED + "No.");
+        } else if(command.equals("stop") || command.equals("reload")) {
+            Component message = Component.text("❓ ").append(Component.text("No.").color(Colors.RED));
+
+            event.getPlayer().sendMessage(message);
             event.setCancelled(true);
         } else if (pluginCommand != null) {
             String permission = pluginCommand.getPermission();
             if (permission != null && !event.getPlayer().hasPermission(permission)) {
-                event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
+                Component message = Component.text("❓ ").append(Component.text("You do not have permission to use this command.").color(Colors.RED));
+
+                event.getPlayer().sendMessage(message);
                 event.setCancelled(true);
             }
         } else {
             String permission = minecraftCommand.getPermission();
             if (permission != null && !event.getPlayer().hasPermission(permission)) {
-                event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You do not have permission to use this command.");
+                Component message = Component.text("❓ ").append(Component.text("You do not have permission to use this command.").color(Colors.RED));
+                event.getPlayer().sendMessage(message);
                 event.setCancelled(true);
             }
         }
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event){
         if(event.getMessage().contains("https://")){
-            event.getPlayer().sendMessage("❓ " + ChatColor.RED + "You cannot send links in chat.");
+            Component text = Component.text("❓ ").append(Component.text("You cannot send links in chat.").color(Colors.RED));
+            event.getPlayer().sendMessage(text);
             event.setCancelled(true);
             return;
         }
 
         for (String blockedCharacter : blockedCharacters) {
             if (event.getMessage().contains(blockedCharacter)) {
-                event.getPlayer().sendMessage("❓ " + ChatColor.RED + "Your message contains a blocked character.");
+                Component text = Component.text("❓ ").append(Component.text("Your message contains a blocked character.").color(Colors.RED));
+
+                event.getPlayer().sendMessage(text);
                 event.setCancelled(true);
                 return;
             }
@@ -103,7 +116,7 @@ public class GeneralListeners implements Listener {
         Player player = event.getPlayer();
         String message = event.getMessage();
 
-        event.setFormat(Format.formatPlayerName(player) + ChatColor.WHITE + ": " + message);
+        event.setFormat(LegacyComponentSerializer.legacySection().serialize(Component.text(Format.formatPlayerName(player)).append(Component.text(": ")).append(Component.text(message)).color(Colors.WHITE)));
     }
 
     @EventHandler
