@@ -1,5 +1,7 @@
 package xyz.devcmb.cmr.cosmetics;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -8,10 +10,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Database;
 
-import javax.naming.Name;
 import java.util.*;
 
 /**
@@ -38,7 +40,7 @@ public class CosmeticInventory {
         ItemStack inventoryItem = new ItemStack(Material.ECHO_SHARD);
         ItemMeta meta = inventoryItem.getItemMeta();
         if(meta == null) return;
-        meta.setItemName("Cosmetic Inventory");
+        meta.displayName(Component.text("Cosmetic Inventory").color(Colors.BLUE).decoration(TextDecoration.ITALIC, false));
         meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("cosmetic_inventory"));
         inventoryItem.setItemMeta(meta);
 
@@ -53,14 +55,14 @@ public class CosmeticInventory {
      * Opens the cosmetic inventory for the player
      */
     public void openInventory(){
-        Inventory inventory = Bukkit.createInventory(player, 54, "Cosmetic Inventory");
+        Inventory inventory = Bukkit.createInventory(player, 54, Component.text("Cosmetic Inventory"));
         switch (page) {
             case "inventory" -> {
                 ItemStack selected = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
                 ItemMeta selectedMeta = selected.getItemMeta();
                 if (selectedMeta == null) return;
-                selectedMeta.setItemName(ChatColor.GREEN + ChatColor.BOLD.toString() + "Inventory");
-                selectedMeta.setLore(List.of(ChatColor.GRAY + "Selected"));
+                selectedMeta.displayName(Component.text("Inventory").color(Colors.GREEN).decorate(TextDecoration.BOLD));
+                selectedMeta.lore(List.of(Component.text("Selected").color(Colors.GRAY)));
                 selected.setItemMeta(selectedMeta);
 
                 inventory.setItem(0, selected);
@@ -68,7 +70,7 @@ public class CosmeticInventory {
                 ItemStack crates = new ItemStack(Material.CHEST);
                 ItemMeta cratesMeta = crates.getItemMeta();
                 if (cratesMeta == null) return;
-                cratesMeta.setItemName(ChatColor.GOLD + ChatColor.BOLD.toString() + "Crates");
+                cratesMeta.displayName(Component.text("Crates").color(Colors.GOLD).decorate(TextDecoration.BOLD));
                 crates.setItemMeta(cratesMeta);
 
                 inventory.setItem(1, crates);
@@ -76,7 +78,7 @@ public class CosmeticInventory {
                 ItemStack shop = new ItemStack(Material.LANTERN);
                 ItemMeta shopMeta = shop.getItemMeta();
                 if (shopMeta == null) return;
-                shopMeta.setItemName(ChatColor.AQUA + ChatColor.BOLD.toString() + "Shop");
+                shopMeta.displayName(Component.text("Shop").color(Colors.AQUA).decorate(TextDecoration.BOLD));
                 shop.setItemMeta(shopMeta);
 
                 inventory.setItem(2, shop);
@@ -124,10 +126,10 @@ public class CosmeticInventory {
                     ItemMeta cosmeticMeta = cosmeticItem.getItemMeta();
                     if (cosmeticMeta == null) return;
                     if (Database.isCosmeticEquipped(player, userCosmetics.get(i))) {
-                        if (cosmeticMeta.getLore() == null) return;
-                        List<String> lore = new ArrayList<>(cosmeticMeta.getLore());
-                        lore.add(ChatColor.WHITE + "Equipped");
-                        cosmeticMeta.setLore(lore);
+                        if (cosmeticMeta.lore() == null) return;
+                        List<Component> lore = new ArrayList<>(Objects.requireNonNull(cosmeticMeta.lore()));
+                        lore.add(Component.text("Equipped").color(Colors.WHITE));
+                        cosmeticMeta.lore(lore);
                     }
 
                     cosmeticItem.setItemMeta(cosmeticMeta);
@@ -139,7 +141,7 @@ public class CosmeticInventory {
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
                         previousPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
-                        previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
+                        previousPageMeta.displayName(Component.text("Previous Page").color(Colors.YELLOW));
                         previousPage.setItemMeta(previousPageMeta);
                     }
                     inventory.setItem(45, previousPage);
@@ -150,7 +152,7 @@ public class CosmeticInventory {
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
                         nextPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
-                        nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
+                        nextPageMeta.displayName(Component.text("Next Page").color(Colors.YELLOW));
                         nextPage.setItemMeta(nextPageMeta);
                     }
                     inventory.setItem(53, nextPage);
@@ -161,7 +163,7 @@ public class CosmeticInventory {
                 SkullMeta inventoryItemMeta = (SkullMeta) inventoryItem.getItemMeta();
                 if (inventoryItemMeta == null) return;
                 inventoryItemMeta.setOwningPlayer(player);
-                inventoryItemMeta.setItemName(ChatColor.GREEN + ChatColor.BOLD.toString() + "Inventory");
+                inventoryItemMeta.displayName(Component.text("Inventory").color(Colors.GREEN).decorate(TextDecoration.BOLD));
                 inventoryItem.setItemMeta(inventoryItemMeta);
 
                 inventory.setItem(0, inventoryItem);
@@ -169,8 +171,8 @@ public class CosmeticInventory {
                 ItemStack selected = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
                 ItemMeta selectedMeta = selected.getItemMeta();
                 if (selectedMeta == null) return;
-                selectedMeta.setItemName(ChatColor.GOLD + ChatColor.BOLD.toString() + "Crates");
-                selectedMeta.setLore(List.of(ChatColor.GRAY + "Selected"));
+                selectedMeta.displayName(Component.text("Crates").color(Colors.GOLD).decorate(TextDecoration.BOLD));
+                selectedMeta.lore(List.of(Component.text("Selected").color(Colors.GRAY)));
                 selected.setItemMeta(selectedMeta);
 
                 inventory.setItem(1, selected);
@@ -178,7 +180,7 @@ public class CosmeticInventory {
                 ItemStack shop = new ItemStack(Material.LANTERN);
                 ItemMeta shopMeta = shop.getItemMeta();
                 if (shopMeta == null) return;
-                shopMeta.setItemName(ChatColor.AQUA + ChatColor.BOLD.toString() + "Shop");
+                shopMeta.displayName(Component.text("Shop").color(Colors.AQUA).decorate(TextDecoration.BOLD));
                 shop.setItemMeta(shopMeta);
 
                 inventory.setItem(2, shop);
@@ -213,7 +215,7 @@ public class CosmeticInventory {
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
                         previousPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
-                        previousPageMeta.setItemName(ChatColor.YELLOW + "Previous Page");
+                        previousPageMeta.displayName(Component.text("Previous Page").color(Colors.YELLOW));
                         previousPage.setItemMeta(previousPageMeta);
                     }
                     inventory.setItem(45, previousPage);
@@ -224,7 +226,7 @@ public class CosmeticInventory {
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
                         nextPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
-                        nextPageMeta.setItemName(ChatColor.YELLOW + "Next Page");
+                        nextPageMeta.displayName(Component.text("Next Page").color(Colors.YELLOW));
                         nextPage.setItemMeta(nextPageMeta);
                     }
                     inventory.setItem(53, nextPage);
@@ -235,7 +237,7 @@ public class CosmeticInventory {
                 SkullMeta inventoryItemMeta = (SkullMeta) inventoryItem.getItemMeta();
                 if (inventoryItemMeta == null) return;
                 inventoryItemMeta.setOwningPlayer(player);
-                inventoryItemMeta.setItemName(ChatColor.GREEN + ChatColor.BOLD.toString() + "Inventory");
+                inventoryItemMeta.displayName(Component.text("Inventory").color(Colors.GREEN).decorate(TextDecoration.BOLD));
                 inventoryItem.setItemMeta(inventoryItemMeta);
 
                 inventory.setItem(0, inventoryItem);
@@ -243,7 +245,7 @@ public class CosmeticInventory {
                 ItemStack crates = new ItemStack(Material.CHEST);
                 ItemMeta selectedMeta = crates.getItemMeta();
                 if (selectedMeta == null) return;
-                selectedMeta.setItemName(ChatColor.GOLD + ChatColor.BOLD.toString() + "Crates");
+                selectedMeta.displayName(Component.text("Crates").color(Colors.GOLD).decorate(TextDecoration.BOLD));
                 crates.setItemMeta(selectedMeta);
 
                 inventory.setItem(1, crates);
@@ -251,8 +253,8 @@ public class CosmeticInventory {
                 ItemStack selected = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
                 ItemMeta shopMeta = selected.getItemMeta();
                 if (shopMeta == null) return;
-                shopMeta.setItemName(ChatColor.AQUA + ChatColor.BOLD.toString() + "Shop");
-                shopMeta.setLore(List.of(ChatColor.GRAY + "Selected"));
+                shopMeta.displayName(Component.text("Shop").color(Colors.AQUA).decorate(TextDecoration.BOLD));
+                shopMeta.lore(List.of(Component.text("Selected").color(Colors.GRAY)));
                 selected.setItemMeta(shopMeta);
 
                 inventory.setItem(2, selected);
@@ -284,18 +286,17 @@ public class CosmeticInventory {
                             ItemStack newItem = crateItem.clone();
                             ItemMeta newItemMeta = newItem.getItemMeta();
                             if (newItemMeta == null) return;
-                            List<String> lore = new ArrayList<>(List.of(
-                                    ChatColor.WHITE + "Price: 🌟" + ChatColor.YELLOW + entry.getValue().get("shop_price"),
-                                    ChatColor.AQUA + "Left click to purchase!",
-                                    ChatColor.AQUA + "Right click to preview!",
-                                    ""
+                            List<Component> lore = new ArrayList<>(List.of(
+                                    Component.text("Price: 🌟").append(Component.text(entry.getValue().get("shop_price").toString())).color(Colors.YELLOW).decoration(TextDecoration.ITALIC, false),
+                                    Component.text("Left click to purchase!").color(Colors.AQUA).decoration(TextDecoration.ITALIC, false),
+                                    Component.text("Right click to preview!").color(Colors.AQUA).decoration(TextDecoration.ITALIC, false),
+                                    Component.empty()
                             ));
 
-                            lore.addAll(Objects.requireNonNull(newItemMeta.getLore()));
-                            newItemMeta.setLore(lore);
+                            lore.addAll(Objects.requireNonNull(newItemMeta.lore()));
+                            newItemMeta.lore(lore);
 
                             newItem.setItemMeta(newItemMeta);
-
                             inventory.setItem(slots[index - startIndex], newItem);
                         }
                     }
@@ -307,7 +308,7 @@ public class CosmeticInventory {
                     ItemMeta previousPageMeta = previousPage.getItemMeta();
                     if (previousPageMeta != null) {
                         previousPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
-                        previousPageMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
+                        previousPageMeta.displayName(Component.text("Previous Page").color(Colors.YELLOW));
                         previousPage.setItemMeta(previousPageMeta);
                     }
                     inventory.setItem(45, previousPage);
@@ -318,7 +319,7 @@ public class CosmeticInventory {
                     ItemMeta nextPageMeta = nextPage.getItemMeta();
                     if (nextPageMeta != null) {
                         nextPageMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
-                        nextPageMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
+                        nextPageMeta.displayName(Component.text("Next Page").color(Colors.YELLOW));
                         nextPage.setItemMeta(nextPageMeta);
                     }
                     inventory.setItem(53, nextPage);
@@ -336,7 +337,7 @@ public class CosmeticInventory {
         Map<String, Object> crateData = CrateManager.crateData.get(crate);
         if(crateData == null) return;
 
-        Inventory inventory = Bukkit.createInventory(player, 27, "Crate");
+        Inventory inventory = Bukkit.createInventory(player, 27, Component.text("Crate"));
         for (int i = 0; i < 9; i++) {
             inventory.setItem(i, new ItemStack(Material.BLUE_STAINED_GLASS_PANE));
         }
@@ -373,7 +374,11 @@ public class CosmeticInventory {
             public void run() {
                 if (index == cosmetics.size()) {
                     this.cancel();
-                    player.sendMessage(ChatColor.GOLD + "You have rolled a " + ChatColor.RESET + Objects.requireNonNull(cosmetic.getItemMeta()).getItemName());
+
+                    Component rolled = Component.text("You have rolled a ").color(Colors.GOLD)
+                            .append(Objects.requireNonNull(Objects.requireNonNull(cosmetic.getItemMeta()).displayName()).decorate(TextDecoration.BOLD));
+
+                    player.sendMessage(rolled);
                     Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
                         page = "inventory";
                         openInventory();
@@ -394,12 +399,6 @@ public class CosmeticInventory {
                 inventory.setItem(17, currentCosmetic);
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 10, 1);
 
-
-                ItemStack centerItem = inventory.getItem(13);
-                if(centerItem != null && centerItem.hasItemMeta() && Objects.requireNonNull(centerItem.getItemMeta()).hasItemName()) {
-                    inventory.setItem(4, new ItemStack(chatColorToGlassPane(centerItem.getItemMeta().getItemName())));
-                    inventory.setItem(22, new ItemStack(chatColorToGlassPane(centerItem.getItemMeta().getItemName())));
-                }
                 index++;
             }
         }.runTaskTimer(CmbMinigamesRandom.getPlugin(), 0, 3);
@@ -413,7 +412,7 @@ public class CosmeticInventory {
         Map<String, Object> crateData = CrateManager.crateData.get(crate);
         if(crateData == null) return;
 
-        Inventory inventory = Bukkit.createInventory(player, 45, "Crate Preview");
+        Inventory inventory = Bukkit.createInventory(player, 45, Component.text("Crate Preview"));
 
         for (int i = 0; i < 9; i++) {
             inventory.setItem(i, empty);
@@ -430,7 +429,7 @@ public class CosmeticInventory {
         ItemMeta backMeta = back.getItemMeta();
         if(backMeta == null) return;
         backMeta.setItemModel(new NamespacedKey("cmbminigames", "functional/arrow_slot"));
-        backMeta.setItemName(ChatColor.YELLOW + "Back");
+        backMeta.itemName(Component.text("Back").color(Colors.YELLOW));
         back.setItemMeta(backMeta);
 
         inventory.setItem(0, back);
@@ -457,8 +456,10 @@ public class CosmeticInventory {
     /**
      * Get a glass pane material by checking if it has a ChatColor in its name
      * @param rarity The string of the rarity
+     * @deprecated Isn't worth making it work with paper changes
      */
-    private Material chatColorToGlassPane(String rarity) {
+    @Deprecated
+    public Material chatColorToGlassPane(String rarity) {
         if (rarity.contains(ChatColor.WHITE.toString())) {
             return Material.WHITE_STAINED_GLASS_PANE;
         } else if (rarity.contains(ChatColor.GREEN.toString())) {
