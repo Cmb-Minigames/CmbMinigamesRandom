@@ -1,7 +1,6 @@
 package xyz.devcmb.cmr.minigames;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
@@ -106,7 +105,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
 
             Component text = Component.text()
                     .content("You are on the ")
-                    .append(Component.text("RED").color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD))
+                    .append(Component.text("RED").color(Colors.RED).decorate(TextDecoration.BOLD))
                     .append(Component.text(" team!"))
                     .build();
 
@@ -119,7 +118,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
 
             Component text = Component.text()
                     .content("You are on the ")
-                    .append(Component.text("BLUE").color(TextColor.color(0, 120, 255)).decorate(TextDecoration.BOLD))
+                    .append(Component.text("BLUE").color(Colors.BLUE).decorate(TextDecoration.BOLD))
                     .append(Component.text(" team!"))
                     .build();
 
@@ -170,7 +169,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                                     public void run() {
                                         Component text = Component.text()
                                                 .content("An item has spawned at ")
-                                                .color(TextColor.fromHexString("#FFAD00"))
+                                                .color(Colors.GOLD)
                                                 .append(Component.text(itemSpawnPlatform.getBlockX() + ", " + itemSpawnPlatform.getBlockY() + ", " + itemSpawnPlatform.getBlockZ()))
                                                 .append(Component.text("!"))
                                                 .build();
@@ -269,7 +268,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 ItemMeta meta = redFlagItem.getItemMeta();
                 if (meta == null) return;
                 meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("red_flag"));
-                meta.displayName(Component.text("Red Flag").color(TextColor.color(255, 0, 0)).decoration(TextDecoration.BOLD, true));
+                meta.displayName(Component.text("Red Flag").color(Colors.RED).decoration(TextDecoration.BOLD, true));
                 redFlagItem.setItemMeta(meta);
                 player.getInventory().setItemInOffHand(redFlagItem);
 
@@ -278,7 +277,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 RED.forEach(plr -> {
                     Component text = Component.text()
                             .content(player.getName() + " has captured the flag! Stop them from reaching their base!")
-                            .color(TextColor.color(255, 0, 0))
+                            .color(Colors.RED)
                             .decoration(TextDecoration.BOLD, true)
                             .build();
                     plr.sendMessage(text);
@@ -286,7 +285,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 BLUE.forEach(plr -> {
                     Component text = Component.text()
                             .content(player.getName() + " has captured the flag! Defend them!")
-                            .color(TextColor.color(0, 255, 0))
+                            .color(Colors.GREEN)
                             .decoration(TextDecoration.BOLD, true)
                             .build();
 
@@ -304,7 +303,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                         endGame("blue");
                     } else {
                         Title title = Title.title(
-                                Component.text("BLUE SCORE").color(TextColor.color(0, 120, 255)).decorate(TextDecoration.BOLD),
+                                Component.text("BLUE SCORE").color(Colors.BLUE).decorate(TextDecoration.BOLD),
                                 Component.empty(),
                                 Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(25), Utilities.ticksToMilliseconds(5))
                         );
@@ -335,7 +334,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 ItemMeta meta = blueFlagIcon.getItemMeta();
                 if (meta == null) return;
                 meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("blue_flag"));
-                meta.displayName(Component.text("Blue Flag").color(TextColor.color(0, 120, 255)).decoration(TextDecoration.BOLD, true));
+                meta.displayName(Component.text("Blue Flag").color(Colors.BLUE).decoration(TextDecoration.BOLD, true));
                 blueFlagIcon.setItemMeta(meta);
                 event.getPlayer().getInventory().setItemInOffHand(blueFlagIcon);
 
@@ -344,7 +343,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 BLUE.forEach(plr -> {
                     Component text = Component.text()
                             .content(player.getName() + " has captured the flag! Stop them from reaching their base!")
-                            .color(TextColor.color(255, 0, 0))
+                            .color(Colors.RED)
                             .decoration(TextDecoration.BOLD, true)
                             .build();
 
@@ -353,7 +352,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                 RED.forEach(plr -> {
                     Component text = Component.text()
                             .content(player.getName() + " has captured the flag! Defend them!")
-                            .color(TextColor.color(0, 255, 0))
+                            .color(Colors.GREEN)
                             .decoration(TextDecoration.BOLD, true)
                             .build();
 
@@ -371,7 +370,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
                         endGame("red");
                     } else {
                         Title title = Title.title(
-                                Component.text("RED SCORE").color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD),
+                                Component.text("RED SCORE").color(Colors.RED).decorate(TextDecoration.BOLD),
                                 Component.empty(),
                                 Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(25), Utilities.ticksToMilliseconds(5))
                         );
@@ -399,19 +398,19 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         timer = null;
 
         Title victoryTitle = Title.title(
-                Component.text("VICTORY").color(TextColor.color(255, 166, 0)).decorate(TextDecoration.BOLD),
+                Component.text("VICTORY").color(Colors.GOLD).decorate(TextDecoration.BOLD),
                 Component.empty(),
                 Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
         );
 
         Title defeatTitle = Title.title(
-                Component.text("DEFEAT").color(TextColor.color(255, 0, 0)).decorate(TextDecoration.BOLD),
+                Component.text("DEFEAT").color(Colors.RED).decorate(TextDecoration.BOLD),
                 Component.empty(),
                 Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
         );
 
         Title drawTitle = Title.title(
-                Component.text("DRAW").color(TextColor.color(0, 255, 255)).decorate(TextDecoration.BOLD),
+                Component.text("DRAW").color(Colors.AQUA).decorate(TextDecoration.BOLD),
                 Component.empty(),
                 Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
         );
@@ -547,16 +546,16 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
     private void revokeFlag(Player player){
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.getType() == Material.ECHO_SHARD && offHandItem.getItemMeta() != null) {
-            Component redReturnText = Component.text("The red flag has been returned!").color(TextColor.color(255, 0, 0)).decoration(TextDecoration.BOLD, true);
-            Component blueReturnText = Component.text("The blue flag has been returned!").color(TextColor.color(0, 120, 255)).decoration(TextDecoration.BOLD, true);
+            Component redReturnText = Component.text("The red flag has been returned!").color(Colors.RED).decoration(TextDecoration.BOLD, true);
+            Component blueReturnText = Component.text("The blue flag has been returned!").color(Colors.BLUE).decoration(TextDecoration.BOLD, true);
 
-            if (Objects.equals(offHandItem.getItemMeta().displayName(), Component.text("Red Flag").color(TextColor.color(255, 0, 0)).decoration(TextDecoration.BOLD, true))) {
+            if (Objects.equals(offHandItem.getItemMeta().displayName(), Component.text("Red Flag").color(Colors.RED).decoration(TextDecoration.BOLD, true))) {
                 player.setGlowing(false);
                 spawnRedFlag();
                 RED.forEach(plr -> plr.sendMessage(redReturnText));
                 BLUE.forEach(plr -> plr.sendMessage(redReturnText));
                 redTaken = false;
-            } else if (Objects.equals(offHandItem.getItemMeta().displayName(), Component.text("Blue Flag").color(TextColor.color(0, 120, 255)).decoration(TextDecoration.BOLD, true))) {
+            } else if (Objects.equals(offHandItem.getItemMeta().displayName(), Component.text("Blue Flag").color(Colors.BLUE).decoration(TextDecoration.BOLD, true))) {
                 player.setGlowing(false);
                 spawnBlueFlag();
                 RED.forEach(plr -> plr.sendMessage(blueReturnText));

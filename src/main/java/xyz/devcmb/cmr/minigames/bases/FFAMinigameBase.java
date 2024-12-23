@@ -1,7 +1,6 @@
 package xyz.devcmb.cmr.minigames.bases;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
@@ -12,6 +11,7 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.minigames.StarSource;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -85,7 +85,7 @@ abstract public class FFAMinigameBase {
         Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             player.teleport(spawnLocation);
-            Component message = Component.text("A game of " + getName() + " is currently active, and you have been added as a spectator.").color(TextColor.color(0xFF0000));
+            Component message = Component.text("A game of " + getName() + " is currently active, and you have been added as a spectator.").color(Colors.RED);
 
             player.sendMessage(message);
             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
@@ -106,7 +106,7 @@ abstract public class FFAMinigameBase {
             if(players.size() == 1){
                 Player winner = players.getFirst();
                 Database.addUserStars(winner, getStarSources().get(StarSource.WIN));
-                Title victoryTitle = Title.title(Component.text("VICTORY").decorate(TextDecoration.BOLD).color(TextColor.color(0xFFA000)), Component.empty(), Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10)));
+                Title victoryTitle = Title.title(Component.text("VICTORY").decorate(TextDecoration.BOLD).color(Colors.GOLD), Component.empty(), Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10)));
 
                 winner.showTitle(victoryTitle);
                 winner.playSound(winner.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
@@ -136,10 +136,10 @@ abstract public class FFAMinigameBase {
             player.getInventory().clear();
             player.setGameMode(GameMode.SPECTATOR);
 
-            Component victoryMessage = Component.text("VICTORY").decorate(TextDecoration.BOLD).color(TextColor.color(0xFFA000));
+            Component victoryMessage = Component.text("VICTORY").decorate(TextDecoration.BOLD).color(Colors.GOLD);
             Title victoryTitle = Title.title(victoryMessage, Component.empty(), Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10)));
 
-            Component defeatMessage = Component.text("DEFEAT").decorate(TextDecoration.BOLD).color(TextColor.color(0xFF0000));
+            Component defeatMessage = Component.text("DEFEAT").decorate(TextDecoration.BOLD).color(Colors.RED);
             Title defeatTitle = Title.title(defeatMessage, Component.empty(), Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10)));
 
             player.showTitle(winner == player ? victoryTitle : defeatTitle);

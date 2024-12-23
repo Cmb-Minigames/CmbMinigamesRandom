@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -130,11 +131,11 @@ public class ElectricEelController implements Minigame {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
                 redTeam.addEntry(allPlayers.get(i).getName());
-                GameManager.teamColors.put(allPlayers.get(i), TextColor.color(0xFF0000));
+                GameManager.teamColors.put(allPlayers.get(i), NamedTextColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
                 blueTeam.addEntry(allPlayers.get(i).getName());
-                GameManager.teamColors.put(allPlayers.get(i), TextColor.color(0x0000FF));
+                GameManager.teamColors.put(allPlayers.get(i), NamedTextColor.BLUE);
 
                 PotionEffect dolphinsGrace = new PotionEffect(PotionEffectType.DOLPHINS_GRACE, Integer.MAX_VALUE, 255, false, false);
                 allPlayers.get(i).addPotionEffect(dolphinsGrace);

@@ -22,7 +22,7 @@ public class TabListScoreboard implements HandledScoreboard{
         Bukkit.getOnlinePlayers().forEach(plr -> {
             Integer priority = Format.getPriority(plr);
             Team team = board.registerNewTeam(priority + plr.getName());
-            team.color((NamedTextColor) GameManager.teamColors.get(plr));
+            team.color(GameManager.teamColors.get(plr));
             team.addEntry(plr.getName());
         });
 
