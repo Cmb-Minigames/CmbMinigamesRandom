@@ -99,7 +99,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
             player.teleport(redSpawn);
             Fade.fadePlayer(player, 0, 0, 40);
 
-            Component team = Component.text("You are on the ").append(Component.text("RED").color(Colors.RED)).append(Component.text(" team!"));
+            Component team = Component.text("You are on the ").append(Component.text("RED").color(Colors.RED).decorate(TextDecoration.BOLD)).append(Component.text(" team!"));
             player.sendMessage(team);
 
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
@@ -110,7 +110,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
             player.teleport(blueSpawn);
             Fade.fadePlayer(player, 0, 0, 40);
 
-            Component team = Component.text("You are on the ").append(Component.text("BLUE").color(Colors.BLUE)).append(Component.text(" team!"));
+            Component team = Component.text("You are on the ").append(Component.text("BLUE").color(Colors.BLUE).decorate(TextDecoration.BOLD)).append(Component.text(" team!"));
             player.sendMessage(team);
 
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));

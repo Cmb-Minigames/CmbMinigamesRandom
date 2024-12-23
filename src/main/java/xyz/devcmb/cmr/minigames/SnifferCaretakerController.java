@@ -1,5 +1,8 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -22,6 +25,7 @@ import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.timers.Timer;
 import xyz.devcmb.cmr.timers.TimerManager;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -53,7 +57,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         if (speedPotionMeta == null) return;
 
         speedPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 20, 1), true);
-        speedPotionMeta.setItemName("Speed Potion");
+        speedPotionMeta.displayName(Component.text("Speed Potion"));
         speedPotion.setItemMeta(speedPotionMeta);
 
         ItemStack poisonSplashPotion = new ItemStack(Material.SPLASH_POTION);
@@ -61,7 +65,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         if (poisonSplashPotionMeta == null) return;
 
         poisonSplashPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 10 * 20, 1), true);
-        poisonSplashPotionMeta.setItemName("Splash Potion of Poison");
+        poisonSplashPotionMeta.displayName(Component.text("Splash Potion of Poison"));
         poisonSplashPotion.setItemMeta(poisonSplashPotionMeta);
 
         ItemStack strengthPotion = new ItemStack(Material.POTION);
@@ -69,7 +73,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         if (strengthPotionMeta == null) return;
 
         strengthPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 20, 1), true);
-        strengthPotionMeta.setItemName("Potion of Strength");
+        strengthPotionMeta.displayName(Component.text("Potion of Strength"));
         strengthPotion.setItemMeta(strengthPotionMeta);
 
         items.add(speedPotion);
@@ -140,14 +144,24 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
             assert redSpawn != null;
             player.teleport(Utilities.findValidLocation(redSpawn));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
+
+            Component teamText = Component.text("You are on the ")
+                    .append(Component.text("RED").color(Colors.RED).decorate(TextDecoration.BOLD))
+                    .append(Component.text(" team!"));
+
+            player.sendMessage(teamText);
         });
 
         BLUE.forEach(player -> {
             assert blueSpawn != null;
             player.teleport(Utilities.findValidLocation(blueSpawn));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
+
+            Component teamText = Component.text("You are on the ")
+                    .append(Component.text("BLUE").color(Colors.BLUE).decorate(TextDecoration.BOLD))
+                    .append(Component.text(" team!"));
+
+            player.sendMessage(teamText);
         });
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -196,7 +210,12 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
                 public void run() {
                     happinessDecreaseAmount++;
                     allPlayers.forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 10, 1));
-                    Bukkit.broadcastMessage(ChatColor.RED + "The sniffers demand MORE! Happiness will go down by " + happinessDecreaseAmount + " every second!");
+
+                    Component message = Component.text("The sniffers demand MORE! Happiness will go down by ")
+                            .append(Component.text(happinessDecreaseAmount).decorate(TextDecoration.BOLD))
+                            .append(Component.text(" every second!")).color(Colors.RED);
+
+                    Bukkit.broadcast(message);
                 }
             };
 
@@ -224,7 +243,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
                     }
 
                     allPlayers.forEach(player -> player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 10, 1));
-                    Bukkit.broadcastMessage(ChatColor.GREEN + "Items have spawned around the map!");
+                    Bukkit.broadcast(Component.text("Items have spawned around the map!").color(Colors.GREEN));
                 }
             };
 
@@ -289,40 +308,59 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         blueSnifferHappiness = 0;
     }
 
+    @SuppressWarnings("all")
     public void endGame() {
         timer = null;
         GameManager.gameEnding = true;
 
+        Title victoryTitle = Title.title(
+                Component.text("VICTORY").color(Colors.GOLD).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title defeatTitle = Title.title(
+                Component.text("DEFEAT").color(Colors.RED).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title drawTitle = Title.title(
+                Component.text("DRAW").color(Colors.AQUA).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
         if (redSnifferHappiness == blueSnifferHappiness) {
             Bukkit.getOnlinePlayers().forEach(plr -> {
-                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.showTitle(drawTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
         } else if(redSnifferHappiness > blueSnifferHappiness){
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.showTitle(victoryTitle);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
         } else if(blueSnifferHappiness > redSnifferHappiness){
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.showTitle(victoryTitle);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
