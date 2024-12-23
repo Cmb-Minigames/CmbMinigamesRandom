@@ -1,5 +1,8 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -12,6 +15,7 @@ import xyz.devcmb.cmr.minigames.bases.FFAMinigameBase;
 import xyz.devcmb.cmr.minigames.teleporters.*;
 import xyz.devcmb.cmr.timers.Timer;
 import xyz.devcmb.cmr.timers.TimerManager;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
 
@@ -60,15 +64,29 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
             public void run() {
                 if(cyles == 5){
                     this.cancel();
+
+                    Title selectedTitle = Title.title(
+                        Component.text(gameLives.toString()).color(Colors.GOLD).decorate(TextDecoration.BOLD),
+                        Component.text("Choosing the amount of lives").color(Colors.GREEN),
+                        Title.Times.times(Utilities.ticksToMilliseconds(0), Utilities.ticksToMilliseconds(40), Utilities.ticksToMilliseconds(20))
+                    );
+
                     allPlayers.forEach(plr -> {
-                        plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + gameLives.toString(), ChatColor.GREEN + "Choosing the amount of lives", 0, 40, 20);
+                        plr.showTitle(selectedTitle);
                         plr.playSound(plr.getLocation(), Sound.BLOCK_BELL_USE, 1, 1);
                     });
+
                     return;
                 }
 
+                Title pickingTitle = Title.title(
+                    Component.text(lives[new Random().nextInt(lives.length)].toString()),
+                    Component.text("Choosing the amount of lives").color(Colors.GREEN),
+                    Title.Times.times(Utilities.ticksToMilliseconds(0), Utilities.ticksToMilliseconds(19), Utilities.ticksToMilliseconds(0))
+                );
+
                 allPlayers.forEach(plr -> {
-                    plr.sendTitle(lives[new Random().nextInt(lives.length)].toString(), ChatColor.GREEN + "Choosing the amount of lives", 0, 19, 0);
+                    plr.showTitle(pickingTitle);
                     plr.playSound(plr.getLocation(), Sound.UI_STONECUTTER_SELECT_RECIPE, 1, 1);
                 });
                 cyles++;
@@ -101,17 +119,31 @@ public class TeleportersController extends FFAMinigameBase implements Minigame {
 
                             for(int i = 0; i < 4; i++){
                                 TeleportersEvent randomEvent = Utilities.getRandom(events);
+
+                                Title eventTitle = Title.title(
+                                    Component.text(randomEvent.getName()).color(Colors.GOLD),
+                                    Component.text(randomEvent.getDescription()),
+                                    Title.Times.times(Utilities.ticksToMilliseconds(0), Utilities.ticksToMilliseconds(19), Utilities.ticksToMilliseconds(0))
+                                );
+
                                 Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () ->
                                     players.forEach(plr -> {
-                                        plr.sendTitle(ChatColor.GOLD + randomEvent.getName(), randomEvent.getDescription(), 0, 19, 0);
+                                        plr.showTitle(eventTitle);
                                         plr.playSound(plr.getLocation(), Sound.UI_STONECUTTER_SELECT_RECIPE, 1, 1);
                                     }
                                 ), 20 * i);
                             }
 
                             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
+
+                                Title eventTitle = Title.title(
+                                    Component.text(event.getName()).color(Colors.GOLD).decorate(TextDecoration.BOLD),
+                                    Component.text(event.getDescription()),
+                                    Title.Times.times(Utilities.ticksToMilliseconds(0), Utilities.ticksToMilliseconds(40), Utilities.ticksToMilliseconds(10))
+                                );
+
                                 players.forEach(plr -> {
-                                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + event.getName(), event.getDescription(), 0, 40, 10);
+                                    plr.showTitle(eventTitle);
                                     plr.playSound(plr.getLocation(), Sound.BLOCK_BELL_USE, 1, 1);
                                 });
                                 Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), event::run, 20 * 3);
