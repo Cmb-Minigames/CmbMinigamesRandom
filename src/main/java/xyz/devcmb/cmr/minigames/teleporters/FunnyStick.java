@@ -1,6 +1,7 @@
 package xyz.devcmb.cmr.minigames.teleporters;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -22,7 +23,7 @@ public class FunnyStick implements TeleportersEvent {
         funnyStick = new ItemStack(Material.STICK);
         ItemMeta meta = funnyStick.getItemMeta();
         if(meta == null) return;
-        meta.displayName(Component.text("Funny Stick"));
+        meta.displayName(Component.text("Funny Stick").decoration(TextDecoration.ITALIC, false));
         funnyStick.setItemMeta(meta);
         funnyStick.addUnsafeEnchantment(Enchantment.KNOCKBACK, 5);
     }

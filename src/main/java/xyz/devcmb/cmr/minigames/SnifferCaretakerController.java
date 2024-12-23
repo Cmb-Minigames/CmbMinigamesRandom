@@ -57,7 +57,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         if (speedPotionMeta == null) return;
 
         speedPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 20, 1), true);
-        speedPotionMeta.displayName(Component.text("Speed Potion"));
+        speedPotionMeta.displayName(Component.text("Speed Potion").decoration(TextDecoration.ITALIC, false));
         speedPotion.setItemMeta(speedPotionMeta);
 
         ItemStack poisonSplashPotion = new ItemStack(Material.SPLASH_POTION);
@@ -65,7 +65,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         if (poisonSplashPotionMeta == null) return;
 
         poisonSplashPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 10 * 20, 1), true);
-        poisonSplashPotionMeta.displayName(Component.text("Splash Potion of Poison"));
+        poisonSplashPotionMeta.displayName(Component.text("Splash Potion of Poison").decoration(TextDecoration.ITALIC, false));
         poisonSplashPotion.setItemMeta(poisonSplashPotionMeta);
 
         ItemStack strengthPotion = new ItemStack(Material.POTION);
@@ -73,7 +73,7 @@ public class SnifferCaretakerController extends Teams2MinigameBase implements Mi
         if (strengthPotionMeta == null) return;
 
         strengthPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 20, 1), true);
-        strengthPotionMeta.displayName(Component.text("Potion of Strength"));
+        strengthPotionMeta.displayName(Component.text("Potion of Strength").decoration(TextDecoration.ITALIC, false));
         strengthPotion.setItemMeta(strengthPotionMeta);
 
         items.add(speedPotion);

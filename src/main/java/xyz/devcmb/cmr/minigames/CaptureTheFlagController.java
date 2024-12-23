@@ -51,7 +51,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (harmingArrowItemMeta == null) return;
 
         harmingArrowItemMeta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_DAMAGE, 1, 1), true);
-        harmingArrowItemMeta.displayName(Component.text("Harming Arrow"));
+        harmingArrowItemMeta.displayName(Component.text("Harming Arrow").decoration(TextDecoration.ITALIC, false));
         harmingArrow.setItemMeta(harmingArrowItemMeta);
 
         ItemStack speedPotion = new ItemStack(Material.POTION);
@@ -59,7 +59,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (speedPotionMeta == null) return;
 
         speedPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1), true);
-        speedPotionMeta.displayName(Component.text("Speed Potion"));
+        speedPotionMeta.displayName(Component.text("Speed Potion").decoration(TextDecoration.ITALIC, false));
         speedPotion.setItemMeta(speedPotionMeta);
 
         ItemStack poisonSplashPotion = new ItemStack(Material.SPLASH_POTION);
@@ -67,7 +67,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (poisonSplashPotionMeta == null) return;
 
         poisonSplashPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 8 * 20, 1), true);
-        poisonSplashPotionMeta.displayName(Component.text("Splash Potion of Poison"));
+        poisonSplashPotionMeta.displayName(Component.text("Splash Potion of Poison").decoration(TextDecoration.ITALIC, false));
         poisonSplashPotion.setItemMeta(poisonSplashPotionMeta);
 
         ItemStack strengthPotion = new ItemStack(Material.POTION);
@@ -75,7 +75,7 @@ public class CaptureTheFlagController extends Teams2MinigameBase implements Mini
         if (strengthPotionMeta == null) return;
 
         strengthPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 10 * 20, 1), true);
-        strengthPotionMeta.displayName(Component.text("Potion of Strength"));
+        strengthPotionMeta.displayName(Component.text("Potion of Strength").decoration(TextDecoration.ITALIC, false));
         strengthPotion.setItemMeta(strengthPotionMeta);
 
         items.add(harmingArrow);
