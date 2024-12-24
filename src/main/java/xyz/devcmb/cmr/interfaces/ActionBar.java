@@ -2,11 +2,13 @@ package xyz.devcmb.cmr.interfaces;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 
 import java.util.HashMap;
@@ -22,16 +24,30 @@ public class ActionBar {
      * Send the action bar to the player
      * @param player The player to show the action bar to
      */
-    private static void sendActionBar(Player player){
-        if(!player.hasPotionEffect(PotionEffectType.HUNGER)){
+    private static void sendActionBar(Player player) {
+        if (!player.hasPotionEffect(PotionEffectType.HUNGER)) {
             player.sendActionBar(Component.empty());
             return;
         }
 
-        Component stars = Component.text(" ".repeat(30 + userStars.get(player).toString().length()))
-                .append(Component.text("\uE000 " + userStars.get(player)))
-                .font(Key.key("cmbminigames", "actionbar"));
+        String starsText = String.format("%010d", userStars.get(player));
+        Component stars = Component.text(" ".repeat(42))
+                .color(TextColor.fromHexString("#4e5c24"))
+                .append(Component.text("\uE000 "));
 
+        boolean leading = true;
+        for (char c : starsText.toCharArray()) {
+            TextColor color;
+            if (leading && c == '0') {
+                color = Colors.DARK_GRAY;
+            } else {
+                color = Colors.WHITE;
+                leading = false;
+            }
+            stars = stars.append(Component.text(c).color(color));
+        }
+
+        stars = stars.font(Key.key("cmbminigames", "actionbar"));
         player.sendActionBar(stars);
     }
 
