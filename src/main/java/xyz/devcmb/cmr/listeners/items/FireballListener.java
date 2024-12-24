@@ -18,9 +18,9 @@ public class FireballListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack item = event.getItem();
-            if (item != null && item.getType() == Material.FIRE_CHARGE) {
+            if (item != null && item.getType().equals(Material.FIRE_CHARGE)) {
                 Location playerLocation = event.getPlayer().getLocation();
-                Location fireballLocation = playerLocation.clone().add(playerLocation.getDirection().multiply(2));
+                Location fireballLocation = playerLocation.clone().add(0,1,0).add(playerLocation.getDirection().multiply(2));
                 Fireball fireball = Objects.requireNonNull(playerLocation.getWorld()).spawn(fireballLocation, Fireball.class);
                 fireball.setDirection(playerLocation.getDirection());
                 fireball.setYield(2);

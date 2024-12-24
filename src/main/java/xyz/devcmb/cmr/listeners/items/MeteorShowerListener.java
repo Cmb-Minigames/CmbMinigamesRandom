@@ -22,9 +22,9 @@ public class MeteorShowerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             ItemStack item = event.getItem();
-            if (item != null && item.getType() == Material.ECHO_SHARD) {
+            if (item != null && item.getType().equals(Material.ECHO_SHARD)) {
                 ItemMeta meta = item.getItemMeta();
-                if (meta != null && meta.hasCustomModelData() && meta.getCustomModelData() == CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("star_shower").intValue()) {
+                if (meta != null && meta.hasItemModel() && Objects.equals(meta.getItemModel(), CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("star_shower"))) {
                     Location playerLocation = event.getPlayer().getLocation();
                     for (int i = 0; i < 5; i++) {
                         double angle = i * (4 * Math.PI / 5);

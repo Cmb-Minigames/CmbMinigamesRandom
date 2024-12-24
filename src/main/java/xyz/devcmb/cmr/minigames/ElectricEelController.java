@@ -1,12 +1,15 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,13 +17,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
 import xyz.devcmb.cmr.timers.Timer;
 import xyz.devcmb.cmr.timers.TimerManager;
 import xyz.devcmb.cmr.utils.*;
@@ -31,26 +32,15 @@ import java.util.*;
 /**
  * The Electric Eel minigame controller
  */
-public class ElectricEelController implements Minigame {
+public class ElectricEelController extends Teams2MinigameBase implements Minigame {
     public List<Player> RED = new ArrayList<>();
     public List<Player> BLUE = new ArrayList<>();
-    public final Scoreboard scoreboard;
-    private final Team redTeam;
-    private final Team blueTeam;
     public List<Beam> beams = new ArrayList<>();
 
     public int redUranium = 0;
     public int blueUranium = 0;
     public boolean hasStarted = false;
     public Timer timer;
-
-    public ElectricEelController() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
-        scoreboard = manager.getNewScoreboard();
-        redTeam = scoreboard.registerNewTeam("Red");
-        blueTeam = scoreboard.registerNewTeam("Blue");
-    }
 
     @SuppressWarnings("unchecked")
     public void ResetBeams(Location eelLocation) {
@@ -122,18 +112,14 @@ public class ElectricEelController implements Minigame {
 
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
 
         for (int i = 0; i < allPlayers.size(); i++) {
             if (i % 2 == 0) {
                 RED.add(allPlayers.get(i));
-                redTeam.addEntry(allPlayers.get(i).getName());
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.RED);
+                GameManager.teamColors.put(allPlayers.get(i), NamedTextColor.RED);
             } else {
                 BLUE.add(allPlayers.get(i));
-                blueTeam.addEntry(allPlayers.get(i).getName());
-                GameManager.teamColors.put(allPlayers.get(i), ChatColor.BLUE);
+                GameManager.teamColors.put(allPlayers.get(i), NamedTextColor.BLUE);
 
                 PotionEffect dolphinsGrace = new PotionEffect(PotionEffectType.DOLPHINS_GRACE, Integer.MAX_VALUE, 255, false, false);
                 allPlayers.get(i).addPotionEffect(dolphinsGrace);
@@ -169,13 +155,23 @@ public class ElectricEelController implements Minigame {
         RED.forEach(player -> {
             player.teleport(Utilities.findValidLocation(redSpawnLocation));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "POLLUTER" + ChatColor.RESET + " team!");
+
+            Component teamText = Component.text("You are on the ")
+                .append(Component.text("POLLUTER").color(Colors.RED).decorate(TextDecoration.BOLD))
+                .append(Component.text(" team!"));
+
+            player.sendMessage(teamText);
         });
 
         BLUE.forEach(player -> {
             player.teleport(Utilities.findValidLocation(blueSpawnLocation));
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "EEL" + ChatColor.RESET + " team!");
+
+            Component teamText = Component.text("You are on the ")
+                .append(Component.text("EEL").color(Colors.BLUE).decorate(TextDecoration.BOLD))
+                .append(Component.text(" team!"));
+
+            player.sendMessage(teamText);
         });
 
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
@@ -193,7 +189,7 @@ public class ElectricEelController implements Minigame {
 
         assert electricEelLocation != null;
         LivingEntity electricEel = (LivingEntity) world.spawnEntity(electricEelLocation, EntityType.SALMON);
-        Objects.requireNonNull(electricEel.getAttribute(Attribute.GENERIC_SCALE)).setBaseValue(3.0);
+        Objects.requireNonNull(electricEel.getAttribute(Attribute.SCALE)).setBaseValue(3.0);
         electricEel.setAI(false);
         electricEel.setInvulnerable(true);
         electricEel.setRemoveWhenFarAway(false);
@@ -238,8 +234,6 @@ public class ElectricEelController implements Minigame {
         beams.clear();
         RED.clear();
         BLUE.clear();
-        redTeam.getEntries().forEach(redTeam::removeEntry);
-        blueTeam.getEntries().forEach(blueTeam::removeEntry);
 
         redUranium = 0;
         blueUranium = 0;
@@ -252,37 +246,56 @@ public class ElectricEelController implements Minigame {
     public void endGame() {
         timer = null;
         GameManager.gameEnding = true;
+
+        Title victoryTitle = Title.title(
+            Component.text("VICTORY").color(Colors.GOLD).decorate(TextDecoration.BOLD),
+            Component.empty(),
+            Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title defeatTitle = Title.title(
+            Component.text("DEFEAT").color(Colors.RED).decorate(TextDecoration.BOLD),
+            Component.empty(),
+            Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title drawTitle = Title.title(
+            Component.text("DRAW").color(Colors.AQUA).decorate(TextDecoration.BOLD),
+            Component.empty(),
+            Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
         if (redUranium > blueUranium) {
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.showTitle(victoryTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
         } else if (blueUranium > redUranium) {
             BLUE.forEach(plr -> {
-                plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                plr.showTitle(victoryTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
             RED.forEach(plr -> {
-                plr.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                plr.showTitle(defeatTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
             });
         } else {
             Bukkit.getOnlinePlayers().forEach(plr -> {
-                plr.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                plr.showTitle(drawTitle);
                 plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 plr.getInventory().clear();
                 plr.setGameMode(GameMode.SPECTATOR);
@@ -295,56 +308,6 @@ public class ElectricEelController implements Minigame {
                 stop();
             }
         }.runTaskLater(CmbMinigamesRandom.getPlugin(), 20 * 7);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void playerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Map<String, Object> mapData = (Map<String, Object>) GameManager.currentMap.get("map");
-        String worldName = MapLoader.LOADED_MAP;
-        Map<String, Object> redSpawn = (Map<String, Object>) mapData.get("redTeamSpawn");
-
-        Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
-            player.teleport(new Location(Bukkit.getWorld(worldName), ((Number) redSpawn.get("x")).doubleValue(), ((Number) redSpawn.get("y")).doubleValue(), ((Number) redSpawn.get("z")).doubleValue()));
-            player.sendMessage(ChatColor.RED + "A game of Electric Eel is currently active, and you have been added as a spectator.");
-            Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
-        }, 10L);
-    }
-
-    @Override
-    public Number playerLeave(Player player) {
-        RED.remove(player);
-        BLUE.remove(player);
-
-        if(CmbMinigamesRandom.DeveloperMode){
-            return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
-        } else {
-            if(RED.isEmpty()){
-                GameManager.gameEnding = true;
-                BLUE.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
-                });
-                return 7;
-            } else if(BLUE.isEmpty()){
-                GameManager.gameEnding = true;
-                RED.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
-                    plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
-                    plr.getInventory().clear();
-                    plr.setGameMode(GameMode.SPECTATOR);
-                    Database.addUserStars(plr, getStarSources().get(StarSource.WIN));
-                });
-
-                return 7;
-            }
-        }
-
-        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -438,10 +401,7 @@ public class ElectricEelController implements Minigame {
     public void updateScoreboard(Player player) {
         CMScoreboardManager.sendScoreboardAlongDefaults(
             player,
-            CMScoreboardManager.mergeScoreboards(
-                CMScoreboardManager.scoreboards.get("electriceel").getScoreboard(player),
-                scoreboard
-            )
+            CMScoreboardManager.scoreboards.get("electriceel").getScoreboard(player)
         );
     }
 

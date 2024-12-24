@@ -15,13 +15,12 @@ public class TabListScoreboard implements HandledScoreboard{
     @Override
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        assert manager != null;
         Scoreboard board = manager.getNewScoreboard();
 
         Bukkit.getOnlinePlayers().forEach(plr -> {
             Integer priority = Format.getPriority(plr);
             Team team = board.registerNewTeam(priority + plr.getName());
-            team.setColor(GameManager.teamColors.get(plr));
+            team.color(GameManager.teamColors.get(plr));
             team.addEntry(plr.getName());
         });
 

@@ -1,7 +1,7 @@
 package xyz.devcmb.cmr.interfaces;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -24,13 +24,15 @@ public class ActionBar {
      */
     private static void sendActionBar(Player player){
         if(!player.hasPotionEffect(PotionEffectType.HUNGER)){
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(""));
+            player.sendActionBar(Component.empty());
             return;
         }
 
-        TextComponent stars = new TextComponent(" ".repeat(30 + userStars.get(player).toString().length()) + "\uE000 " + userStars.get(player));
-        stars.setFont("cmbminigames:actionbar");
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, stars);
+        Component stars = Component.text(" ".repeat(30 + userStars.get(player).toString().length()))
+                .append(Component.text("\uE000 " + userStars.get(player)))
+                .font(Key.key("cmbminigames", "actionbar"));
+
+        player.sendActionBar(stars);
     }
 
     /**

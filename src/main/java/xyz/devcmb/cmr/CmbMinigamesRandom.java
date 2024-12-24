@@ -1,9 +1,7 @@
 package xyz.devcmb.cmr;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import xyz.devcmb.cmr.commands.RegisterCommands;
 import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.cosmetics.CrateManager;
@@ -26,19 +24,7 @@ public final class CmbMinigamesRandom extends JavaPlugin {
     private static CmbMinigamesRandom plugin;
     public static Logger LOGGER;
     public static boolean DeveloperMode = false;
-    private static BukkitAudiences adventure;
     private static MultiverseCore multiverseCore;
-
-    /**
-     * Get the Adventure instance
-     * @return The Adventure instance
-     */
-    public static @NonNull BukkitAudiences adventure() {
-        if(adventure == null) {
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-        }
-        return adventure;
-    }
 
     /**
      * Get the plugin instance
@@ -67,7 +53,6 @@ public final class CmbMinigamesRandom extends JavaPlugin {
         DeveloperMode = getPlugin().getConfig().getBoolean("settings.devMode");
         multiverseCore = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
-        adventure = BukkitAudiences.create(this);
         Database.connect();
         CosmeticManager.registerAllCosmetics();
         CrateManager.registerAllCrates();

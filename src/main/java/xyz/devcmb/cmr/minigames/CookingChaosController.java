@@ -1,5 +1,8 @@
 package xyz.devcmb.cmr.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
@@ -15,6 +18,7 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
 import xyz.devcmb.cmr.minigames.bases.Teams2MinigameBase;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.Kits;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -94,7 +98,10 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
             assert redSpawn != null;
             player.teleport(redSpawn);
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.RED + ChatColor.BOLD + "RED" + ChatColor.RESET + " team!");
+
+            Component team = Component.text("You are on the ").append(Component.text("RED").color(Colors.RED).decorate(TextDecoration.BOLD)).append(Component.text(" team!"));
+            player.sendMessage(team);
+
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
         });
 
@@ -102,7 +109,10 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
             assert blueSpawn != null;
             player.teleport(blueSpawn);
             Fade.fadePlayer(player, 0, 0, 40);
-            player.sendMessage("You are on the " + ChatColor.BLUE + ChatColor.BOLD + "BLUE" + ChatColor.RESET + " team!");
+
+            Component team = Component.text("You are on the ").append(Component.text("BLUE").color(Colors.BLUE).decorate(TextDecoration.BOLD)).append(Component.text(" team!"));
+            player.sendMessage(team);
+
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 4, false, false, false));
         });
 
@@ -220,7 +230,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
                             chestData.getInventory().setItem(16, new ItemStack(Material.SUGAR_CANE, 3));
                         }
                     });
-                    Bukkit.broadcastMessage(ChatColor.GREEN + "Crop chests have been refilled!");
+                    Bukkit.broadcast(Component.text("Crop chests have been refilled!").color(Colors.GREEN));
                 }
             };
 
@@ -257,7 +267,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
                                 Location textLocation = loc.clone().add(0, 2, 0);
 
                                 TextDisplay text = (TextDisplay) world.spawnEntity(textLocation, EntityType.TEXT_DISPLAY);
-                                text.setText(fontItems.get(newCustomer.get("order")));
+                                text.text(Component.text(fontItems.get(newCustomer.get("order"))));
                                 text.setBillboard(Display.Billboard.CENTER);
 
                                 newCustomer.put("orderTextEntity", text);
@@ -269,7 +279,10 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
                         });
 
                         selectedTable.put("taken", true);
-                        RED.forEach(player -> player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "A customer has arrived at your resturant!"));
+                        RED.forEach(player -> {
+                            Component message = Component.text("A customer has arrived at your resturant!").color(Colors.GOLD);
+                            player.sendMessage(message);
+                        });
                     }
 
                     if(!blueTables.stream().allMatch(table -> (Boolean) table.get("taken"))){
@@ -301,7 +314,7 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
                                 Location textLocation = loc.clone().add(0, 2, 0);
 
                                 TextDisplay text = (TextDisplay) world.spawnEntity(textLocation, EntityType.TEXT_DISPLAY);
-                                text.setText(fontItems.get(newCustomer.get("order")));
+                                text.text(Component.text(fontItems.get(newCustomer.get("order"))));
                                 text.setBillboard(Display.Billboard.CENTER);
 
                                 newCustomer.put("orderTextEntity", text);
@@ -313,7 +326,10 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
                         });
 
                         selectedTable.put("taken", true);
-                        BLUE.forEach(player -> player.sendMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "A customer has arrived at your resturant!"));
+                        BLUE.forEach(player -> {
+                            Component message = Component.text("A customer has arrived at your resturant!").color(Colors.GOLD);
+                            player.sendMessage(message);
+                        });
                     }
 
                     CmbMinigamesRandom.LOGGER.info("Sent new customers to tables");
@@ -332,23 +348,41 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
         if(customerRunnable != null) customerRunnable.cancel();
         customerRunnable = null;
 
+        Title victoryTitle = Title.title(
+                Component.text("VICTORY").color(Colors.GOLD).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title defeatTitle = Title.title(
+                Component.text("DEFEAT").color(Colors.RED).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
+        Title drawTitle = Title.title(
+                Component.text("DRAW").color(Colors.AQUA).decorate(TextDecoration.BOLD),
+                Component.text(""),
+                Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10))
+        );
+
         RED.forEach(player -> {
             player.getInventory().clear();
             player.setGameMode(GameMode.SPECTATOR);
 
             if(redScore > blueScore){
-                player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                player.showTitle(victoryTitle);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);
                 Database.addUserStars(player, getStarSources().get(StarSource.WIN));
             } else if(blueScore > redScore){
-                player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                player.showTitle(defeatTitle);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);
             } else {
-                player.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                player.showTitle(drawTitle);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);
@@ -360,18 +394,18 @@ public class CookingChaosController extends Teams2MinigameBase implements Miniga
             player.setGameMode(GameMode.SPECTATOR);
 
             if(blueScore > redScore){
-                player.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                player.showTitle(victoryTitle);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);
                 Database.addUserStars(player, getStarSources().get(StarSource.WIN));
             } else if(redScore > blueScore){
-                player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "DEFEAT", "", 5, 80, 10);
+                player.showTitle(defeatTitle);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);
             } else {
-                player.sendTitle(ChatColor.AQUA + ChatColor.BOLD.toString() + "DRAW", "", 5, 80, 10);
+                player.showTitle(drawTitle);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 player.getInventory().clear();
                 player.setGameMode(GameMode.SPECTATOR);

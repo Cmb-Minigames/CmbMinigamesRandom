@@ -1,12 +1,17 @@
 package xyz.devcmb.cmr.cosmetics;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 
 import java.util.HashMap;
@@ -46,27 +51,27 @@ public class CosmeticManager {
         ItemStack item = new ItemStack(Material.LEATHER_HORSE_ARMOR);
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return;
-        int customModelData = (int) cosmetic.get("custom_model_data");
-        meta.setCustomModelData(customModelData);
+        meta.setItemModel(new NamespacedKey("cmbminigames", "cosmetic/" + name));
         String display_name = (String) cosmetic.get("display_name");
         String rarity = (String) cosmetic.get("rarity");
 
         CmbMinigamesRandom.LOGGER.info("Registering cosmetic: " + name + " with rarity " + rarity);
 
-        ChatColor rarityColor = switch (rarity.toLowerCase()) {
-            case "uncommon" -> ChatColor.GREEN;
-            case "rare" -> ChatColor.BLUE;
-            case "epic" -> ChatColor.DARK_PURPLE;
-            case "legendary" -> ChatColor.GOLD;
-            case "mythic" -> ChatColor.RED;
-            default -> ChatColor.WHITE;
+        TextColor rarityColor = switch (rarity.toLowerCase()) {
+            case "uncommon" -> Colors.GREEN;
+            case "rare" -> Colors.BLUE;
+            case "epic" -> Colors.PURPLE;
+            case "legendary" -> Colors.GOLD;
+            case "mythic" -> Colors.RED;
+            default -> Colors.WHITE;
         };
 
-        meta.setItemName(rarityColor + display_name);
-        meta.setLore(List.of(
-            ChatColor.GRAY + (String) cosmetic.get("description"),
-            rarityColor + rarity
+        meta.displayName(Component.text(display_name).color(rarityColor).decoration(TextDecoration.ITALIC, false));
+        meta.lore(List.of(
+            Component.text((String) cosmetic.get("description")).color(Colors.GRAY).decoration(TextDecoration.ITALIC, false),
+            Component.text(rarity).color(rarityColor).decoration(TextDecoration.ITALIC, false)
         ));
+
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
 
         item.setItemMeta(meta);
@@ -79,9 +84,9 @@ public class CosmeticManager {
      * @param display_name The display name of the cosmetic
      * @return The cosmetic data
      */
-    public static Map<String, Object> getFromDisplayName(String display_name){
+    public static Map<String, Object> getFromDisplayName(Component display_name){
         for(Map.Entry<String, Map<String, Object>> entry : cosmeticData.entrySet()){
-            if(entry.getValue().get("display_name").equals(display_name)){
+            if(entry.getValue().get("display_name").equals(PlainTextComponentSerializer.plainText().serialize(display_name))){
                 return entry.getValue();
             }
         }
@@ -113,7 +118,11 @@ public class CosmeticManager {
         String equipped = Database.getEquipped(player);
         if(equipped == null) return;
         ItemStack cosmetic = cosmetics.get(equipped);
-        if(cosmetic == null) player.sendMessage("❓ " + ChatColor.RED + "That cosmetic does not exist.");
+        if(cosmetic == null) {
+            CmbMinigamesRandom.LOGGER.warning("Cosmetic " + equipped + " does not exist, invoked by " + player.getName());
+            return;
+        }
+
         player.getInventory().setHelmet(cosmetic);
     }
 
@@ -124,7 +133,11 @@ public class CosmeticManager {
      */
     public static void giveCosmetic(Player player, String name){
         ItemStack cosmetic = cosmetics.get(name);
-        if(cosmetic == null) player.sendMessage("❓ " + ChatColor.RED + "That cosmetic does not exist.");
+        if(cosmetic == null) {
+            player.sendMessage(Component.text("❓ ").color(Colors.RED).append(Component.text("That cosmetic does not exist.")));
+            return;
+        }
+
         player.getInventory().addItem(cosmetic);
     }
 }

@@ -1,11 +1,16 @@
 package xyz.devcmb.cmr.minigames.bases;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.StarSource;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
@@ -44,10 +49,10 @@ abstract public class Teams2MinigameBase {
         for (int i = 0; i < sortingPlayers.size(); i++) {
             if (i % 2 == 0) {
                 RED.add(sortingPlayers.get(i));
-                GameManager.teamColors.put(sortingPlayers.get(i), ChatColor.RED);
+                GameManager.teamColors.put(sortingPlayers.get(i), NamedTextColor.RED);
             } else {
                 BLUE.add(sortingPlayers.get(i));
-                GameManager.teamColors.put(sortingPlayers.get(i), ChatColor.BLUE);
+                GameManager.teamColors.put(sortingPlayers.get(i), NamedTextColor.BLUE);
             }
         }
 
@@ -91,7 +96,10 @@ abstract public class Teams2MinigameBase {
         Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> {
             player.teleport(redSpawn);
-            player.sendMessage(ChatColor.RED + "A game of " + getName() + " is currently active, and you have been added as a spectator.");
+
+            Component message = Component.text("A game of " + getName() + " is currently active, and you have been added as a spectator.").color(Colors.RED);
+            player.sendMessage(message);
+
             Bukkit.getScheduler().runTaskLater(CmbMinigamesRandom.getPlugin(), () -> player.setGameMode(GameMode.SPECTATOR), 10L);
         }, 10L);
     }
@@ -108,9 +116,12 @@ abstract public class Teams2MinigameBase {
         if(CmbMinigamesRandom.DeveloperMode){
             return (RED.isEmpty() && BLUE.isEmpty()) ? 0 : null;
         } else {
+            Component victoryMessage = Component.text("VICTORY").decorate(TextDecoration.BOLD).color(Colors.GOLD);
+            Title victoryTitle = Title.title(victoryMessage, Component.empty(), Title.Times.times(Utilities.ticksToMilliseconds(5), Utilities.ticksToMilliseconds(80), Utilities.ticksToMilliseconds(10)));
+
             if (RED.isEmpty()) {
                 BLUE.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.showTitle(victoryTitle);
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);
@@ -120,7 +131,7 @@ abstract public class Teams2MinigameBase {
                 return 8;
             } else if (BLUE.isEmpty()) {
                 RED.forEach(plr -> {
-                    plr.sendTitle(ChatColor.GOLD + ChatColor.BOLD.toString() + "VICTORY", "", 5, 80, 10);
+                    plr.showTitle(victoryTitle);
                     plr.playSound(plr.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                     plr.getInventory().clear();
                     plr.setGameMode(GameMode.SPECTATOR);

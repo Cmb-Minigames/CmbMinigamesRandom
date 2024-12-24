@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.interfaces.scoreboards;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -109,16 +110,21 @@ public class CMScoreboardManager {
      */
     public static Scoreboard mergeScoreboards(Scoreboard... boards) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-        assert scoreboardManager != null;
         Scoreboard merged = scoreboardManager.getNewScoreboard();
 
         for (Scoreboard board : boards) {
             if(board == null) continue;
             board.getTeams().forEach(team -> {
                 org.bukkit.scoreboard.Team newTeam = merged.registerNewTeam(team.getName());
-                newTeam.setPrefix(team.getPrefix());
-                newTeam.setSuffix(team.getSuffix());
-                newTeam.setColor(team.getColor());
+                newTeam.prefix(team.prefix());
+                newTeam.suffix(team.suffix());
+
+                if (team.color() instanceof NamedTextColor color) {
+                    newTeam.color(color);
+                } else {
+                    newTeam.color(NamedTextColor.WHITE);
+                }
+
                 newTeam.setOption(org.bukkit.scoreboard.Team.Option.NAME_TAG_VISIBILITY, team.getOption(org.bukkit.scoreboard.Team.Option.NAME_TAG_VISIBILITY));
                 newTeam.setOption(org.bukkit.scoreboard.Team.Option.COLLISION_RULE, team.getOption(org.bukkit.scoreboard.Team.Option.COLLISION_RULE));
                 newTeam.setOption(org.bukkit.scoreboard.Team.Option.DEATH_MESSAGE_VISIBILITY, team.getOption(org.bukkit.scoreboard.Team.Option.DEATH_MESSAGE_VISIBILITY));
@@ -128,7 +134,7 @@ public class CMScoreboardManager {
             board.getObjectives().forEach(objective -> {
                 Objective newObjective = merged.getObjective(objective.getName());
                 if (newObjective == null) {
-                    newObjective = merged.registerNewObjective(objective.getName(), objective.getTrackedCriteria(), objective.getDisplayName(), objective.getRenderType());
+                    newObjective = merged.registerNewObjective(objective.getName(), objective.getTrackedCriteria(), objective.displayName(), objective.getRenderType());
                     newObjective.setDisplaySlot(objective.getDisplaySlot());
                 }
                 for (String entry : board.getEntries()) {

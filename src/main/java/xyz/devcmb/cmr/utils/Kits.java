@@ -1,5 +1,7 @@
 package xyz.devcmb.cmr.utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -105,8 +107,8 @@ public class Kits {
                 ItemStack rocketLauncher = new ItemStack(Material.ECHO_SHARD, (int) value.getFirst());
                 ItemMeta meta = rocketLauncher.getItemMeta();
                 if(meta == null) return;
-                meta.setItemName("Rocket Launcher");
-                meta.setCustomModelData(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("rocket_launcher").intValue());
+                meta.displayName(Component.text("Rocket Launcher").decoration(TextDecoration.ITALIC, false));
+                meta.setItemModel(CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("rocket_launcher"));
                 rocketLauncher.setItemMeta(meta);
 
                 player.getInventory().setItem((int) value.get(1), rocketLauncher);

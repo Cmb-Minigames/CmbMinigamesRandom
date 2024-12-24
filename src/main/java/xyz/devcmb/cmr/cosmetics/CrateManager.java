@@ -1,11 +1,14 @@
 package xyz.devcmb.cmr.cosmetics;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 
 import java.util.HashMap;
@@ -42,20 +45,20 @@ public class CrateManager {
         ItemStack crateItem = new ItemStack(Material.CHEST);
         ItemMeta meta = crateItem.getItemMeta();
         if(meta == null) return;
-        meta.setItemName(crate.get("display_name").toString());
+        meta.displayName(Component.text(crate.get("display_name").toString()).decoration(TextDecoration.ITALIC, false));
         Map<String, Number> raritySet = Database.getRaritySet((Integer) crate.get("rarity_set"));
         if(raritySet == null) {
             CmbMinigamesRandom.LOGGER.warning("Rarity set not found for crate " + name);
             return;
         }
 
-        meta.setLore(List.of(
-            ChatColor.WHITE + "Common: " + ChatColor.WHITE + raritySet.get("common") + "%",
-            ChatColor.GREEN + "Uncommon: " + ChatColor.WHITE + raritySet.get("uncommon") + "%",
-            ChatColor.BLUE + "Rare: " + ChatColor.WHITE + raritySet.get("rare") + "%",
-            ChatColor.DARK_PURPLE + "Epic: " + ChatColor.WHITE + raritySet.get("epic") + "%",
-            ChatColor.GOLD + "Legendary: " + ChatColor.WHITE + raritySet.get("legendary") + "%",
-            ChatColor.RED + "Mythic: " + ChatColor.WHITE + raritySet.get("mythic") + "%"
+        meta.lore(List.of(
+            Component.text("Common: ").color(Colors.WHITE).append(Component.text(raritySet.get("common").toString()).color(Colors.WHITE)).append(Component.text("%").color(Colors.WHITE)).decoration(TextDecoration.ITALIC, false),
+            Component.text("Uncommon: ").color(Colors.GREEN).append(Component.text(raritySet.get("uncommon").toString()).color(Colors.WHITE)).append(Component.text("%").color(Colors.WHITE)).decoration(TextDecoration.ITALIC, false),
+            Component.text("Rare: ").color(Colors.BLUE).append(Component.text(raritySet.get("rare").toString()).color(Colors.WHITE)).append(Component.text("%").color(Colors.WHITE)).decoration(TextDecoration.ITALIC, false),
+            Component.text("Epic: ").color(Colors.PURPLE).append(Component.text(raritySet.get("epic").toString()).color(Colors.WHITE)).append(Component.text("%").color(Colors.WHITE)).decoration(TextDecoration.ITALIC, false),
+            Component.text("Legendary: ").color(Colors.GOLD).append(Component.text(raritySet.get("legendary").toString()).color(Colors.WHITE)).append(Component.text("%").color(Colors.WHITE)).decoration(TextDecoration.ITALIC, false),
+            Component.text("Mythic: ").color(Colors.RED).append(Component.text(raritySet.get("mythic").toString()).color(Colors.WHITE)).append(Component.text("%").color(Colors.WHITE)).decoration(TextDecoration.ITALIC, false)
         ));
         crateItem.setItemMeta(meta);
 
@@ -70,7 +73,11 @@ public class CrateManager {
      */
     public static void giveCrate(Player player, String name){
         ItemStack cosmetic = crates.get(name);
-        if(cosmetic == null) player.sendMessage("❓ " + ChatColor.RED + "That crate does not exist.");
+        if(cosmetic == null) {
+            player.sendMessage(Component.text("❓ ").append(Component.text("That crate does not exist.")));
+            return;
+        }
+
         player.getInventory().addItem(cosmetic);
     }
 
@@ -83,13 +90,13 @@ public class CrateManager {
     public static String rollCrate(Player player, String name) {
         Map<String, Object> crate = crateData.get(name);
         if (crate == null) {
-            player.sendMessage("❓ " + ChatColor.RED + "That crate does not exist.");
+            player.sendMessage(Component.text("❓ ").append(Component.text("That crate does not exist.").color(Colors.RED)));
             return null;
         }
 
         Map<String, Number> raritySet = Database.getRaritySet((Integer) crate.get("rarity_set"));
         if (raritySet == null) {
-            player.sendMessage("❓ " + ChatColor.RED + "Rarity set not found.");
+            player.sendMessage(Component.text("❓ ").append(Component.text("Rarity set not found.").color(Colors.RED)));
             return null;
         }
 
@@ -103,9 +110,9 @@ public class CrateManager {
      * @param display_name The display name of the crate
      * @return The crate data
      */
-    public static Map<String, Object> getFromDisplayName(String display_name) {
+    public static Map<String, Object> getFromDisplayName(Component display_name) {
         for (Map.Entry<String, Map<String, Object>> entry : crateData.entrySet()) {
-            if (entry.getValue().get("display_name").equals(display_name)) {
+            if (entry.getValue().get("display_name").equals(PlainTextComponentSerializer.plainText().serialize(display_name))) {
                 return entry.getValue();
             }
         }

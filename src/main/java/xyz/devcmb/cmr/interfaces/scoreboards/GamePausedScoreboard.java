@@ -1,7 +1,10 @@
 package xyz.devcmb.cmr.interfaces.scoreboards;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -18,13 +21,23 @@ public class GamePausedScoreboard implements HandledScoreboard {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         Scoreboard board = Objects.requireNonNull(scoreboardManager).getNewScoreboard();
 
-        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames" + ChatColor.WHITE + " | " + ChatColor.GRAY + "v" + CmbMinigamesRandom.getPlugin().getDescription().getVersion() + " ".repeat(5));
+        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"),
+                Component.text(" ".repeat(5))
+                        .append(Component.text("Cmb Minigames").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD))
+                        .append(Component.text(" | "))
+                        .append(Component.text("v")
+                            .append(Component.text(CmbMinigamesRandom.getPlugin().getDescription().getVersion())).color(NamedTextColor.GRAY))
+                        .append(Component.text(" ".repeat(5))));
+
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank = objective.getScore(" ");
         blank.setScore(1);
 
-        Score players = objective.getScore(ChatColor.WHITE + "\u1F46 Players: " + ChatColor.AQUA + Bukkit.getOnlinePlayers().size());
+        Score players = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                Component.text("\u1F46 Players: ").append(Component.text(Bukkit.getOnlinePlayers().size()).color(NamedTextColor.AQUA))
+        ));
+
         players.setScore(3);
 
         Score waiting = objective.getScore("❓ Game is currently paused.");

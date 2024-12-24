@@ -1,7 +1,10 @@
 package xyz.devcmb.cmr.interfaces.scoreboards.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import xyz.devcmb.cmr.GameManager;
@@ -20,30 +23,39 @@ public class ElectricEelScoreboard implements HandledScoreboard {
     @Override
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-        assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
         if(electricEelController.timer == null) return board;
 
-        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), ChatColor.YELLOW + ChatColor.BOLD.toString() + "Electric Eel");
+        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"),
+                Component.text(" ".repeat(5))
+                        .append(Component.text("Electric Eel").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD))
+                        .append(Component.text(" ".repeat(5))));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score blank1 = objective.getScore(" ");
         blank1.setScore(6);
 
-        Score timeLeft = objective.getScore("ὕ Time Left: " + ChatColor.AQUA + Utilities.formatTime(electricEelController.timer.getTime()));
-        timeLeft.setScore(5);
+        Score time = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                Component.text("ὕ Time Left: ")
+                        .append(Utilities.formatTime(electricEelController.timer.getTime()).color(NamedTextColor.AQUA))
+        ));
+        time.setScore(5);
 
-        Score kills = objective.getScore("⚔ Kills: " + ChatColor.AQUA + GameManager.kills.get(player));
+        Score kills = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                Component.text("⚔ Kills: ").append(Component.text(GameManager.kills.get(player).toString()).color(NamedTextColor.AQUA)))
+        );
         kills.setScore(4);
 
         Score blank2 = objective.getScore("  ");
         blank2.setScore(3);
 
-        Score red = objective.getScore(ChatColor.RED + "Polluters" + ChatColor.RESET + ": " + ChatColor.AQUA + electricEelController.redUranium);
+        Score red = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                Component.text("Red", NamedTextColor.RED).append(Component.text(": ")).append(Component.text(electricEelController.redUranium).color(NamedTextColor.AQUA))));
         red.setScore(2);
 
-        Score blue = objective.getScore(ChatColor.BLUE + "Electric Eels" + ChatColor.RESET + ": " + ChatColor.AQUA + electricEelController.blueUranium);
+        Score blue = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                Component.text("Blue", NamedTextColor.BLUE).append(Component.text(": ")).append(Component.text(electricEelController.blueUranium).color(NamedTextColor.AQUA))));
         blue.setScore(1);
 
         Score blank3 = objective.getScore("   ");

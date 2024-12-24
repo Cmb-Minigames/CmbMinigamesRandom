@@ -1,5 +1,10 @@
 package xyz.devcmb.cmr.utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -21,6 +26,7 @@ import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.interfaces.Fade;
 import xyz.devcmb.cmr.timers.TimerManager;
 
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -39,28 +45,41 @@ public class Utilities {
             public void run() {
                 if(seconds == 0){
                     this.cancel();
-                    player.sendTitle(ChatColor.GREEN.toString() + ChatColor.BOLD + "GO!", "", 0, 40, 10);
+
+                    Title goTitle = Title.title(
+                        Component.text("GO!").color(Colors.GREEN).decorate(TextDecoration.BOLD),
+                        Component.empty(),
+                        Title.Times.times(ticksToMilliseconds(0), ticksToMilliseconds(40), ticksToMilliseconds(10))
+                    );
+
+                    player.showTitle(goTitle);
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10, 2.5f);
                     return;
                 }
 
-                ChatColor color = ChatColor.WHITE;
+                TextColor color = Colors.WHITE;
 
                 switch(seconds){
                     case 3:
-                        color = ChatColor.GREEN;
+                        color = Colors.GREEN;
                         break;
                     case 2:
-                        color = ChatColor.YELLOW;
+                        color = Colors.YELLOW;
                         break;
                     case 1:
-                        color = ChatColor.RED;
+                        color = Colors.RED;
                         break;
                     default:
                         break;
                 }
 
-                player.sendTitle(color.toString() + ChatColor.BOLD + "> " + seconds + " <", "The game will begin shortly", 0, 20, 0);
+                Title countdownTitle = Title.title(
+                    Component.text("> " + seconds + " <").color(color).decorate(TextDecoration.BOLD),
+                    Component.text("The game will begin shortly"),
+                    Title.Times.times(ticksToMilliseconds(0), ticksToMilliseconds(20), ticksToMilliseconds(0))
+                );
+
+                player.showTitle(countdownTitle);
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10, 1);
                 seconds--;
             }
@@ -135,11 +154,11 @@ public class Utilities {
      * @param time The time in seconds
      * @return The formatted time string
      */
-    public static String formatTime(int time){
-        if(TimerManager.paused) return ChatColor.YELLOW + "⏸ PAUSED";
+    public static Component formatTime(int time){
+        if(TimerManager.paused) return Component.text("⏸ PAUSED").color(Colors.YELLOW);
         int minutes = time / 60;
         int seconds = time % 60;
-        return String.format("%02d:%02d", minutes, seconds);
+        return Component.text(String.format("%02d:%02d", minutes, seconds));
     }
 
     /**
@@ -210,7 +229,7 @@ public class Utilities {
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
             player.removePotionEffect(PotionEffectType.HUNGER);
-            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue());
             player.setFoodLevel(20);
         });
     }
@@ -240,9 +259,9 @@ public class Utilities {
 
                 player.setGameMode(GameMode.SURVIVAL);
                 player.getInventory().clear();
-                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+                Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
                 player.setGlowing(false);
-                GameManager.teamColors.put(player, ChatColor.WHITE);
+                GameManager.teamColors.put(player, NamedTextColor.WHITE);
 
                 CosmeticInventory cosmeticInventory = CosmeticManager.playerInventories.get(player);
                 cosmeticInventory.giveInventoryItem();
@@ -337,11 +356,11 @@ public class Utilities {
 
         List<ItemStack> inventoryContents = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
         inventoryContents.addAll(Arrays.asList(player.getInventory().getArmorContents()));
-        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, damageSource, inventoryContents, 0, null);
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, damageSource, inventoryContents, 0, Component.empty());
         Bukkit.getPluginManager().callEvent(deathEvent);
         
         player.setAllowFlight(true);
-        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
+        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getBaseValue());
         player.setFoodLevel(20);
         player.setFlying(true);
         player.setInvulnerable(true);
@@ -356,7 +375,7 @@ public class Utilities {
                     player.setFlying(false);
                     player.setAllowFlight(false);
                     player.setInvulnerable(false);
-                    Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+                    Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
                     player.setHealth(20);
                     player.setFoodLevel(20);
                     player.setFireTicks(0);
@@ -498,5 +517,9 @@ public class Utilities {
         return loc.getX() >= minX && loc.getX() <= maxX &&
                 loc.getY() >= minY && loc.getY() <= maxY &&
                 loc.getZ() >= minZ && loc.getZ() <= maxZ;
+    }
+
+    public static Duration ticksToMilliseconds(Number ticks) {
+        return Duration.ofMillis(ticks.longValue() * 50);
     }
 }

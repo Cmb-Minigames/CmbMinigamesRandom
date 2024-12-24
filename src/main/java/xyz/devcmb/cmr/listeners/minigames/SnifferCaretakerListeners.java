@@ -1,5 +1,6 @@
 package xyz.devcmb.cmr.listeners.minigames;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.EntityType;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import xyz.devcmb.cmr.CmbMinigamesRandom;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.SnifferCaretakerController;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.MapLoader;
 import xyz.devcmb.cmr.utils.Utilities;
 
@@ -180,21 +182,36 @@ public class SnifferCaretakerListeners implements Listener {
                 controller.redSnifferHappiness = Math.clamp(controller.redSnifferHappiness + happinessIncrease, 0, 1000);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
-                player.sendMessage(ChatColor.RED + "[Red Sniffer] " + ChatColor.RESET + (happinessIncrease >= 10 ? "This makes me VERY happy!" : "This makes me happy!"));
+
+                Component message = net.kyori.adventure.text.Component.text("[Red Sniffer] ").color(Colors.RED)
+                        .append(Component.text("This makes me " + (happinessIncrease >= 10 ? "VERY happy!" : "happy!")).color(Colors.WHITE));
+
+                player.sendMessage(message);
                 itemDrop.getWorld().spawnParticle(Particle.HEART, controller.redSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
             }
             if (controller.BLUE.contains(player)) {
                 controller.blueSnifferHappiness = Math.clamp(controller.blueSnifferHappiness + happinessIncrease, 0, 1000);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_EAT, 10, 1);
                 itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_HAPPY, 10, 1);
-                player.sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RESET + (happinessIncrease >= 10 ? "This makes me VERY happy!" : "This makes me happy!"));
+
+                Component message = net.kyori.adventure.text.Component.text("[Blue Sniffer] ").color(Colors.BLUE)
+                        .append(Component.text("This makes me " + (happinessIncrease >= 10 ? "VERY happy!" : "happy!")).color(Colors.WHITE));
+
+                player.sendMessage(message);
                 itemDrop.getWorld().spawnParticle(Particle.HEART, controller.blueSniffer.getLocation().clone().add(0, 2, 0), 10, 0.5, 0.5, 0.5, 0.1);
             }
             itemDrop.remove();
         } else {
             itemDrop.getWorld().playSound(player.getLocation(), Sound.ENTITY_SNIFFER_SNIFFING, 10, 1);
-            if (controller.RED.contains(player)) player.sendMessage(ChatColor.RED + "[Red Sniffer] I don't want that!");
-            if (controller.BLUE.contains(player)) player.sendMessage(ChatColor.BLUE + "[Blue Sniffer] " + ChatColor.RED + "I don't want that!");
+
+            Component message = Component.text(controller.RED.contains(player) ? "[Red Sniffer] " : "[Blue Sniffer] ")
+                    .color(controller.RED.contains(player) ? Colors.RED : Colors.BLUE)
+                    .append(Component.text("I don't want that!").color(Colors.RED));
+
+            if(controller.RED.contains(player) || controller.BLUE.contains(player)){
+                player.sendMessage(message);
+            }
+
             itemDrop.getWorld().spawnParticle(
                     Particle.ANGRY_VILLAGER,
                     controller.RED.contains(player) ? controller.redSniffer.getLocation().clone().add(0, 2, 0) : controller.blueSniffer.getLocation().clone().add(0, 2, 0),

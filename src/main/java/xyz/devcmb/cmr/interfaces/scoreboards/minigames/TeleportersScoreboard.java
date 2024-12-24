@@ -1,7 +1,10 @@
 package xyz.devcmb.cmr.interfaces.scoreboards.minigames;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 import xyz.devcmb.cmr.GameManager;
@@ -25,22 +28,29 @@ public class TeleportersScoreboard implements HandledScoreboard {
     @Override
     public Scoreboard getScoreboard(Player player) {
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-        assert scoreboardManager != null;
         Scoreboard board = scoreboardManager.getNewScoreboard();
 
         if(teleportersController.timer == null) return board;
 
-        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"), " ".repeat(5) + ChatColor.YELLOW + ChatColor.BOLD + "Teleporters" + " ".repeat(5));
+        Objective objective = board.registerNewObjective("info", Criteria.create("dummy"),
+                Component.text(" ".repeat(5))
+                        .append(Component.text("Teleporters").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD))
+                        .append(Component.text(" ".repeat(5))));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Map<Player, Integer> playerLives = teleportersController.playerLives;
         Score blank1 = objective.getScore(" ");
         blank1.setScore(playerLives.size() + 4);
 
-        Score eventTimer = objective.getScore("ὕ Next event: " + ChatColor.AQUA + (!teleportersController.eventActive ? Utilities.formatTime(teleportersController.eventTimer) : "Now!"));
+        Score eventTimer = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                Component.text("ὕ Next event: ").append(
+                        (!teleportersController.eventActive ? Utilities.formatTime(teleportersController.eventTimer) : Component.text("Now!")
+                ).color(NamedTextColor.AQUA))));
         eventTimer.setScore(playerLives.size() + 3);
 
-        Score kills = objective.getScore("⚔ Kills: " + ChatColor.AQUA + GameManager.kills.get(player));
+        Score kills = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                Component.text("⚔ Kills: ").append(Component.text(GameManager.kills.get(player).toString()).color(NamedTextColor.AQUA)))
+        );
         kills.setScore(playerLives.size() + 2);
 
         Score blank3 = objective.getScore("   ");
@@ -49,12 +59,16 @@ public class TeleportersScoreboard implements HandledScoreboard {
         AtomicInteger index = new AtomicInteger(playerLives.size());
         playerLives.forEach((p, lives) -> {
             if(p == player){
-                Score playerLivesScore = objective.getScore(ChatColor.BOLD + "You: " + ChatColor.RESET + ChatColor.AQUA + lives);
+                Score playerLivesScore = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                    Component.text("You: ").decorate(TextDecoration.BOLD).append(Component.text(lives).color(NamedTextColor.AQUA))
+                ));
                 playerLivesScore.setScore(index.getAndDecrement());
                 return;
             }
 
-            Score playerLivesScore = objective.getScore(p.getName() + ": " + ChatColor.AQUA + lives);
+            Score playerLivesScore = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
+                    Component.text(p.getName() + ":").append(Component.text(lives).color(NamedTextColor.AQUA))
+            ));
             playerLivesScore.setScore(index.getAndDecrement());
         });
 

@@ -20,13 +20,12 @@ public class RegisterCommands {
     public static void register(){
         registerSingleCommand("pause", new StopLoopCommand());
         registerSingleCommand("end", new EndMinigameCommand());
-        registerSingleCommand("minigame", new MinigameCommand(CmbMinigamesRandom.adventure()));
-        registerSingleCommand("flags", new FlagsCommand(CmbMinigamesRandom.adventure()));
+        registerSingleCommand("minigame", new MinigameCommand());
+        registerSingleCommand("flags", new FlagsCommand());
         registerSingleCommand("select", new SelectCommand());
         registerSingleCommand("ui", new UICommand());
         registerSingleCommand("cosmeticitem", new CosmeticCommand());
         registerSingleCommand("crateitem", new CrateCommand());
-        registerSingleCommand("rollcrate", new RollCrateCommand());
         registerSingleCommand("rc", new ReloadCosmeticsCommand());
         registerSingleCommand("cosmetic", new GiveCosmeticCommand());
         registerSingleCommand("crate", new GiveCrateCommand());
@@ -42,7 +41,6 @@ public class RegisterCommands {
         registerSingleTabCompletion("cosmeticitem", new CosmeticCommandCompletion());
         registerSingleTabCompletion("cosmetic", new CosmeticCommandCompletion());
         registerSingleTabCompletion("crateitem", new CrateCommandCompletion());
-        registerSingleTabCompletion("rollcrate", new CrateCommandCompletion());
         registerSingleTabCompletion("crate", new CrateCommandCompletion());
 
     }

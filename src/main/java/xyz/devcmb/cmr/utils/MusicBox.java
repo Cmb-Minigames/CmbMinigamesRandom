@@ -1,6 +1,5 @@
 package xyz.devcmb.cmr.utils;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -68,7 +67,6 @@ public class MusicBox {
                 loopTrack(player, music);
             }
 
-            Audience audience = CmbMinigamesRandom.adventure().player(player);
             final BossBar bossBar = BossBar.bossBar(
                     Component.text("\"" + track.get("song") + "\" by " + track.get("author")),
                     0,
@@ -76,7 +74,7 @@ public class MusicBox {
                     BossBar.Overlay.PROGRESS
             );
 
-            audience.showBossBar(bossBar);
+            player.showBossBar(bossBar);
             new BukkitRunnable() {
                 double progress = 0;
                 final double increment = 1.0 / 100;
@@ -84,7 +82,7 @@ public class MusicBox {
                 @Override
                 public void run() {
                     if (progress >= 1) {
-                        audience.hideBossBar(bossBar);
+                        player.hideBossBar(bossBar);
                         this.cancel();
                     } else {
                         progress += increment;

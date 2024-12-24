@@ -1,15 +1,14 @@
 package xyz.devcmb.cmr.commands.game;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
+import xyz.devcmb.cmr.utils.Colors;
 
 import java.util.stream.Collectors;
 
@@ -17,12 +16,6 @@ import java.util.stream.Collectors;
  * A command for listing the flags of a minigame
  */
 public class FlagsCommand implements CommandExecutor {
-    private final BukkitAudiences audiences;
-
-    public FlagsCommand(BukkitAudiences audiences) {
-        this.audiences = audiences;
-    }
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if(args.length == 1) {
@@ -32,17 +25,17 @@ public class FlagsCommand implements CommandExecutor {
                         .map(Enum::toString)
                         .collect(Collectors.joining("\n"));
 
-                audiences.sender(commandSender).sendMessage(Component.text()
+                commandSender.sendMessage(Component.text()
                         .append(Component.text("-------------------------------------\n").color(NamedTextColor.AQUA))
                         .append(Component.text(minigame.getName() + "\n\n").color(NamedTextColor.WHITE))
                         .append(Component.text(flags)).color(NamedTextColor.GOLD)
                         .append(Component.text("\n-------------------------------------").color(NamedTextColor.AQUA))
-                        .build());
+                );
             } else {
-                commandSender.sendMessage("❓ " + ChatColor.RED + "Invalid minigame.");
+                commandSender.sendMessage(Component.text("❓ ").append(Component.text("Invalid minigame").color(Colors.RED)));
             }
         } else {
-            commandSender.sendMessage("❓ " + ChatColor.RED + "Invalid arguments. Usage: /flags <game>");
+            commandSender.sendMessage(Component.text("❓ ").append(Component.text("Usage: /flags <minigame>").color(Colors.RED)));
         }
 
         return true;

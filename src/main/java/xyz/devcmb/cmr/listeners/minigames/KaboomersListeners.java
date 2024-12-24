@@ -20,6 +20,7 @@ import xyz.devcmb.cmr.utils.CustomModelDataConstants;
 import xyz.devcmb.cmr.utils.Utilities;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -43,8 +44,8 @@ public class KaboomersListeners implements Listener {
             ItemMeta meta = item.getItemMeta();
             if (
                     meta != null
-                    && meta.hasCustomModelData()
-                    && meta.getCustomModelData() == (int)CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("rocket_launcher")
+                    && meta.hasItemModel()
+                    && Objects.equals(meta.getItemModel(), CustomModelDataConstants.constants.get(Material.ECHO_SHARD).get("rocket_launcher"))
             ) {
                 Fireball fireball = player.launchProjectile(Fireball.class, player.getLocation().getDirection());
                 fireball.setYield(0);

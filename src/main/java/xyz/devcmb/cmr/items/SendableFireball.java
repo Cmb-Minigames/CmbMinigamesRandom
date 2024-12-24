@@ -1,9 +1,11 @@
 package xyz.devcmb.cmr.items;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import xyz.devcmb.cmr.utils.Colors;
 
 import java.util.List;
 
@@ -21,8 +23,8 @@ public class SendableFireball implements CustomItem {
         ItemStack item = new ItemStack(Material.FIRE_CHARGE);
         ItemMeta meta = item.getItemMeta();
         if(meta == null) return item;
-        meta.setItemName(ChatColor.GOLD + "Fireball");
-        meta.setLore(List.of(ChatColor.WHITE + "Shoots a fireball in the direction you are looking"));
+        meta.displayName(Component.text("Fireball").color(Colors.GOLD).decoration(TextDecoration.ITALIC, false));
+        meta.lore(List.of(Component.text("Shoots a fireball in the direction you are looking")));
         item.setItemMeta(meta);
         return item;
     }

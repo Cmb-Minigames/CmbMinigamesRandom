@@ -1,9 +1,7 @@
 package xyz.devcmb.cmr.listeners;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -21,6 +19,7 @@ import xyz.devcmb.cmr.cosmetics.CosmeticManager;
 import xyz.devcmb.cmr.interfaces.ActionBar;
 import xyz.devcmb.cmr.interfaces.TabList;
 import xyz.devcmb.cmr.interfaces.scoreboards.CMScoreboardManager;
+import xyz.devcmb.cmr.utils.Colors;
 import xyz.devcmb.cmr.utils.Database;
 
 import java.util.HashMap;
@@ -36,7 +35,6 @@ public class PlayerListeners implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event){
         String worldName = CmbMinigamesRandom.getPlugin().getConfig().getString("lobby.worldName");
         if(worldName == null || Bukkit.getWorld(worldName) == null){
-            event.getPlayer().sendMessage(ChatColor.RED + "The lobby world is not set up correctly. Please contact an administrator.");
             return;
         }
 
@@ -47,7 +45,7 @@ public class PlayerListeners implements Listener {
         );
 
         Player player = event.getPlayer();
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
         ActionBar.registerPlayer(player);
         CMScoreboardManager.initialize(player);
         GameManager.playerConnect(event);
@@ -69,8 +67,10 @@ public class PlayerListeners implements Listener {
         PotionEffect hungerEffect = new PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 255, true, false, false);
         player.addPotionEffect(hungerEffect);
 
-        Audience audience = (Audience) player;
-        audience.sendPlayerListHeader(Component.text(" ".repeat(5) + ChatColor.GOLD + ChatColor.BOLD + "Cmb Minigames - Random" + " ".repeat(5)));
+        player.sendPlayerListHeader(
+                Component.text(" ".repeat(5))
+                        .append(Component.text("Cmb Minigames - Random").color(Colors.GOLD))
+                        .append(Component.text(" ".repeat(5))));
 
         countdowns.put(player, new BukkitRunnable(){
             @Override
@@ -84,7 +84,7 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
-        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(20);
+        Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(20);
 
         GameManager.playerDisconnect(player);
         countdowns.get(player).cancel();

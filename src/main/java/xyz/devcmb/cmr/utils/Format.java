@@ -1,6 +1,5 @@
 package xyz.devcmb.cmr.utils;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -14,7 +13,7 @@ public class Format {
      */
     public static String formatPlayerName(Player player){
         String name = player.getName();
-        name = getPrefix(player) + name + ChatColor.RESET;
+        name = getPrefix(player) + name;
 
         return name;
     }

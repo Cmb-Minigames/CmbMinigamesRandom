@@ -1,5 +1,7 @@
 package xyz.devcmb.cmr.listeners;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
@@ -25,10 +27,7 @@ import xyz.devcmb.cmr.GameManager;
 import xyz.devcmb.cmr.minigames.Minigame;
 import xyz.devcmb.cmr.minigames.MinigameFlag;
 import xyz.devcmb.cmr.minigames.StarSource;
-import xyz.devcmb.cmr.utils.Database;
-import xyz.devcmb.cmr.utils.Format;
-import xyz.devcmb.cmr.utils.MapLoader;
-import xyz.devcmb.cmr.utils.Utilities;
+import xyz.devcmb.cmr.utils.*;
 
 import java.util.List;
 import java.util.Map;
@@ -248,7 +247,14 @@ public class MinigameListeners implements Listener {
         minigame.playerDeath(event);
         if(killer != null && minigame.getStarSources().containsKey(StarSource.KILL) && killer != player){
             killer.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 10, 1);
-            killer.sendTitle("⚔ " + Format.formatPlayerName(player), "+" + minigame.getStarSources().get(StarSource.KILL) + " 🌟", 0, 40, 10);
+
+            Title killTitle = Title.title(
+                    Component.text("⚔ " + Format.formatPlayerName(player)),
+                    Component.text("+" + minigame.getStarSources().get(StarSource.KILL) + " 🌟"),
+                    Title.Times.times(Utilities.ticksToMilliseconds(0), Utilities.ticksToMilliseconds(40), Utilities.ticksToMilliseconds(10))
+            );
+
+            killer.showTitle(killTitle);
             Database.addUserStars(killer, minigame.getStarSources().get(StarSource.KILL));
             GameManager.kills.put(killer, GameManager.kills.get(killer).intValue() + 1);
         }
@@ -286,14 +292,15 @@ public class MinigameListeners implements Listener {
             for (ItemStack item : player.getInventory().getContents()) {
                 if (item != null && item.isSimilar(clickedItem) && noRepeatTools.contains(item.getType())) {
                     event.setCancelled(true);
-                    player.sendMessage(ChatColor.RED + "You cannot have more than one item of this type in your inventory in this minigame!");
+
+                    player.sendMessage(Component.text("You cannot have more than one item of this type in your inventory in this minigame!").color(Colors.RED));
                     return;
                 }
 
                 for (ItemStack armorItem : player.getInventory().getArmorContents()) {
                     if (armorItem != null && armorItem.isSimilar(clickedItem) && noRepeatTools.contains(armorItem.getType())) {
                         event.setCancelled(true);
-                        player.sendMessage(ChatColor.RED + "You cannot have more than one item of this type in your inventory in this minigame!");
+                        player.sendMessage(Component.text("You cannot have more than one item of this type in your inventory in this minigame!").color(Colors.RED));
                         return;
                     }
                 }
