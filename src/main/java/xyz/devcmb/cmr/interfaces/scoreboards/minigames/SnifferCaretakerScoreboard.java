@@ -45,7 +45,7 @@ public class SnifferCaretakerScoreboard implements HandledScoreboard {
         blank2.setScore(3);
 
         Score red = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
-                Component.text("Red Sniffer", NamedTextColor.RED).append(Component.text(": ")).append(Component.text(snifferCaretakerController.redSnifferHappiness + "☺").color(NamedTextColor.AQUA))));
+                Component.text("Red Sniffer", NamedTextColor.RED).append(Component.text(": ")).append(Component.text(snifferCaretakerController.redSnifferHappiness + " ☺").color(NamedTextColor.AQUA))));
         red.setScore(2);
 
         Score blue = objective.getScore(LegacyComponentSerializer.legacySection().serialize(
