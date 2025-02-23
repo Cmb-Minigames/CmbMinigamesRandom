@@ -8,7 +8,17 @@ import xyz.devcmb.cmr.CmbMinigamesRandom;
 
 import java.time.Duration;
 
+/**
+ * An interfaces class to show a fading transition
+ */
 public class Fade {
+    /**
+     * Fades the player
+     * @param player The player to fade
+     * @param up The time to fade up
+     * @param stay The time to stay
+     * @param down The time to fade down
+     */
     public static void fadePlayer(Player player, Integer up, Integer stay, Integer down){
         CmbMinigamesRandom.LOGGER.info("Fading player " + player.getName() + " with up: " + up + ", stay: " + stay + ", down: " + down);
 

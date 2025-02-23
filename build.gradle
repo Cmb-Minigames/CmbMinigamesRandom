@@ -18,12 +18,14 @@ repositories {
     }
     maven { url = "https://repo.dmulloy2.net/repository/public/" }
     maven { url = "https://repo.onarandombox.com/content/groups/public/" }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     implementation 'commons-io:commons-io:2.14.0'
     compileOnly 'com.onarandombox.multiversecore:multiverse-core:4.3.14'
+    implementation 'com.github.Cmb-Minigames:CmbLib:-SNAPSHOT'
 }
 
 shadowJar {
